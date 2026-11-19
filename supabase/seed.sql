@@ -151,3 +151,87 @@ VALUES
 ('bariatric', 'Gastric Sleeve Surgery', 'Gastric sleeve', 'Bariatric', 3, 7, 10, 'Staple-line leaks typically present in the first week; flying waits until the leak window has passed and fluids are tolerated.', 0.045, 0.90),
 ('dental', 'Full-Arch Dental Implants', 'Dental implants', 'Dental', 0, 7, 3, 'Swelling and bleeding settle within a few days; sinus-lift cases wait longer because of cabin pressure.', 0.030, 0.50)
 ON CONFLICT (id) DO NOTHING;
+
+-- =========================================================================
+-- 4. Supabase pgvector RAG Pipeline (Google text-embedding-004 / 768 dims)
+-- =========================================================================
+
+-- Enable pgvector extension
+CREATE EXTENSION IF NOT EXISTS vector;
+
+-- Clinical Knowledge Base table (Hospital profiles, Surgeon credentials, Fit-to-Fly aerospace guidelines, Visas)
+CREATE TABLE IF NOT EXISTS public.clinical_knowledge (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    category TEXT NOT NULL, -- 'fit_to_fly', 'hospital', 'insurance', 'visa', 'escrow', 'medication'
+    source TEXT NOT NULL,
+    title TEXT NOT NULL,
+    content TEXT NOT NULL,
+    embedding vector(768),
+    metadata JSONB DEFAULT '{}'::jsonb,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE public.clinical_knowledge ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read clinical knowledge" ON public.clinical_knowledge FOR SELECT USING (true);
+CREATE POLICY "Allow authenticated insert clinical knowledge" ON public.clinical_knowledge FOR ALL USING (auth.role() = 'authenticated');
+
+-- Patient Records Vault RAG table (Past lab reports, discharge summaries, strictly scoped by user_id)
+CREATE TABLE IF NOT EXISTS public.patient_records_vault (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    record_type TEXT NOT NULL, -- 'discharge_summary', 'lab_report', 'prescription'
+    file_name TEXT NOT NULL,
+    chunk_text TEXT NOT NULL,
+    embedding vector(768),
+    metadata JSONB DEFAULT '{}'::jsonb,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE public.patient_records_vault ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users can only read own vault records" ON public.patient_records_vault FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert own vault records" ON public.patient_records_vault FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+-- Cosine Similarity Semantic Search RPC Function for Aria Care Concierge
+CREATE OR REPLACE FUNCTION match_clinical_knowledge (
+    query_embedding vector(768),
+    match_threshold float DEFAULT 0.45,
+    match_count int DEFAULT 4
+)
+RETURNS TABLE (
+    id uuid,
+    category text,
+    source text,
+    title text,
+    content text,
+    similarity float
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        clinical_knowledge.id,
+        clinical_knowledge.category,
+        clinical_knowledge.source,
+        clinical_knowledge.title,
+        clinical_knowledge.content,
+        1 - (clinical_knowledge.embedding <=> query_embedding) AS similarity
+    FROM clinical_knowledge
+    WHERE 1 - (clinical_knowledge.embedding <=> query_embedding) > match_threshold
+    ORDER BY clinical_knowledge.embedding <=> query_embedding
+    LIMIT match_count;
+END;
+$$;
+
+-- Seed Knowledge Base Chunks (without embeddings, so text search works immediately; embeddings populated via API/Trigger)
+INSERT INTO public.clinical_knowledge (category, source, title, content)
+VALUES
+('fit_to_fly', 'MedTour Aerospace Clinical Guidelines & IATA Medical Manual', 'Fit-to-Fly Gate: Lower-Limb Arthroplasty (Knee & Hip)', 'Return flights for Total Knee Replacement and Total Hip Replacement are gated to a strict minimum of Day 14 post-operation. Seated travel in a pressurized aircraft cabin carries elevated Deep Vein Thrombosis (DVT) and pulmonary embolism risks. Discharge clearance requires verified wound healing, absence of deep swelling, and independent mobility before flight ticket unlocking.'),
+('fit_to_fly', 'Cardiothoracic Society & Aerospace Medicine Guidelines', 'Fit-to-Fly Gate: Coronary Artery Bypass Graft (CABG)', 'Heart bypass patients are strictly barred from air travel before Day 21. Sternal bone union, resolution of pleural effusion, and hemodynamic stability under altitude-simulated hypoxia must be verified by the treating cardiac surgeon. Cabin pressure altitudes (6,000–8,000 ft) reduce oxygen saturation, requiring a minimum 3-week stable window.'),
+('fit_to_fly', 'International Federation for Surgery of Obesity (IFSO) Safety Protocol', 'Fit-to-Fly Gate: Gastric Sleeve & Bariatric Surgery', 'Gastric sleeve patients must remain in the treating city until Day 10. The highest-risk window for staple-line leaks occurs between post-op Day 2 and Day 7. Cabin pressure expansion of intraluminal gas can stress staple lines. Flying is approved only after clear oral fluid tolerance and surgeon sign-off.'),
+('fit_to_fly', 'Spine Surgery International Consensus', 'Fit-to-Fly Gate: Lumbar Spinal Fusion', 'Spinal fusion return flights are gated to Day 16. Prolonged sitting exerts axial pressure on newly installed pedicle screws and interbody cages. Flight approval requires neuro-monitoring check, suture removal, and pain control on oral non-sedating medications.'),
+('hospital', 'Aravali Heart & Joint Institute International Desk Protocol', 'Aravali Institute: Insurance & Direct Billing Accreditations', 'Aravali Heart & Joint Institute (New Delhi) holds dual JCI (USA) and NABH (India) accreditations. The hospital maintains direct billing agreements with Bupa Global, Cigna International, Allianz Worldwide Care, and Aetna International with pre-authorization Guarantee of Payment (GOP) letters. Out-of-network patients receive itemized English HL7 bills for home claim reimbursement.'),
+('hospital', 'Ministry of Health Singapore & Merlion Specialist Centre Audit', 'Merlion Specialist Centre: Outcomes & Surgical Registry', 'Merlion Specialist Centre (Singapore) is JCI-accredited and maintains Asia''s lowest verified 30-day surgical complication rate (0.65x risk index; audited CABG complication rate 1.2%). Features dedicated robotic-assisted operating suites and 1:1 patient-to-nurse ICU staffing.'),
+('visa', 'MedTour Fast-Track Visa Guarantee Policy', 'Fast-Track Medical Visas & 45-Day Date Rollover Protection', 'All MedTour accredited hospitals provide government-registered Medical Visa Invitation Letters. In the event of consular visa processing delays, MedTour enforces the 45-Day Protected Rollover Guarantee: your operating theatre booking, surgical team schedule, and locked package price roll forward up to 45 days at zero financial penalty.'),
+('escrow', 'MedTour Actuarial Escrow & Smart Contract Terms', 'Milestone Outcome Escrow: 15% Holdback Mechanism', 'Patient payments are disbursed across 4 transparent tranches: Tranche 1 (10% booking slot), Tranche 2 (40% hospital admission check-in), Tranche 3 (35% discharge to local recovery hotel), and Tranche 4 (15% held in independent escrow until the Day-30 post-return clinical teleconsultation). If a verified clinical complication arises, the escrow holdback funds immediate remediation.'),
+('medication', 'Pre-Operative Anticoagulation Management Standard', 'Pre-Surgery Blood Thinner Protocol', 'Direct oral anticoagulants (Apixaban, Rivaroxaban) must be withheld 48-72 hours prior to major surgery. Warfarin requires a 5-day pre-op cessation with INR monitoring < 1.5, bridged with low-molecular-weight heparin if prescribed by your cardiologist. Never discontinue medications without consulting your MedTour coordinator.');

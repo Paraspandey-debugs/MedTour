@@ -9,13 +9,16 @@ interface ChatMessage {
   text: string;
   time: string;
   tag?: string;
+  citations?: string[];
+  isEmergency?: boolean;
 }
 
 const PRESET_QUERIES = [
+  { label: "✈️ Flying Day 10 after Bypass?", text: "Why can't I fly home on Day 10 after coronary artery bypass surgery?" },
+  { label: "🏥 Aravali Insurance Coverage", text: "Does Aravali Heart & Joint Institute accept international direct billing insurance?" },
   { label: "💊 Stopping Blood Thinners", text: "When should I stop taking blood thinners before surgery?" },
-  { label: "✈️ Visa Delays & Policy", text: "What happens if my medical visa is delayed past my travel date?" },
-  { label: "👨‍👩‍👧 Live Family Tracker", text: "How does the Family Companion live tracker work during surgery?" },
-  { label: "📋 Home Doctor Handover", text: "How will my home doctor receive my surgical notes and implants record?" },
+  { label: "💰 15% Outcome Escrow", text: "How does the 15% outcome escrow holdback protect me post-op?" },
+  { label: "🛂 Medical Visa Delays", text: "What happens if my medical visa is delayed past my travel date?" },
 ];
 
 const KNOWLEDGE_BASE: Record<string, string> = {
@@ -74,7 +77,9 @@ export default function CoordinatorPage() {
               sender: "aria",
               text: data.reply,
               time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-              tag: "Aria · Google Gemini AI",
+              tag: "Aria · Google Gemini RAG",
+              citations: data.citations || [],
+              isEmergency: data.isEmergency || false,
             },
           ]);
           setIsTyping(false);
@@ -164,6 +169,39 @@ export default function CoordinatorPage() {
                     }`}
                   >
                     {m.text}
+
+                    {/* Citations Grounding Badge */}
+                    {m.citations && m.citations.length > 0 && (
+                      <div className="mt-2.5 pt-2 border-t border-line/50 flex flex-wrap gap-1.5 items-center">
+                        <span className="text-[10px] text-muted font-semibold uppercase tracking-wider">
+                          📚 Sources:
+                        </span>
+                        {m.citations.map((c, i) => (
+                          <span
+                            key={i}
+                            className="text-[10px] bg-white border border-line text-teal font-medium px-2 py-0.5 rounded-full shadow-xs"
+                          >
+                            {c}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Emergency Alert Card */}
+                    {m.isEmergency && (
+                      <div className="mt-3 p-3 rounded-xl bg-coral/10 border border-coral text-xs text-coral font-medium flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2">
+                          <span className="text-base">🚨</span>
+                          <span>Immediate medical attention advised.</span>
+                        </div>
+                        <a
+                          href="tel:+911126854100"
+                          className="btn btn-primary !py-1 !px-3 text-xs bg-coral border-coral hover:bg-coral/90 shrink-0"
+                        >
+                          Call Emergency Desk
+                        </a>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
