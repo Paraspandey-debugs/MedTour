@@ -27,32 +27,32 @@ const ACCOUNT_LINKS = [
 export default function Nav({ user: initialUser }: { user?: NavUser | null }) {
   const path = usePathname();
   const router = useRouter();
-  const [user, setUser] = useState<NavUser | null>(initialUser ?? null);
+  // undefined = no auth event received yet, so fall back to the server-provided user
+  const [liveUser, setLiveUser] = useState<NavUser | null | undefined>(undefined);
+  const user: NavUser | null = liveUser === undefined ? (initialUser ?? null) : liveUser;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const sheetRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setUser(initialUser ?? null);
-  }, [initialUser]);
-
-  useEffect(() => {
     const supabase = createClient();
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ? { id: session.user.id, email: session.user.email || "" } : null);
+      setLiveUser(session?.user ? { id: session.user.id, email: session.user.email || "" } : null);
       router.refresh();
     });
     return () => subscription.unsubscribe();
   }, [router]);
 
-  // Close menus on route change
-  useEffect(() => {
+  // Close menus on route change (adjust state during render, not in an effect)
+  const [prevPath, setPrevPath] = useState(path);
+  if (prevPath !== path) {
+    setPrevPath(path);
     setMobileOpen(false);
     setMenuOpen(false);
-  }, [path]);
+  }
 
   // Mobile sheet: Escape closes, Tab is trapped inside, focus moves in on open
   useEffect(() => {

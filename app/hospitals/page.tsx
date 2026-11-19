@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { COUNTRIES, DOCTORS, HOMES, HOSPITALS, TREATMENTS, hospitalById, offers, pct, priceAt, treatmentById, usd, type HomeId, type Tier, type Hospital, type Doctor } from "@/lib/data";
 import { getHospitals, getDoctors } from "@/lib/supabase/db";
 import { complicationAt, trueCost } from "@/lib/engine";
-import { CostBar, HospitalMark, PageHead, Place, TierBadge } from "@/components/ui";
+import { CostBar, HospitalMark, PageHead, Place } from "@/components/ui";
 import MedicalDisclaimer from "@/components/MedicalDisclaimer";
 
 const SMART_SEARCH_PRESETS = [
@@ -195,6 +195,12 @@ function HospitalsInner() {
         {!t && (
           <div className="mb-5 rounded-xl border border-sand bg-mint/50 px-4 py-3 text-sm text-ink" role="status">
             Choose a procedure above to see the total trip cost for each hospital.
+          </div>
+        )}
+        {t && (
+          <div className="mb-5 rounded-xl border border-sand bg-surface px-4 py-3 text-sm text-ink flex flex-wrap items-center justify-between gap-2">
+            <span>Want estimates adjusted for your own health data? <span className="text-muted">Optional.</span></span>
+            <Link href="/match" className="text-teal font-semibold hover:underline">Analyse my report →</Link>
           </div>
         )}
         {dbNotice && <p className="mb-3 text-xs text-muted" role="status">{dbNotice}</p>}

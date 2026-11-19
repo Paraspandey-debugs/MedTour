@@ -17,7 +17,7 @@ export default function TermsPage() {
           <li><b className="text-ink">Sample data.</b> Hospitals, doctors, prices, ratings and outcomes are fictional or illustrative. Do not rely on them to make real decisions.</li>
           <li><b className="text-ink">Estimates, not quotes.</b> Costs and the complication buffer are estimates. Real prices depend on your clinical situation and the hospital.</li>
           <li><b className="text-ink">No real transactions.</b> Escrow, milestone payments and quote forwarding are simulations or planned features, not live services.</li>
-          <li><b className="text-ink">Acceptable use.</b> Do not abuse the service, scrape it at volume, or upload other people's health records without permission.</li>
+          <li><b className="text-ink">Acceptable use.</b> Do not abuse the service, scrape it at volume, or upload other people&apos;s health records without permission.</li>
           <li><b className="text-ink">No warranty.</b> The service is provided as is, with no guarantee of availability or accuracy.</li>
         </ul>
       </div>

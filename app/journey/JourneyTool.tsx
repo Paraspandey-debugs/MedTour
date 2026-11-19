@@ -70,7 +70,7 @@ export default function JourneyTool() {
           </div>
           <div>
             <div className="flex justify-between">
-              <label className="label" htmlFor="risk">Personal risk multiplier</label>
+              <label className="label" htmlFor="risk">Personal risk adjustment</label>
               <span className="text-sm font-semibold text-coral num">{risk.toFixed(2)}×</span>
             </div>
             <input id="risk" type="range" min={1} max={2.5} step={0.05} value={risk} onChange={(e) => { setRisk(+e.target.value); setStay(null); }} className="w-full" />
@@ -134,7 +134,7 @@ export default function JourneyTool() {
               </p>
             </div>
             <span className={`rounded-full px-3 py-1 text-xs font-bold ${j.blocked ? "bg-coral text-white" : "bg-teal text-white"}`}>
-              Fit-to-Fly gate: Day {gate} post-op
+              safe-to-fly date: Day {gate} post-op
             </span>
           </div>
           <label htmlFor="stay" className="mt-3 block text-sm font-semibold">
@@ -153,7 +153,7 @@ export default function JourneyTool() {
             ) : (
               <>
                 ✓ Day {requested} is safe for long-haul commercial flight. {t.fitToFlyWhy}
-                {safe.extraDays > 0 && ` Your personalized risk multiplier added ${safe.extraDays} safety day${safe.extraDays > 1 ? "s" : ""} to standard recovery.`}
+                {safe.extraDays > 0 && ` Your personal risk adjustment added ${safe.extraDays} safety day${safe.extraDays > 1 ? "s" : ""} to standard recovery.`}
               </>
             )}
           </p>
@@ -165,8 +165,8 @@ export default function JourneyTool() {
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 text-muted">
             <span className="p-2 rounded-lg bg-cream/60 border border-sand"><b>1. Prepare:</b> Medical dossier review &amp; expedited visa.</span>
             <span className="p-2 rounded-lg bg-cream/60 border border-sand"><b>2. Care:</b> Hospital admission &amp; procedure by chief surgeon.</span>
-            <span className="p-2 rounded-lg bg-cream/60 border border-sand"><b>3. Recovery:</b> Monitored hotel stay until Fit-to-Fly gate clears.</span>
-            <span className="p-2 rounded-lg bg-cream/60 border border-sand"><b>4. Outcome:</b> Day-30 checkup &amp; final escrow release.</span>
+            <span className="p-2 rounded-lg bg-cream/60 border border-sand"><b>3. Recovery:</b> Monitored hotel stay until safe-to-fly date clears.</span>
+            <span className="p-2 rounded-lg bg-cream/60 border border-sand"><b>4. Outcome:</b> Day-30 checkup &amp; final planned payment stage.</span>
           </div>
         </div>
 

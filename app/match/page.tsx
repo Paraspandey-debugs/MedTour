@@ -13,8 +13,8 @@ const STATUS = {
   high: "bg-blush text-coral",
 };
 const WEIGHT_LABELS: Record<keyof Weights, [string, string]> = {
-  outcomes: ["Audited outcomes", "Lowest personalised complication risk"],
-  cost: ["Total cost", "Lowest TrueCost, all-in"],
+  outcomes: ["Sample outcome data", "Lowest personalised complication risk"],
+  cost: ["Total cost", "Lowest Total cost, all-in"],
   travel: ["Easy travel", "Short flight, fast visa"],
   trust: ["Verification", "Audit depth and patient ratings"],
 };
@@ -150,9 +150,9 @@ export default function MatchPage() {
 
   return (
     <>
-      <PageHead eyebrow="Care Passport · report analysis" title="Paste your report. See what it means, and where to go.">
-        We read the report, pull out the values that change your surgical risk, and rank hospitals
-        with the reasoning shown.
+      <PageHead eyebrow="Analyse my report" title="Optional: paste a report to adjust your estimate.">
+        Optional step: if you share a report, we pull out values such as HbA1c and BMI that can raise surgical risk,
+        and adjust your cost estimate to match. You can compare hospitals without it. Informational only.
       </PageHead>
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 mb-6">
@@ -286,11 +286,11 @@ export default function MatchPage() {
                 </div>
                 <div className="p-3 rounded-xl bg-sand/30 border border-line text-xs">
                   <p className="font-semibold text-ink">2. Exact Biomarker Calibration</p>
-                  <p className="text-muted mt-0.5">Captures HbA1c, BMI, Ejection Fraction, and Creatinine into the $M_{'{patient}'}$ risk multiplier.</p>
+                  <p className="text-muted mt-0.5">Captures HbA1c, BMI, Ejection Fraction, and Creatinine into your personal risk adjustment.</p>
                 </div>
                 <div className="p-3 rounded-xl bg-sand/30 border border-line text-xs">
                   <p className="font-semibold text-ink">3. Explainable Hospital Ranking</p>
-                  <p className="text-muted mt-0.5">Ranks audited hospitals with transparent weights and zero sponsored bias.</p>
+                  <p className="text-muted mt-0.5">Ranks sample hospitals with transparent weights and zero sponsored bias.</p>
                 </div>
               </div>
 
@@ -329,7 +329,7 @@ export default function MatchPage() {
               {Object.keys(biomarkers).length > 0 && (
                 <div className="mt-4">
                   <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">
-                    Calibrated Lab Biomarkers ($M_{'{patient}'}$)
+                    Calibrated Lab Biomarkers
                   </p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {biomarkers.hba1c && (
@@ -396,9 +396,9 @@ export default function MatchPage() {
               <div className="mt-4 rounded-2xl bg-blush/60 border border-coral/20 p-4">
                 <div className="flex items-baseline justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-ink">Personal Risk Multiplier ($M_{'{patient}'}$)</p>
+                    <p className="text-sm font-semibold text-ink">Personal risk adjustment</p>
                     <p className="text-[11px] text-muted">
-                      {risk <= 1.1 ? "Standard risk — standard Fit-to-Fly window" : risk < 1.8 ? "Moderate complexity — +3 to +5 recovery days added" : "High clinical acuity — specialized tertiary care required"}
+                      {risk <= 1.1 ? "Standard risk — standard recovery window" : risk < 1.8 ? "Moderate complexity — +3 to +5 recovery days added" : "High clinical acuity — specialized tertiary care required"}
                     </p>
                   </div>
                   <p className="font-display text-2xl text-coral num font-bold">{risk.toFixed(2)}×</p>
@@ -532,7 +532,7 @@ export default function MatchPage() {
 
                   <div className="mt-4 pt-4 border-t border-line flex flex-wrap items-center justify-between gap-3">
                     <p className="text-sm">
-                      <span className="text-muted">TrueCost</span>{" "}
+                      <span className="text-muted">Total cost</span>{" "}
                       <b className="num">{usd(m.cost.total)}</b>{" "}
                       <span className="text-muted">
                         · {m.cost.saving >= 0 ? `saves ${usd(m.cost.saving)} vs home` : `${usd(-m.cost.saving)} more than home`}

@@ -1,100 +1,98 @@
 # MedTour
 
-**Better Healthcare, Global Access, Healthier Tomorrow**
+**Compare the real cost of planned surgery abroad.**
 
-MedTour is a cross-border healthcare platform prototype that helps patients evaluate international medical travel options. Rather than acting as a simple hospital directory with sticker prices, MedTour models patient-specific risk, plans post-operative recovery travel around clinical milestones, and demonstrates milestone-staged payments.
+Pick a procedure and the country you live in. MedTour shows the total trip cost for each hospital: procedure, flights,
+recovery stay, visa and insurance, and a buffer for complications. Then you can request a quote.
 
-> **Note on Data:** Provider listings, surgeon profiles, prices, accreditations, and complication rates are **illustrative sample data** for prototype demonstration. The risk calculation engine, clinical timeline rules, Google Gemini AI report analysis, and pgvector RAG retrieval are fully implemented functional features.
+> **This is a demo prototype.** Hospitals, doctors, prices, ratings, accreditations and complication rates are
+> **illustrative sample data**. No hospital has been audited or onboarded, no payments exist, and quote requests are
+> saved to your account but **not sent to any hospital**. Nothing here is medical advice.
 
----
+## What is real today
 
-## Key Features
+| Feature | Status |
+|---|---|
+| Total-cost comparison (`/hospitals`, `/cost`) | Working, calculated from sample prices |
+| Hospital and specialist listings | Sample data |
+| Report analysis (`/match`) | Working, AI-assisted (Google Gemini), informational only |
+| Quote requests (`/hospitals/[id]`, `/dashboard`) | Working, stored in Supabase, not forwarded |
+| AI assistant (`/coordinator`) | Working, general information only, requires sign-in |
+| Trip plan (`/journey`) | Working, day-by-day timeline from sample rules |
+| Milestone payments / escrow (`/security`) | **Planned**, simulation only |
+| Rewards, reviews, hospital onboarding (`/loyalty`, `/partners`) | **Concept previews** |
 
-1. **Care Passport (`/match`)** — Upload a medical document or paste clinical notes. Google Gemini extracts key biomarkers, identifies the procedure, computes a personalized surgical risk multiplier, and ranks sample hospitals with explainable scoring.
-2. **TrueCost Estimator (`/cost`)** — Models all-in procedure pricing including surgery, recovery lodging, travel, and an actuarial risk reserve based on patient risk and hospital complication rates.
-3. **Fit-to-Fly Journey Planner (`/journey`)** — Enforces recovery gates that block flight scheduling until clinically safe post-operative windows pass.
-4. **24/7 Care Coordinator Concierge (`/coordinator`)** — Live AI concierge powered by Google Gemini and grounded with RAG clinical knowledge to answer journey and recovery questions.
-5. **Privacy Architecture & Milestone Payments (`/security`)** — Demonstrates client-side PHI de-identification and staged milestone escrow release models.
-6. **Hospitals & Specialist Directory (`/hospitals`)** — Provider search with natural language query parsing and sample tier ratings.
+## Main flow
 
----
+1. `/` choose a procedure and your home country
+2. `/hospitals?procedure=…&from=…` ranked by total trip cost (sort by rating or shortest trip)
+3. `/hospitals/[id]` cost summary and **Request a quote**
+4. `/dashboard` your saved quote requests
 
-## Tech Stack
+Optional: `/match` adjusts the estimate to your health data. `/journey` shows when it is safe to fly home.
 
-- **Framework:** Next.js 16 (App Router, Turbopack)
-- **UI:** React 19, Tailwind CSS 4
-- **Database & Auth:** Supabase (PostgreSQL, Supabase Auth, pgvector)
-- **AI & Embeddings:** Google Gemini 3.1 Flash Lite (`gemini-3.1-flash-lite`), Gemini Embeddings (`gemini-embedding-001`)
-- **Validation:** Zod
+## Tech stack
 
----
+Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Supabase (Postgres, Auth, RLS, pgvector),
+Google Gemini (`gemini-3.1-flash-lite`), Zod, Vitest.
 
-## Getting Started
+## Setup
 
-### 1. Prerequisites
-
-- Node.js 20+
-- A Supabase project (with PostgreSQL)
-- A Google AI Studio API key
-
-### 2. Environment Variables
-
-Create a `.env.local` file in the project root:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-supabase-publishable-key
-GEMINI_API_KEY=your-google-ai-studio-key
-
-# Optional: used only by the offline database seed script (never exposed to app code)
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-```
-
-### 3. Install & Run
+Prerequisites: Node.js 20+, a Supabase project, a Google AI Studio key.
 
 ```bash
+cp .env.example .env.local   # then fill in the values
 npm install
-npm run dev
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+### Environment variables
 
----
-
-## Available Scripts
-
-| Command | Description |
+| Name | Purpose |
 |---|---|
-| `npm run dev` | Starts local Next.js development server |
-| `npm run build` | Builds production application with type checking |
-| `npm run start` | Starts production server |
-| `npm run lint` | Runs Next.js ESLint checks |
-| `npm run seed` | Seeds Supabase database tables using `SUPABASE_SERVICE_ROLE_KEY` |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase public (anon) key |
+| `GEMINI_API_KEY` | Server-side only. Report analysis, assistant, smart search |
+| `NEXT_PUBLIC_SITE_URL` | Public URL, used for sitemap, robots and OpenGraph |
+| `SUPABASE_SERVICE_ROLE_KEY` | Only for `npm run seed`. Never used by app code |
 
----
+### Database
 
-## Repository Structure
+Run in the Supabase SQL editor, in this order:
+
+1. `supabase/seed.sql` (tables, RLS, sample data, quote requests), **or** apply `supabase/migrations/*.sql` to an existing project
+2. Optionally `npm run seed` to upsert hospitals and doctors with the service-role key
+
+Security model: hospitals, doctors, treatments and the knowledge base are **read-only** for clients. Users can only
+read their own dossiers, vault records and quote requests. Anyone may insert a quote request (validated in the API and
+by table checks).
+
+## Scripts
+
+| Command | What it does |
+|---|---|
+| `npm run dev` | Dev server |
+| `npm run build` / `npm start` | Production build / serve |
+| `npm run lint` | ESLint |
+| `npm test` | Vitest unit tests (engine, `safeNext`) |
+| `npm run seed` | Seed hospitals and doctors (needs service-role key) |
+
+CI (`.github/workflows/ci.yml`) runs install, lint, typecheck, tests and build.
+
+## Project structure
 
 ```
-├── app/                  # Next.js App Router pages and API route handlers
-│   ├── api/              # Secure API routes (/api/analyze-report, /api/ai/chat, /api/smart-search)
-│   ├── coordinator/      # 24/7 AI concierge & companion interface
-│   ├── cost/             # TrueCost actuarial comparison tool
-│   ├── dashboard/        # Authenticated patient workspace
-│   ├── hospitals/        # Sample hospital & doctor directory
-│   ├── journey/          # Fit-to-Fly journey planner
-│   ├── login/            # Supabase authentication (login / signup)
-│   ├── match/            # Care Passport & Gemini report analysis
-│   └── security/         # PHI privacy & milestone payment architecture
-├── components/           # Reusable UI components & navigation
-├── lib/
-│   ├── data.ts           # Reference clinical datasets, procedures, sample hospitals
-│   ├── engine.ts         # Risk scoring, TrueCost actuarial calculation, matching algorithms
-│   ├── gemini.ts         # Google Gemini AI integrations with secure header authentication
-│   ├── rag.ts            # Clinical knowledge corpus & pgvector RAG semantic search
-│   ├── rate-limit.ts     # In-memory sliding-window rate limiter
-│   ├── safe-next.ts      # Open-redirect validation helper
-│   └── supabase/         # Supabase client, server, and middleware session helpers
-├── scripts/              # Offline maintenance scripts (seed.ts)
-└── supabase/             # Database schema migrations and seed SQL
+app/            pages and API routes (api/quote, api/analyze-report, api/ai/chat, api/smart-search)
+components/     Nav, HomeSearch, QuoteForm, MedicalDisclaimer, shared UI
+lib/data.ts     sample treatments, hospitals, doctors, currencies
+lib/engine.ts   cost, matching, journey and redaction logic
+lib/supabase/   server/browser clients, session proxy, data access
+supabase/       seed.sql and migrations
+tests/          unit tests
 ```
+
+## Before a real launch
+
+Replace sample data with real, sourced providers; run real verification; get privacy policy and terms reviewed by a
+lawyer; add email verification and an admin tool for managing listings; move rate limiting to Redis/Upstash; have a
+clinician review the risk and cost model.

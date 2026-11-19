@@ -5,15 +5,15 @@ import OnboardForm from "./OnboardForm";
 export const metadata = { title: "For partners" };
 
 const PARTNERS = [
-  ["Hospitals & clinics", "Reach international patients by publishing audited outcomes. Better outcomes rank higher - you compete on quality, not ad spend."],
+  ["Hospitals & clinics", "Reach international patients by publishing outcome data. The idea: better outcomes rank higher, so hospitals compete on quality, not ad spend."],
   ["Hotels & recovery stays", "Receive bookings with exact dates from the clinical timeline, including accessibility needs."],
-  ["Airlines & transport", "Fit-to-Fly clearance arrives with the booking, so assistance and seating are arranged up front."],
-  ["Insurers", "Price complication cover from the same risk reserve the patient sees - one shared, transparent number."],
+  ["Airlines & transport", "safe-to-fly clearance arrives with the booking, so assistance and seating are arranged up front."],
+  ["Insurers", "Price complication cover from the same complication buffer the patient would see - one shared, transparent number."],
   ["Governments & tourism boards", "Aggregate, anonymised demand and outcome data for accreditation and visa policy."],
 ];
 
 const REVENUE = [
-  ["Hospital commission", "Per completed treatment, collected from escrow at release."],
+  ["Hospital commission", "Per completed treatment (planned model)."],
   ["Patient service fee", "3% of the package, capped at $400. Waived for Plus members."],
   ["Travel & insurance partners", "Referral revenue on hotel nights, flights and complication cover."],
   ["MedTour Plus", "Subscription for priority coordinators and exclusive offers."],
@@ -28,16 +28,16 @@ const COSTS = [
 ];
 
 const PLANS = [
-  { name: "MedTour", price: "Free", note: "3% service fee per booking", items: ["Report analysis and matching", "TrueCost comparison", "Journey planner and escrow", "24/7 chat support"] },
+  { name: "MedTour", price: "Free", note: "3% service fee per booking", items: ["Report analysis and matching", "Total cost comparison", "Trip plan", "AI assistant chat"] },
   { name: "MedTour Plus", price: "$19 / month", note: "Service fee waived", featured: true, items: ["Dedicated care coordinator", "Priority surgeon video consults", "Partner hotel and lounge offers", "Loyalty credit on follow-up care", "Family companion view"] },
 ];
 
 export default function PartnersPage() {
   return (
     <>
-      <PageHead eyebrow="For hospitals and partners" title="Earn patients by proving outcomes.">
-        MedTour is a two-sided platform. The verification workflow below is what gives the patient
-        side its trust - and what a hospital must pass to be listed.
+      <PageHead eyebrow="For hospitals and partners (preview)" title="A planned way for hospitals to earn patients by proving outcomes.">
+        MedTour would be a two-sided platform. The verification workflow below shows what a hospital would have to pass to
+        be listed. It is a concept: no hospital has been onboarded or audited, and the form below does not send anything.
       </PageHead>
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 grid gap-6 lg:grid-cols-[1fr_1fr]">
@@ -60,7 +60,7 @@ export default function PartnersPage() {
             ))}
           </ol>
           <p className="mt-3 text-sm text-muted">
-            Hospitals are re-audited every 12 months. A lapsed audit drops the tier automatically.
+            Planned: hospitals would be re-audited every 12 months. No audits have been carried out yet.
           </p>
         </section>
         <OnboardForm />
@@ -114,7 +114,7 @@ export default function PartnersPage() {
               {COSTS.map((c) => <li key={c} className="flex gap-2"><span className="text-coral">●</span>{c}</li>)}
             </ul>
             <p className="mt-5 text-sm text-muted">
-              Because commission is taken from escrow at release, MedTour only earns when the
+              In the planned model, commission would be taken at milestone release, so MedTour only earns when the
               patient&apos;s milestones are actually met.
             </p>
           </div>

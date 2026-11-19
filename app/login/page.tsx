@@ -27,11 +27,10 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   return (
     <>
       <PageHead
-        eyebrow="Authentication &amp; Access Control"
-        title="Secure Patient &amp; Clinician Access"
+        eyebrow="Account"
+        title="Sign in or create an account"
       >
-        Sign in to access protected clinical tools: 24/7 Care Coordinator Concierge and the
-        Zero-Knowledge Escrow Security Vault.
+        An account lets you save quote requests, use the assistant and see your activity in one place.
       </PageHead>
 
       <div className="mx-auto max-w-md px-4 sm:px-6 pb-16">
@@ -48,19 +47,19 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
               <div className="pt-2 space-y-2">
                 <Link href="/dashboard" className="btn btn-primary w-full text-xs">
-                  Open Patient Dashboard →
+                  Open dashboard →
                 </Link>
                 <Link href="/coordinator" className="btn btn-ghost w-full text-xs">
-                  24/7 Care Concierge →
+                  Ask the assistant →
                 </Link>
                 <Link href="/security" className="btn btn-ghost w-full text-xs">
-                  Security &amp; Escrow Vault →
+                  Security &amp; privacy →
                 </Link>
               </div>
 
               <form action={signout} className="pt-4 border-t border-line">
                 <button type="submit" className="text-xs text-coral font-semibold hover:underline">
-                  Sign Out of MedTour
+                  Sign out
                 </button>
               </form>
             </div>
@@ -69,7 +68,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
               <div className="mb-6">
                 <h2 className="font-display text-2xl">MedTour Account</h2>
                 <p className="text-xs text-muted mt-1">
-                  Access protected clinical journey tracking and smart escrow arbitration.
+                  Save quote requests and use the assistant.
                 </p>
               </div>
 
@@ -80,14 +79,14 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
               />
 
               <div className="mt-6 pt-4 border-t border-line text-center text-xs text-muted">
-                <span>All public exploration pages (</span>
-                <Link href="/match" className="text-teal hover:underline font-medium">Care Passport</Link>
+                <span>Public pages (</span>
+                <Link href="/match" className="text-teal hover:underline font-medium">Analyse my report</Link>
                 <span>, </span>
-                <Link href="/cost" className="text-teal hover:underline font-medium">TrueCost</Link>
+                <Link href="/cost" className="text-teal hover:underline font-medium">Total cost</Link>
                 <span>, </span>
                 <Link href="/hospitals" className="text-teal hover:underline font-medium">Hospitals</Link>
                 <span>, </span>
-                <Link href="/journey" className="text-teal hover:underline font-medium">Journey</Link>
+                <Link href="/journey" className="text-teal hover:underline font-medium">Trip plan</Link>
                 <span>) remain open to everyone.</span>
               </div>
             </>
@@ -96,8 +95,8 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
         <div className="mt-8">
           <Disclaimer>
-            MedTour authentication is secured by Supabase Auth with encrypted JWT cookie sessions.
-            Protected health routes (/coordinator, /security) enforce server-side user verification via proxy.
+            Sign-in is handled by Supabase Auth. Your account page and the assistant require you to be signed in.
+            This is a demo prototype with sample data.
           </Disclaimer>
         </div>
       </div>

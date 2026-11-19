@@ -50,7 +50,7 @@ export default function CostTool() {
         </div>
         <div>
           <div className="flex justify-between">
-            <label className="label" htmlFor="risk">Personal risk multiplier</label>
+            <label className="label" htmlFor="risk">Personal risk adjustment</label>
             <span className="text-sm font-semibold text-coral num">{risk.toFixed(2)}×</span>
           </div>
           <input id="risk" type="range" min={1} max={2.5} step={0.05} value={risk} onChange={(e) => setRisk(+e.target.value)} className="w-full" />
@@ -81,18 +81,18 @@ export default function CostTool() {
         <div className="rounded-2xl border border-sand bg-surface p-5 sm:p-6 mb-4 shadow-sm">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-semibold uppercase tracking-wider text-teal bg-mint px-2.5 py-0.5 rounded-full">
-              Patient Guide to TrueCost
+              Guide to the total cost
             </span>
             <span className="text-xs text-muted">
               Home baseline: {h0.name} ({usd(homeTotal)})
             </span>
           </div>
           <h3 className="font-serif text-xl sm:text-2xl text-ink">
-            Why TrueCost is Different from Traditional Comparison Sites
+            Why total cost differs from sticker price
           </h3>
           <p className="text-xs sm:text-sm text-muted mt-1 leading-relaxed">
             Other sites show only the hospital&apos;s sticker price, hiding flights, recovery hotel stays, companion expenses,
-            and the financial cost of managing complications. TrueCost accounts for everything:
+            and the financial cost of managing complications. Total cost accounts for everything:
           </p>
           <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
             <div className="p-3 rounded-xl bg-sand/30 border border-line">
@@ -112,7 +112,7 @@ export default function CostTool() {
             <div className="p-3 rounded-xl bg-sand/30 border border-line">
               <span className="font-semibold text-ink flex items-center gap-1.5">
                 <i className="size-2 rounded-full" style={{ background: LINE_COLORS.risk }} />
-                3. Risk Reserve
+                3. Complication buffer
               </span>
               <p className="text-muted mt-1">Not an upfront charge! An actuarial cushion so you know the realistic financial buffer if extra care is needed.</p>
             </div>
@@ -124,7 +124,7 @@ export default function CostTool() {
           <p className="mt-1 font-display text-2xl sm:text-3xl">
             {reshuffled > 0
               ? `${reshuffled} of ${rows.length} hospitals change position once risk and travel are priced in.`
-              : "For this profile, sticker order and TrueCost order agree."}
+              : "For this profile, sticker order and Total cost order agree."}
           </p>
           <p className="mt-2 text-sm text-white/70">
             Drag the risk slider: as personal risk rises, low-complication hospitals climb the ranking.
@@ -162,7 +162,7 @@ export default function CostTool() {
                 <div className="mt-3"><CostBar cost={cost} max={max} /></div>
                 <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
                   <span className="num">
-                    Your complication risk <b className="text-ink">{pct(cost.complication)}</b> · risk reserve{" "}
+                    Your complication risk <b className="text-ink">{pct(cost.complication)}</b> · complication buffer{" "}
                     <b className="text-coral">{usd(cost.riskReserve)}</b> · {cost.tripDays} days abroad
                   </span>
                   <button onClick={() => setOpen(isOpen ? null : h.id)} aria-expanded={isOpen} className="text-teal font-semibold hover:underline">
@@ -187,7 +187,7 @@ export default function CostTool() {
                           </tr>
                         ))}
                         <tr>
-                          <td className="py-2 font-semibold">TrueCost</td>
+                          <td className="py-2 font-semibold">Total cost</td>
                           <td className="py-2 text-right num font-semibold">{usd(cost.total)}</td>
                         </tr>
                       </tbody>
@@ -219,13 +219,13 @@ export default function CostTool() {
               <span style={{ width: `${(t.homeCost[home] / max) * 100}%`, background: "#10292c" }} />
               <span style={{ width: `${((homeTotal - t.homeCost[home]) / max) * 100}%`, background: LINE_COLORS.risk }} />
             </div>
-            <p className="mt-2 text-xs text-muted">The same risk reserve is applied at home, using the platform-average complication rate.</p>
+            <p className="mt-2 text-xs text-muted">The same complication buffer is applied at home, using the platform-average complication rate.</p>
           </li>
         </ol>
 
         <div className="mt-5">
           <Disclaimer>
-            Risk reserve = hospital complication rate × your risk multiplier × cost of managing a
+            Complication buffer = hospital complication rate × your personal risk adjustment × cost of managing a
             complication. It is an expected value, not a charge: MedTour uses it to rank fairly and to
             size the complication insurance. All figures are illustrative.
           </Disclaimer>

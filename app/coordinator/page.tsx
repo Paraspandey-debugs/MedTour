@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { PageHead, Disclaimer } from "@/components/ui";
 import MedicalDisclaimer from "@/components/MedicalDisclaimer";
@@ -15,9 +16,9 @@ interface ChatMessage {
 
 const PRESET_QUERIES = [
   { label: "✈️ Flying Day 10 after Bypass?", text: "Why can't I fly home on Day 10 after coronary artery bypass surgery?" },
-  { label: "🏥 Aravali Insurance Coverage", text: "Does Aravali Heart & Joint Institute accept international direct billing insurance?" },
+  { label: "🏥 Hospital insurance billing", text: "How does international insurance billing usually work for planned surgery abroad?" },
   { label: "💊 Stopping Blood Thinners", text: "When should I stop taking blood thinners before surgery?" },
-  { label: "💰 15% Outcome Escrow", text: "How does the 15% outcome escrow holdback protect me post-op?" },
+  { label: "💰 Planned payment stages", text: "What are the planned milestone payment stages in MedTour, and do they exist yet?" },
   { label: "🛂 Medical Visa Delays", text: "What happens if my medical visa is delayed past my travel date?" },
 ];
 
@@ -29,14 +30,14 @@ const KNOWLEDGE_BASE: Record<string, string> = {
   tracker:
     "• Real-Time Theatre Feed: Family members receive a private token link (no account registration needed).\n• Circulating Nurse Updates: Live status timestamps: Theatre Entry → Anaesthesia Induction → Procedure Underway → ICU / Recovery Transfer.\n• Direct Surgeon Briefing: A video briefing link is shared right after procedure completion.",
   doctor:
-    "• Standardized Handover: Your treating surgeon generates an HL7/FHIR compliant electronic discharge summary.\n• Implant Records: Full 3D manufacturer lot numbers and sterile certifications are included.\n• Direct GP Sync: The summary is automatically dispatched to your home family doctor and saved in your encrypted Care Passport.",
+    "• Standardized Handover: Your treating surgeon generates an HL7/FHIR compliant electronic discharge summary.\n• Implant Records: Full 3D manufacturer lot numbers and sterile certifications are included.\n• Direct GP Sync: The summary is automatically dispatched to your home family doctor and saved in your encrypted report analysis.",
 };
 
 export default function CoordinatorPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       sender: "aria",
-      text: "Hello! I'm Aria, your 24/7 MedTour Care Coordinator powered by Google Gemini AI. I'm connected to your clinical travel file, treating hospital desks, and pre-op clearance protocols. How can I assist you or your family today?",
+      text: "Hello! I'm Aria, an AI assistant powered by Google Gemini. I can answer general questions about planning surgery abroad. I'm not a doctor, and I'm not connected to any hospital or to your medical records. In an emergency, contact your local emergency services. What would you like to know?",
       time: "10:30 AM",
       tag: "Aria · Google Gemini AI",
     },
@@ -91,7 +92,7 @@ export default function CoordinatorPage() {
     }
 
     // Local deterministic fallback
-    let reply = "I have noted that for your assigned human Care Coordinator (Dr. Rachel Vance, EMEA & Asia desk). Based on current clinical protocols, our 24/7 medical desk will confirm hospital instructions within 15 minutes.";
+    let reply = "I could not reach the AI service just now, and I do not have a built-in answer for that. This is a demo, so there is no human coordinator behind this chat. Please ask your doctor or the hospital directly for medical or booking questions.";
     const lower = text.toLowerCase();
     if (lower.includes("thinner") || lower.includes("medication") || lower.includes("aspirin")) {
       reply = KNOWLEDGE_BASE.thinners;
@@ -109,7 +110,7 @@ export default function CoordinatorPage() {
         sender: "aria",
         text: reply,
         time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        tag: "Aria · Care Desk",
+        tag: "Aria · AI assistant (offline mode)",
       },
     ]);
     setIsTyping(false);
@@ -117,12 +118,15 @@ export default function CoordinatorPage() {
 
   return (
     <>
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 pt-6">
+        <Link href="/hospitals" className="text-sm text-muted hover:text-teal">← Back to results</Link>
+      </div>
       <PageHead
-        eyebrow="24/7 Care Coordination & Support"
-        title="Human & AI Care Coordination Across Every Timezone"
+        eyebrow="Ask the assistant"
+        title="Ask general questions about planning surgery abroad"
       >
-        A surgical journey across borders requires continuous care: from pre-travel medical clearance
-        and visa coordination to live theatre tracking for family and post-return follow-ups.
+        Aria is an AI assistant. It gives general information only, is not a doctor, and cannot see
+        your records or contact a hospital. The family tracker and mobile app below are mock-ups of planned ideas, not live features.
       </PageHead>
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 mb-6">
@@ -138,7 +142,7 @@ export default function CoordinatorPage() {
               <div className="flex items-center gap-3">
                 <span className="size-3 rounded-full bg-emerald-500 animate-pulse" />
                 <div>
-                  <h2 className="font-semibold text-sm">Aria · 24/7 Clinical Care Concierge</h2>
+                  <h2 className="font-semibold text-sm">Aria · AI assistant (not a clinician)</h2>
                   <p className="text-xs text-muted">Powered by Google Gemini 3.1 AI · Human surgical team on-call</p>
                 </div>
               </div>
@@ -269,15 +273,15 @@ export default function CoordinatorPage() {
           <div className="card p-5 sm:p-6 bg-paper">
             <div className="flex items-center justify-between">
               <div>
-                <p className="eyebrow">Real-Time Family Tracking</p>
-                <h3 className="font-display text-xl mt-1">Live Surgical &amp; Recovery Feed</h3>
+                <p className="eyebrow">Preview (mock-up)</p>
+                <h3 className="font-display text-xl mt-1">Family update feed: example</h3>
               </div>
               <span className="text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full">
-                LIVE UPDATES
+                EXAMPLE ONLY
               </span>
             </div>
             <p className="mt-1 text-xs text-muted">
-              Family members access this live feed without an account via single-use encrypted token.
+              A planned idea: family members could follow status updates without an account. This is a static example, not a live feed.
             </p>
 
             <div className="mt-5 space-y-4">
@@ -340,8 +344,8 @@ export default function CoordinatorPage() {
           <div className="card p-5 sm:p-6 bg-gradient-to-b from-white to-sand/20">
             <div className="flex items-center justify-between pb-4 border-b border-line">
               <div>
-                <p className="eyebrow">Multi-Platform Architecture</p>
-                <h3 className="font-display text-xl">Mobile Patient Companion</h3>
+                <p className="eyebrow">Preview (mock-up)</p>
+                <h3 className="font-display text-xl">Mobile companion: concept</h3>
               </div>
               <div className="flex rounded-full border border-line bg-white p-0.5 text-xs">
                 <button
@@ -417,7 +421,7 @@ export default function CoordinatorPage() {
                         <div className="flex justify-between items-start">
                           <div>
                             <span className="text-[10px] uppercase tracking-wider text-mint font-bold">
-                              Verified Digital Care Pass
+                              Sample Digital Care Pass
                             </span>
                             <p className="text-sm font-semibold mt-0.5">Jane Doe · CABG Protocol</p>
                           </div>
@@ -431,7 +435,7 @@ export default function CoordinatorPage() {
                             <p className="font-medium text-white">Aravali Institute</p>
                           </div>
                           <div>
-                            <p className="text-[9px] text-white/40">FIT-TO-FLY GATE</p>
+                            <p className="text-[9px] text-white/40">SAFE-TO-FLY DAY</p>
                             <p className="font-medium text-coral">Day 21 (Locked)</p>
                           </div>
                         </div>
@@ -450,7 +454,7 @@ export default function CoordinatorPage() {
                           </div>
                         </div>
                         <p className="mt-2 text-[10px] font-mono text-muted">
-                          TOKEN: 9f8a-cabg-aravali-verified
+                          TOKEN: SAMPLE-0000
                         </p>
                         <p className="text-[9px] text-muted">
                           Scannable by airline gate staff &amp; emergency responders
@@ -539,9 +543,8 @@ export default function CoordinatorPage() {
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 mt-12">
         <Disclaimer>
-          MedTour 24/7 Care Coordination integrates human registered nurses with protocol-driven AI.
-          Emergency escalation triggers hospital rapid response teams and international medical repatriation
-          partners where medically required.
+          This page is a demo of an AI assistant. No human nurses or coordinators are connected to it, and it cannot
+          contact hospitals or emergency services. In an emergency, call your local emergency number.
         </Disclaimer>
       </div>
     </>

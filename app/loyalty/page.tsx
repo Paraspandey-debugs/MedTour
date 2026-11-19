@@ -16,11 +16,10 @@ export default function LoyaltyPage() {
   return (
     <>
       <PageHead
-        eyebrow="User Engagement &amp; Trust"
-        title="MedTour HealthMiles, Special Offers &amp; Verified Trust"
+        eyebrow="Preview of planned features"
+        title="Offers and rewards (preview)"
       >
-        Rewarding patients across their lifetime recovery journey while ensuring every review and special
-        offer is anchored in audited clinical transparency.
+        Rewards, offers and reviews are ideas for a later version. Everything on this page is illustrative sample content, and no points, offers or discounts are real.
       </PageHead>
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
@@ -34,7 +33,7 @@ export default function LoyaltyPage() {
                 : "bg-white border border-line text-muted hover:text-ink"
             }`}
           >
-            Curated Special Offers ({SPECIAL_PACKAGES.length})
+            Sample offers ({SPECIAL_PACKAGES.length})
           </button>
           <button
             onClick={() => setActiveTab("loyalty")}
@@ -54,7 +53,7 @@ export default function LoyaltyPage() {
                 : "bg-white border border-line text-muted hover:text-ink"
             }`}
           >
-            Discharge-Verified Reviews
+            Reviews (concept)
           </button>
         </div>
 
@@ -127,7 +126,7 @@ export default function LoyaltyPage() {
                 </p>
               </div>
               <Link href="/cost" className="btn btn-ghost text-xs">
-                Compare Against Base TrueCost
+                Compare against the base total cost
               </Link>
             </div>
           </div>
@@ -180,7 +179,7 @@ export default function LoyaltyPage() {
                       className="size-4 accent-teal"
                     />
                     <span>
-                      MedTour Plus Member (<b>+50% Miles Bonus</b> &amp; Priority Concierge)
+                      MedTour Plus Member (<b>+50% Miles Bonus</b> &amp; priority support (planned))
                     </span>
                   </label>
                 </div>
@@ -250,14 +249,14 @@ export default function LoyaltyPage() {
             <div className="card p-6 bg-sand/30">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <h3 className="font-display text-2xl">Discharge-Verified Review Ledger</h3>
+                  <h3 className="font-display text-2xl">Review verification: concept</h3>
                   <p className="text-xs text-muted mt-1">
-                    Unlike review sites prone to astroturfing, MedTour reviews require an unforgeable
-                    cryptographic hash signed by the treating hospital upon clinical discharge.
+                    The idea: only patients whose treatment a hospital confirms could leave a review. This does not exist yet.
+                    The two stories below are invented examples, not real patients.
                   </p>
                 </div>
                 <span className="text-xs bg-mint text-deep font-semibold px-3 py-1 rounded-full">
-                  100% Anti-Astroturfing Guarantee
+                  Planned, not live
                 </span>
               </div>
             </div>
@@ -270,8 +269,8 @@ export default function LoyaltyPage() {
                   hospital: "Aravali Heart & Joint Institute, New Delhi",
                   rating: 5,
                   date: "October 2026",
-                  text: "Had severe angina and a 20-week wait on the NHS. MedTour coordinated Dr. Sharma at Aravali. The TrueCost was exactly what I paid - no hidden ICU extras. What gave my family total peace of mind was that 15% of the bill was held until my day-30 check back home.",
-                  hash: "0x89f2...c81b (NABH Verified Discharge)",
+                  text: "Had severe angina and a 20-week wait on the NHS. MedTour coordinated Dr. Sharma at Aravali. The Total cost was exactly what I paid - no hidden ICU extras. What gave my family total peace of mind was that 15% of the bill was held until my day-30 check back home.",
+                  hash: "0x89f2...c81b (sample)",
                 },
                 {
                   patient: "Sarah M., 42 (Calgary, Canada)",
@@ -279,8 +278,8 @@ export default function LoyaltyPage() {
                   hospital: "Baja Pacific Surgical, Tijuana",
                   rating: 5,
                   date: "September 2026",
-                  text: "The Fit-to-Fly gate refused to let me fly home on day 5 because of my high BMI and risk score. At first I was frustrated, but the team explained the leak risk. I stayed 3 extra days at the ocean recovery hotel. That medical gate literally protected my health.",
-                  hash: "0x34e1...99a0 (CSG Mexico Verified Discharge)",
+                  text: "The safe-to-fly date refused to let me fly home on day 5 because of my high BMI and risk score. At first I was frustrated, but the team explained the leak risk. I stayed 3 extra days at the ocean recovery hotel. That medical gate literally protected my health.",
+                  hash: "0x34e1...99a0 (sample)",
                 },
               ].map((rev, idx) => (
                 <div key={idx} className="card p-5 sm:p-6 flex flex-col justify-between">

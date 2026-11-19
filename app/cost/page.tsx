@@ -1,16 +1,20 @@
+import Link from "next/link";
 import { Suspense } from "react";
 import { PageHead } from "@/components/ui";
 import MedicalDisclaimer from "@/components/MedicalDisclaimer";
 import CostTool from "./CostTool";
 
-export const metadata = { title: "TrueCost estimator" };
+export const metadata = { title: "Total cost calculator", description: "Compare the total trip cost of planned surgery abroad across hospitals. Estimates from sample data." };
 
 export default function CostPage() {
   return (
     <>
-      <PageHead eyebrow="TrueCost estimator" title="Compare what you will actually pay - including the risk.">
-        Other sites rank by sticker price. TrueCost adds travel, stay and a risk reserve built from
-        each hospital&apos;s audited complication rate and your own health profile.
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 pt-6">
+        <Link href="/hospitals" className="text-sm text-muted hover:text-teal">← Back to results</Link>
+      </div>
+      <PageHead eyebrow="Total cost calculator" title="Compare what you will actually pay, including a buffer for complications.">
+        Hospital sticker prices leave out flights, recovery stay, visa and the cost of things going wrong. This
+        calculator adds them up for each hospital, using sample data. Estimates only, not quotes.
       </PageHead>
       <div className="mx-auto max-w-6xl px-4 sm:px-6 mb-6">
         <MedicalDisclaimer />

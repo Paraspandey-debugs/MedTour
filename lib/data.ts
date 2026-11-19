@@ -200,7 +200,7 @@ export const VERIFICATION_STEPS = [
   { key: "outcomes", label: "Outcome data audit", detail: "12 months of procedure-level outcomes submitted and sampled against records." },
   { key: "inspection", label: "On-site inspection", detail: "A MedTour clinical auditor walks the ICU, theatres and international desk." },
   { key: "pricelock", label: "Price-lock agreement", detail: "Published package price is contractually fixed for 90 days after quote." },
-  { key: "escrow", label: "Outcome-linked escrow", detail: "Hospital accepts milestone payouts with a 15% holdback until the post-return outcome check." },
+  { key: "escrow", label: "Milestone payment agreement (planned)", detail: "Hospital would accept staged payouts with a 15% holdback until a post-return check. Not yet in place." },
 ] as const;
 
 export interface Hospital {
