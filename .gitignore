@@ -43,3 +43,6 @@ env
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# auto-generated next.js agent rules
+AGENTS.md
