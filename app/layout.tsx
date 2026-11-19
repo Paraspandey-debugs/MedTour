@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Instrument_Serif, Inter } from "next/font/google";
 import Link from "next/link";
 import Nav from "@/components/Nav";
+import Logo from "@/components/Logo";
 import { createClient } from "@/lib/supabase/server";
 import "./globals.css";
 
@@ -45,8 +46,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <footer className="mt-24 border-t border-sand bg-surface">
           <div className="max-w-7xl mx-auto px-6 py-12 grid gap-8 sm:grid-cols-[1.4fr_1fr_1fr] text-sm">
             <div>
-              <div className="flex items-center gap-2 mb-3">
-                <span className="w-7 h-7 rounded-full bg-tealBrand text-white flex items-center justify-center font-bold text-base leading-none" aria-hidden>+</span>
+              <div className="flex items-center gap-2.5 mb-3">
+                <Logo className="h-6 w-auto shrink-0" />
                 <span className="font-serif text-2xl tracking-tight text-ink">MedTour</span>
               </div>
               <p className="text-muted max-w-sm text-sm leading-relaxed">

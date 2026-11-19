@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { signout } from "@/app/login/actions";
+import Logo from "@/components/Logo";
 
 export interface NavUser {
   id: string;
@@ -110,7 +111,7 @@ export default function Nav({ user: initialUser }: { user?: NavUser | null }) {
     <header className="sticky top-0 z-50 bg-cream/95 backdrop-blur border-b border-sand">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-6">
         <Link href="/" className="flex items-center gap-2.5 shrink-0" aria-label="MedTour home">
-          <span className="w-8 h-8 rounded-full bg-tealBrand text-white flex items-center justify-center font-bold text-lg leading-none" aria-hidden>+</span>
+          <Logo className="h-7 w-auto shrink-0" />
           <span className="font-serif text-2xl tracking-tight text-ink">MedTour</span>
         </Link>
 

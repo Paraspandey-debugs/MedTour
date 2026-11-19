@@ -1,12 +1,11 @@
 import Link from "next/link";
+import Logo from "@/components/Logo";
 
 export default function NotFound() {
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-4 sm:px-6 py-16">
       <div className="card max-w-lg w-full p-8 text-center space-y-5">
-        <div className="size-14 rounded-full bg-sand/60 text-ink flex items-center justify-center font-display text-2xl mx-auto">
-          404
-        </div>
+        <Logo className="h-12 w-auto mx-auto" />
 
         <div>
           <h1 className="font-display text-3xl text-ink">Page Not Found</h1>
