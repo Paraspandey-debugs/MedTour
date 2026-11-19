@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { login, signup } from "./actions";
+import { safeNext } from "@/lib/safe-next";
 
 interface LoginFormProps {
   initialError?: string;
@@ -12,6 +13,7 @@ interface LoginFormProps {
 export default function LoginForm({ initialError, initialSuccess, nextUrl = "/dashboard" }: LoginFormProps) {
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [loading, setLoading] = useState(false);
+  const validatedNext = safeNext(nextUrl);
 
   return (
     <div>
@@ -54,7 +56,7 @@ export default function LoginForm({ initialError, initialSuccess, nextUrl = "/da
         onSubmit={() => setLoading(true)}
         className="space-y-4"
       >
-        <input type="hidden" name="next" value={nextUrl} />
+        <input type="hidden" name="next" value={validatedNext} />
 
         <div>
           <label className="label" htmlFor="email">

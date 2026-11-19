@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { safeNext } from "@/lib/safe-next";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -52,13 +53,11 @@ export async function updateSession(request: NextRequest) {
     return redirectResponse;
   }
 
-  // If already authenticated user visits /login, automatically redirect them to /dashboard
+  // If already authenticated user visits /login, automatically redirect them to safe next target or /dashboard
   if (path === "/login" && user) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
-    url.searchParams.delete("next");
-    url.searchParams.delete("error");
-    url.searchParams.delete("success");
+    const rawNext = request.nextUrl.searchParams.get("next");
+    const target = safeNext(rawNext, "/dashboard");
+    const url = new URL(target, request.nextUrl.origin);
     const redirectResponse = NextResponse.redirect(url);
     supabaseResponse.cookies.getAll().forEach((c) => {
       redirectResponse.cookies.set(c.name, c.value, c);

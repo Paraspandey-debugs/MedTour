@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { signout } from "./actions";
 import LoginForm from "./LoginForm";
 import { Disclaimer, PageHead } from "@/components/ui";
+import { safeNext } from "@/lib/safe-next";
 
 export const metadata = {
   title: "Account Login & Access",
@@ -75,7 +76,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
               <LoginForm
                 initialError={params.error}
                 initialSuccess={params.success}
-                nextUrl={params.next || "/dashboard"}
+                nextUrl={safeNext(params.next)}
               />
 
               <div className="mt-6 pt-4 border-t border-line text-center text-xs text-muted">

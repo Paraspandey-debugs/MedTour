@@ -3,11 +3,12 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { safeNext } from "@/lib/safe-next";
 
 export async function login(formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
-  const next = (formData.get("next") as string) || "/dashboard";
+  const next = safeNext(formData.get("next") as string);
 
   if (!email || !password) {
     redirect(`/login?error=${encodeURIComponent("Email and password are required.")}&next=${encodeURIComponent(next)}`);
@@ -24,13 +25,13 @@ export async function login(formData: FormData) {
   }
 
   revalidatePath("/", "layout");
-  redirect(next.startsWith("/login") ? "/dashboard" : next);
+  redirect(next);
 }
 
 export async function signup(formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
-  const next = (formData.get("next") as string) || "/dashboard";
+  const next = safeNext(formData.get("next") as string);
 
   if (!email || !password) {
     redirect(`/login?error=${encodeURIComponent("Email and password are required.")}&next=${encodeURIComponent(next)}`);
@@ -48,10 +49,10 @@ export async function signup(formData: FormData) {
 
   if (data.session) {
     revalidatePath("/", "layout");
-    redirect("/dashboard");
+    redirect(next);
   }
 
-  redirect(`/login?success=${encodeURIComponent("Account created! Please check your email inbox to verify your address or sign in.")}&next=${encodeURIComponent("/dashboard")}`);
+  redirect(`/login?success=${encodeURIComponent("Account created! Please check your email inbox to verify your address or sign in.")}&next=${encodeURIComponent(next)}`);
 }
 
 export async function signout() {
