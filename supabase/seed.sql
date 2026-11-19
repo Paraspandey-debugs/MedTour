@@ -31,7 +31,6 @@ CREATE TABLE IF NOT EXISTS public.hospitals (
 -- Enable RLS for hospitals
 ALTER TABLE public.hospitals ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read access to hospitals" ON public.hospitals FOR SELECT USING (true);
-CREATE POLICY "Allow authenticated insert/update to hospitals" ON public.hospitals FOR ALL USING (auth.role() = 'authenticated');
 
 -- 3. Doctors & Specialists Table
 CREATE TABLE IF NOT EXISTS public.doctors (
@@ -56,7 +55,6 @@ CREATE TABLE IF NOT EXISTS public.doctors (
 -- Enable RLS for doctors
 ALTER TABLE public.doctors ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read access to doctors" ON public.doctors FOR SELECT USING (true);
-CREATE POLICY "Allow authenticated insert/update to doctors" ON public.doctors FOR ALL USING (auth.role() = 'authenticated');
 
 -- 4. Treatments Table
 CREATE TABLE IF NOT EXISTS public.treatments (
@@ -173,7 +171,6 @@ CREATE TABLE IF NOT EXISTS public.clinical_knowledge (
 
 ALTER TABLE public.clinical_knowledge ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read clinical knowledge" ON public.clinical_knowledge FOR SELECT USING (true);
-CREATE POLICY "Allow authenticated insert clinical knowledge" ON public.clinical_knowledge FOR ALL USING (auth.role() = 'authenticated');
 
 -- Patient Records Vault RAG table (Past lab reports, discharge summaries, strictly scoped by user_id)
 CREATE TABLE IF NOT EXISTS public.patient_records_vault (
