@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { PageHead, Disclaimer } from "@/components/ui";
 import MedicalDisclaimer from "@/components/MedicalDisclaimer";
 

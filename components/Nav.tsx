@@ -29,12 +29,14 @@ export default function Nav({ user: initialUser }: { user?: NavUser | null }) {
   const path = usePathname();
   const router = useRouter();
   const [user, setUser] = useState<NavUser | null>(initialUser ?? null);
+  const [prevInitialUser, setPrevInitialUser] = useState(initialUser);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  useEffect(() => {
+  if (initialUser !== prevInitialUser) {
+    setPrevInitialUser(initialUser);
     setUser(initialUser ?? null);
-  }, [initialUser]);
+  }
 
   useEffect(() => {
     const supabase = createClient();

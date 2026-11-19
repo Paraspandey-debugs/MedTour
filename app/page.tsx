@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { COUNTRIES, HOSPITALS, TREATMENTS, hospitalById, usd } from "@/lib/data";
+import { HOSPITALS, TREATMENTS, hospitalById, usd } from "@/lib/data";
 import { trueCost } from "@/lib/engine";
 
 const INNOVATIONS = [

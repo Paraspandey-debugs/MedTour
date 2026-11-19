@@ -1,4 +1,4 @@
-import { analyzeReport, type Analysis } from "./engine";
+import { analyzeReport } from "./engine";
 
 const GEMINI_API_KEY =
   process.env.GEMINI_API_KEY ||
@@ -159,7 +159,7 @@ Return ONLY valid JSON matching this exact structure:
 Ensure risk_multiplier is bounded between 1.0 and 2.5 (1.0 = standard risk, 1.3-1.6 = moderate complexity, >1.7 = high complexity).`;
 
   try {
-    const parts: any[] = [];
+    const parts: Array<{ inline_data?: { mime_type: string; data: string }; text?: string }> = [];
 
     if (fileData?.base64 && fileData?.mimeType) {
       parts.push({
@@ -216,7 +216,7 @@ Ensure risk_multiplier is bounded between 1.0 and 2.5 (1.0 = standard risk, 1.3-
       confidence: typeof parsed.confidence === "number" ? parsed.confidence : 0.95,
       age: parsed.age || null,
       biomarkers: parsed.biomarkers || {},
-      matchedTerms: parsed.findings ? parsed.findings.map((f: any) => f.label) : [],
+      matchedTerms: parsed.findings ? parsed.findings.map((f: { label: string }) => f.label) : [],
       findings: parsed.findings || [],
       risks: parsed.risks || [],
       riskMultiplier: mult,

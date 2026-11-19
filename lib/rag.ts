@@ -79,7 +79,7 @@ export const VERIFIED_KNOWLEDGE_CORPUS: KnowledgeChunk[] = [
 /**
  * Computes cosine similarity between two vector embeddings.
  */
-function cosineSimilarity(a: number[], b: number[]): number {
+export function cosineSimilarity(a: number[], b: number[]): number {
   let dotProduct = 0;
   let normA = 0;
   let normB = 0;
@@ -90,6 +90,14 @@ function cosineSimilarity(a: number[], b: number[]): number {
   }
   if (normA === 0 || normB === 0) return 0;
   return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+}
+
+interface MatchedKnowledgeRow {
+  id: string;
+  source: string;
+  title: string;
+  content: string;
+  category: "fit_to_fly" | "hospital" | "insurance" | "visa" | "escrow" | "medication";
 }
 
 /**
@@ -116,9 +124,10 @@ export async function searchClinicalKnowledge(
       });
 
       if (!error && data && data.length > 0) {
-        const citations = data.map((d: any) => d.source);
-        const contextText = data
-          .map((d: any) => `Source: [${d.source}]\nTitle: ${d.title}\nContent: ${d.content}`)
+        const rows = data as MatchedKnowledgeRow[];
+        const citations = rows.map((d) => d.source);
+        const contextText = rows
+          .map((d) => `Source: [${d.source}]\nTitle: ${d.title}\nContent: ${d.content}`)
           .join("\n\n");
 
         return {
@@ -128,7 +137,7 @@ export async function searchClinicalKnowledge(
         };
       }
     }
-  } catch (err) {
+  } catch {
     // Graceful fallback to verified corpus
   }
 

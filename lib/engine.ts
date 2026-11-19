@@ -376,13 +376,13 @@ export function deidentifyReport(raw: string): DeidentifiedResult {
   };
 
   // 1. Redact explicit patient names e.g. "Patient: Jane Doe" or "Name: John Smith"
-  text = text.replace(/(?:Patient|Pt|Name|Mr\.|Mrs\.|Ms\.)\s*:\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)/gi, (match, name) => {
+  text = text.replace(/(?:Patient|Pt|Name|Mr\.|Mrs\.|Ms\.)\s*:\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)/gi, () => {
     redactedTypes["Patient Name"]++;
     return `Patient: [REDACTED_NAME_${redactedTypes["Patient Name"]}]`;
   });
 
   // 2. Redact MRN / ID numbers e.g. "MRN: 981247" or "ID #129381"
-  text = text.replace(/(?:MRN|Record\s*#|ID|Account)\s*[:#]?\s*([A-Z0-9-]{4,15})/gi, (match, id) => {
+  text = text.replace(/(?:MRN|Record\s*#|ID|Account)\s*[:#]?\s*([A-Z0-9-]{4,15})/gi, () => {
     redactedTypes["Medical Record #"]++;
     return `MRN: [REDACTED_MRN_${redactedTypes["Medical Record #"]}]`;
   });
@@ -398,7 +398,7 @@ export function deidentifyReport(raw: string): DeidentifiedResult {
   });
 
   // 4. Redact Specific Calendar Dates e.g. "Date: 12/04/2025" or "DOB: 1962-08-14"
-  text = text.replace(/(?:Date|DOB|D\.O\.B\.|Examined)\s*:\s*(\d{1,4}[-/.]\d{1,2}[-/.]\d{1,4})/gi, (match) => {
+  text = text.replace(/(?:Date|DOB|D\.O\.B\.|Examined)\s*:\s*(\d{1,4}[-/.]\d{1,2}[-/.]\d{1,4})/gi, () => {
     redactedTypes["Dates / Timestamps"]++;
     return `Date: [REDACTED_DATE_${redactedTypes["Dates / Timestamps"]}]`;
   });
