@@ -130,13 +130,6 @@ export default function Nav({ user: initialUser }: { user?: NavUser | null }) {
 
         {/* Right Actions */}
         <div className="flex items-center gap-3 shrink-0">
-          <Link
-            href="/defense"
-            className="hidden sm:inline-flex items-center whitespace-nowrap text-xs font-semibold px-3 py-1.5 rounded-full bg-terracottaSoft text-terracotta hover:bg-terracotta/15 transition-colors"
-          >
-            Defense Dossier
-          </Link>
-
           {user ? (
             /* Logged in state: Show Dashboard, User Badge, Sign Out */
             <div className="flex items-center gap-2.5">
@@ -270,15 +263,7 @@ export default function Nav({ user: initialUser }: { user?: NavUser | null }) {
             ))}
           </div>
 
-          <div className="pt-3 border-t border-sand flex items-center justify-between gap-3">
-            <Link
-              href="/defense"
-              onClick={() => setMobileOpen(false)}
-              className="text-xs font-semibold px-3 py-1.5 rounded-full bg-terracottaSoft text-terracotta"
-            >
-              ★ Defense Dossier
-            </Link>
-
+          <div className="pt-3 border-t border-sand flex items-center justify-end gap-3">
             {user ? (
               <form action={signout}>
                 <button

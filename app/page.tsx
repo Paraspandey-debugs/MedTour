@@ -344,32 +344,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* ACADEMIC DEFENSE BANNER */}
-      <section className="max-w-7xl mx-auto px-6 pb-20">
-        <div className="rounded-3xl border border-terracotta/30 bg-terracottaSoft/50 p-8 sm:p-10 flex flex-wrap items-center justify-between gap-6">
-          <div className="max-w-xl">
-            <span className="text-xs uppercase tracking-widest text-terracotta font-bold px-3 py-1 rounded-full bg-terracottaSoft border border-terracotta/20">
-              Academic Evaluation Hub &middot; Group No. 19
-            </span>
-            <h3 className="font-serif text-2xl sm:text-3xl mt-3 text-ink">
-              Defending MedTour&apos;s Groundbreaking Innovations
-            </h3>
-            <p className="mt-2 text-sm text-muted leading-relaxed">
-              Designed specifically for university examination: explore mathematical formulas, algorithmic proofs,
-              our milestone payment staging model and platform architecture.
-            </p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Link href="/defense" className="btn btn-primary !bg-terracotta hover:!bg-terracotta/90 text-white">
-              Open Defense Dossier &rarr;
-            </Link>
-            <Link href="/coordinator" className="btn btn-ghost">
-              24/7 Concierge &amp; Mobile App
-            </Link>
-          </div>
-        </div>
-      </section>
     </>
   );
 }
