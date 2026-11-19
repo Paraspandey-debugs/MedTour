@@ -44,8 +44,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 Better Healthcare, Global Access, Healthier Tomorrow.
               </p>
               <p className="mt-4 text-xs text-muted max-w-sm leading-relaxed">
-                Academic prototype by Group No. 19. Hospitals, prices and outcome figures are
-                illustrative demo data. Nothing here is medical or financial advice.
+                Demo prototype. Hospitals, prices and outcome figures are
+                illustrative sample data. Nothing here is medical or financial advice.
               </p>
             </div>
             <div>
@@ -61,10 +61,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <div>
               <p className="font-semibold text-ink mb-3 text-sm">Trust &amp; Infrastructure</p>
               <ul className="space-y-2 text-sm text-muted">
-                <li><Link href="/security" className="hover:text-ink transition-colors">Zero-Knowledge Vault &amp; Escrow</Link></li>
+                <li><Link href="/security" className="hover:text-ink transition-colors">Security &amp; Milestone Payments</Link></li>
                 <li><Link href="/loyalty" className="hover:text-ink transition-colors">HealthMiles &amp; Curated Offers</Link></li>
                 <li><Link href="/partners" className="hover:text-ink transition-colors">Hospital Onboarding Audit</Link></li>
-                <li><Link href="/defense" className="text-terracotta font-semibold hover:underline">Academic Defense Dossier (Group 19)</Link></li>
               </ul>
             </div>
           </div>

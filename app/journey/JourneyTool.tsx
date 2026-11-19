@@ -81,7 +81,7 @@ export default function JourneyTool() {
         </div>
 
         <div className="card p-5">
-          <p className="eyebrow">Outcome Escrow</p>
+          <p className="eyebrow">Milestone Payment Staging <span className="ml-1 text-[10px] font-normal text-muted border border-sand rounded px-1.5 py-0.5">Planned feature — illustrative only</span></p>
           <p className="mt-1 text-sm text-muted">
             Package <b className="text-ink num">{usd(cost.sticker)}</b>, paid to the hospital only as care is delivered.
           </p>

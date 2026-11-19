@@ -56,11 +56,10 @@ export default function SecurityPage() {
     <>
       <PageHead
         eyebrow="Security &amp; Payment Infrastructure"
-        title="Zero-Knowledge Health Privacy &amp; Outcome-Linked Escrow"
+        title="Health Privacy &amp; Milestone Payment Staging"
       >
         Cross-border healthcare fails when health data leaks or hospitals demand 100% upfront wire transfers
-        with zero outcome accountability. MedTour enforces client-side HIPAA Safe Harbor scrubbing and milestone
-        smart escrow.
+        with zero outcome accountability. MedTour applies client-side PHI de-identification and staged milestone payments (planned feature).
       </PageHead>
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 space-y-12">
@@ -68,17 +67,17 @@ export default function SecurityPage() {
         <section className="card p-6 sm:p-8">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-line pb-4">
             <div>
-              <p className="eyebrow">Zero-Knowledge Architecture</p>
+              <p className="eyebrow">Privacy Architecture</p>
               <h2 className="font-display text-2xl sm:text-3xl mt-1">
                 Client-Side PHI Sanitization Engine
               </h2>
             </div>
             <div className="flex flex-wrap gap-2">
               <span className="text-xs bg-mint text-deep font-semibold px-3 py-1 rounded-full">
-                ✓ HIPAA 18 Safe Harbor
+                Client-side PHI de-identification
               </span>
               <span className="text-xs bg-mint text-deep font-semibold px-3 py-1 rounded-full">
-                ✓ GDPR Art. 9 Special Category
+                Privacy-first architecture
               </span>
               <span className="text-xs bg-ink text-white font-semibold px-3 py-1 rounded-full">
                 AES-256 Client Redacted

@@ -75,7 +75,7 @@ export default function MatchPage() {
     if (!value.trim() && !uploadedFile) return;
     setIsAnalyzing(true);
 
-    // 1. Client-Side HIPAA Safe Harbor Scrubber (Zero PHI leaves browser)
+    // 1. Client-Side PHI De-identification (direct identifiers scrubbed in-browser)
     let sanitizedPayload = value;
     if (value.trim()) {
       const deid = deidentifyReport(value);
@@ -216,7 +216,7 @@ export default function MatchPage() {
             <div className="mt-2.5 p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 flex items-start gap-2">
               <span className="shrink-0 text-sm">🛡️</span>
               <div>
-                <p className="font-semibold">Client-Side HIPAA Safe Harbor Scrubber Active</p>
+                <p className="font-semibold">Client-Side PHI De-identification Active</p>
                 <p className="text-[11px] text-emerald-800 mt-0.5 leading-snug">
                   {privacyAudit.redactedCount} direct identifiers (Patient Names, MRNs, Dates, Contact Info) were redacted locally in your browser before network transmission. Zero Protected Health Information (PHI) touched external servers.
                 </p>
@@ -254,7 +254,7 @@ export default function MatchPage() {
 
           <div className="mt-4">
             <Disclaimer>
-              Zero-knowledge architecture: Direct patient identifiers are scrubbed in-browser via HIPAA Safe Harbor regex.
+              Privacy-first: Direct patient identifiers (name, DOB, MRN) are scrubbed in-browser before any data is sent to the server.
               Clinical parameters are evaluated by Google Gemini Structured Outputs and our mathematical $M_{'{patient}'}$ risk model.
             </Disclaimer>
           </div>

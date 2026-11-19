@@ -94,7 +94,7 @@ export default async function DashboardPage() {
               </span>
               <div className="min-w-0 flex-1">
                 <p className="text-xs font-semibold text-ink truncate">{user.email}</p>
-                <p className="text-[10px] text-muted">Verified Patient Account</p>
+                <p className="text-[10px] text-muted">Patient Account</p>
               </div>
             </div>
             <form action={signout} className="mt-3">
@@ -116,15 +116,15 @@ export default async function DashboardPage() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-semibold tracking-wider uppercase text-tealBrand bg-cream px-2.5 py-0.5 rounded-full border border-sand">
-                  Live Care Dossier
+                  Care Dossier
                 </span>
-                <span className="text-xs text-muted">ID: #MED-2026-98124</span>
+                <span className="text-xs text-muted">Sample workspace</span>
               </div>
               <h1 className="font-serif text-2xl sm:text-3xl text-ink mt-1.5">
                 Patient Workspace
               </h1>
               <p className="text-xs sm:text-sm text-muted mt-0.5">
-                Connected to: <b className="text-ink font-semibold">{user.email}</b>. All clinical gates, risk reserves, and milestone payments are synchronized.
+                Connected to: <b className="text-ink font-semibold">{user.email}</b>. This is a demo workspace with illustrative sample data.
               </p>
             </div>
 

@@ -287,6 +287,7 @@ export default function HospitalsPage() {
                                 {h.name}
                               </Link>
                               <TierBadge tier={h.tier} />
+                              <span className="text-[10px] font-medium text-muted border border-sand rounded px-1.5 py-0.5">Sample listing</span>
                             </div>
                             <Place h={h} />
                           </div>

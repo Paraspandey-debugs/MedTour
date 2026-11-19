@@ -20,7 +20,7 @@ const PRIMARY_LINKS = [
 ];
 
 const PLATFORM_LINKS = [
-  { href: "/security", label: "Security & Escrow", desc: "Zero-knowledge PHI vault & milestone escrow" },
+  { href: "/security", label: "Security & Escrow", desc: "PHI privacy architecture & milestone payment staging" },
   { href: "/loyalty", label: "Offers & Loyalty", desc: "HealthMiles & curated partner packages" },
   { href: "/partners", label: "Partners", desc: "Hospital audit & provider onboarding" },
 ];

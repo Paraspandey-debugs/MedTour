@@ -25,7 +25,7 @@ const KNOWLEDGE_BASE: Record<string, string> = {
   thinners:
     "• Discontinue oral blood thinners (e.g. Warfarin, Apixaban) 5 to 7 days before surgery, strictly following your cardiologist's written instructions.\n• MedTour coordinates directly with your hospital team to arrange bridging low-molecular-weight heparin if clinically indicated.\n• Always keep original prescription bottles in your carry-on luggage.",
   visa:
-    "• Fast-Track Medical Visa: All partner hospitals provide an official government invitation letter with hospital registration code.\n• 45-Day Protected Rollover: If the consulate delays your visa, your hospital operating slot and price lock rollover up to 45 days at zero penalty.\n• Coordinator Assistance: Your desk coordinator will contact the embassy medical attaché directly.",
+    "• Medical Visa Support: Partner hospitals can provide invitation letters to support your visa application.\n• Flexible Scheduling: Coordinate with hospital admin if visa or travel delays affect your booking.\n• Coordinator Assistance: Your desk coordinator will contact the embassy medical attaché directly.",
   tracker:
     "• Real-Time Theatre Feed: Family members receive a private token link (no account registration needed).\n• Circulating Nurse Updates: Live status timestamps: Theatre Entry → Anaesthesia Induction → Procedure Underway → ICU / Recovery Transfer.\n• Direct Surgeon Briefing: A video briefing link is shared right after procedure completion.",
   doctor:
@@ -143,7 +143,7 @@ export default function CoordinatorPage() {
                   ✨ Gemini 3.1 Live
                 </span>
                 <span className="text-xs bg-mint text-teal font-medium px-2.5 py-0.5 rounded-full">
-                  HIPAA &amp; GDPR
+                  Privacy-first
                 </span>
               </div>
             </div>

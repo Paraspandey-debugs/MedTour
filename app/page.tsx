@@ -34,7 +34,7 @@ const INNOVATIONS = [
   {
     step: "05 · Privacy Vault",
     title: "Zero-Knowledge PHI Scrubbing",
-    body: "In-browser redaction scrubs HIPAA 18 identifiers client-side before any data leaves your browser session.",
+    body: "In-browser redaction strips direct identifiers (name, DOB, MRN) before any data leaves your browser session.",
     href: "/security",
     tag: "Security Vault",
   },
@@ -48,7 +48,7 @@ const INNOVATIONS = [
 ];
 
 const STEPS = [
-  ["Share a report", "Paste or pick a sample. Client-side HIPAA scrubbing protects your data."],
+  ["Share a report", "Paste or pick a sample. Client-side PHI de-identification protects your data."],
   ["Compare TrueCost", "See audited hospitals side by side against wait times and private costs at home."],
   ["Plan the journey", "Visa, flights, recovery stay and follow-ups on one clinically-gated timeline."],
   ["Pay by milestone", "Escrow releases as care is delivered, with a 15% post-return holdback."],
@@ -357,7 +357,7 @@ export default function Home() {
             </h3>
             <p className="mt-2 text-sm text-muted leading-relaxed">
               Designed specifically for university examination: explore mathematical formulas, algorithmic proofs,
-              the Nash equilibrium of our 85/15 outcome escrow, and our Professor Q&amp;A Defense Matrix.
+              our milestone payment staging model and platform architecture.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3">
