@@ -38,10 +38,9 @@ export async function updateSession(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const isProtected =
     path.startsWith("/dashboard") ||
-    path.startsWith("/coordinator") ||
-    path.startsWith("/security");
+    path.startsWith("/coordinator");
 
-  // Protect /dashboard, /coordinator, and /security (redirect unauthenticated users to /login)
+  // Protect /dashboard and /coordinator (redirect unauthenticated users to /login)
   if (isProtected && !user) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
