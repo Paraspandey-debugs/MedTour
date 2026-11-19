@@ -21,6 +21,19 @@
   risk multiplier -> personal risk adjustment, risk reserve -> complication buffer, Concierge -> assistant.
 - Privacy policy and terms pages (templates; need legal review), sitemap, robots, OpenGraph, skip link, footer.
 
+## Prescription & Medical Document Analysis Redesign
+- **Fix Blocking Flow**: `/api/analyze-report` now supports guest prospective patients (rate-limited by IP) and authenticated users (rate-limited by User ID) instead of failing with 401.
+- **Enhanced Document Ingestion**: Supports drag-and-drop file uploads for PDF, PNG, JPG, JPEG, and WebP (with automatic client-side canvas conversion to JPEG to prevent Gemini WebP errors).
+- **Interactive Progress Workflow**: During analysis, displays an animated multi-step progress ticker (HIPAA redaction -> vision scan -> biomarker extraction -> risk calculation) preventing the feeling of the UI being blocked or frozen.
+- **Improved UI & Synthesis**:
+  - Prominent detected procedure card with match confidence, specialty, and one-click override.
+  - Manual procedure selection fallback when a prescription does not explicitly specify a surgical procedure.
+  - Calibrated lab biomarker cards (HbA1c, BMI, BP, EF, Creatinine).
+  - Risk multiplier meter ($M_{patient}$) with travel recovery day adjustments.
+  - AI-generated teleconsultation questions for the treating surgeon.
+  - Quick jump button to matched hospital rankings.
+  - Clear error alerts with retry capability instead of silent empty fallback.
+
 ## You must do manually
 1. Apply `supabase/migrations/20261119010000_quote_requests.sql` (and `...000000_fix_rls_policies.sql` if not yet applied).
 2. Set `NEXT_PUBLIC_SITE_URL` in production.
