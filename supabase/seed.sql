@@ -232,3 +232,32 @@ VALUES
 ('visa', 'MedTour Fast-Track Visa Guarantee Policy', 'Fast-Track Medical Visas & 45-Day Date Rollover Protection', 'All MedTour accredited hospitals provide government-registered Medical Visa Invitation Letters. In the event of consular visa processing delays, MedTour enforces the 45-Day Protected Rollover Guarantee: your operating theatre booking, surgical team schedule, and locked package price roll forward up to 45 days at zero financial penalty.'),
 ('escrow', 'MedTour Actuarial Escrow & Smart Contract Terms', 'Milestone Outcome Escrow: 15% Holdback Mechanism', 'Patient payments are disbursed across 4 transparent tranches: Tranche 1 (10% booking slot), Tranche 2 (40% hospital admission check-in), Tranche 3 (35% discharge to local recovery hotel), and Tranche 4 (15% held in independent escrow until the Day-30 post-return clinical teleconsultation). If a verified clinical complication arises, the escrow holdback funds immediate remediation.'),
 ('medication', 'Pre-Operative Anticoagulation Management Standard', 'Pre-Surgery Blood Thinner Protocol', 'Direct oral anticoagulants (Apixaban, Rivaroxaban) must be withheld 48-72 hours prior to major surgery. Warfarin requires a 5-day pre-op cessation with INR monitoring < 1.5, bridged with low-molecular-weight heparin if prescribed by your cardiologist. Never discontinue medications without consulting your MedTour coordinator.');
+
+-- =========================================================================
+-- Quote requests (see supabase/migrations/20261119010000_quote_requests.sql)
+-- =========================================================================
+
+CREATE TABLE IF NOT EXISTS public.quote_requests (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    email TEXT NOT NULL CHECK (char_length(email) BETWEEN 5 AND 254 AND email LIKE '%_@_%._%'),
+    hospital_id TEXT NOT NULL CHECK (char_length(hospital_id) BETWEEN 1 AND 64),
+    procedure TEXT NOT NULL CHECK (char_length(procedure) BETWEEN 1 AND 64),
+    preferred_month TEXT CHECK (preferred_month IS NULL OR char_length(preferred_month) <= 32),
+    message TEXT CHECK (message IS NULL OR char_length(message) <= 2000),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS quote_requests_user_idx ON public.quote_requests (user_id, created_at DESC);
+
+ALTER TABLE public.quote_requests ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Anyone can submit a quote request" ON public.quote_requests;
+CREATE POLICY "Anyone can submit a quote request" ON public.quote_requests
+    FOR INSERT TO anon, authenticated
+    WITH CHECK (user_id IS NULL OR user_id = auth.uid());
+
+DROP POLICY IF EXISTS "Users can read their own quote requests" ON public.quote_requests;
+CREATE POLICY "Users can read their own quote requests" ON public.quote_requests
+    FOR SELECT TO authenticated
+    USING (user_id = auth.uid());
