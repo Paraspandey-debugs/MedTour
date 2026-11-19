@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { PageHead, Disclaimer } from "@/components/ui";
+import MedicalDisclaimer from "@/components/MedicalDisclaimer";
 
 interface ChatMessage {
   sender: "aria" | "patient";
@@ -124,6 +125,10 @@ export default function CoordinatorPage() {
         A surgical journey across borders requires continuous care: from pre-travel medical clearance
         and visa coordination to live theatre tracking for family and post-return follow-ups.
       </PageHead>
+
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 mb-6">
+        <MedicalDisclaimer />
+      </div>
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 grid gap-8 lg:grid-cols-[1.2fr_1fr] items-start">
         {/* Left column: AI Care Coordinator & Family Tracker */}

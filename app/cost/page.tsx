@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { PageHead } from "@/components/ui";
+import MedicalDisclaimer from "@/components/MedicalDisclaimer";
 import CostTool from "./CostTool";
 
 export const metadata = { title: "TrueCost estimator" };
@@ -11,6 +12,9 @@ export default function CostPage() {
         Other sites rank by sticker price. TrueCost adds travel, stay and a risk reserve built from
         each hospital&apos;s audited complication rate and your own health profile.
       </PageHead>
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 mb-6">
+        <MedicalDisclaimer />
+      </div>
       <Suspense fallback={<div className="mx-auto max-w-6xl px-4 sm:px-6 text-muted">Loading estimator…</div>}>
         <CostTool />
       </Suspense>

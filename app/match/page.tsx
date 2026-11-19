@@ -5,6 +5,7 @@ import { useMemo, useState, useRef } from "react";
 import { HOMES, SAMPLE_REPORTS, TREATMENTS, treatmentById, usd, type HomeId, type TreatmentId } from "@/lib/data";
 import { DEFAULT_WEIGHTS, analyzeReport, deidentifyReport, matchHospitals, type Analysis, type Weights } from "@/lib/engine";
 import { Disclaimer, HospitalMark, PageHead, Place, TierBadge } from "@/components/ui";
+import MedicalDisclaimer from "@/components/MedicalDisclaimer";
 
 const STATUS = {
   ok: "bg-mint text-deep",
@@ -153,6 +154,10 @@ export default function MatchPage() {
         We read the report, pull out the values that change your surgical risk, and rank hospitals
         with the reasoning shown.
       </PageHead>
+
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 mb-6">
+        <MedicalDisclaimer />
+      </div>
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 grid gap-6 lg:grid-cols-[1fr_1fr]">
         <section className="card p-5 sm:p-6 self-start">
