@@ -62,8 +62,7 @@ export async function POST(request: Request) {
   // 4. Perform RAG search on clinical & hospital knowledge base
   const ragResult = await searchClinicalKnowledge(body.message, 3);
 
-  // 5. Invoke Gemini with RAG grounding and optional care plan
-  try {
+  // 5. Invoke Gemini with RAG grounding and optional care plan  try {
     const { reply, isEmergency } = await geminiChatCoordinator(
       body.message,
       body.history ?? [],

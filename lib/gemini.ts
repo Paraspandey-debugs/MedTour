@@ -289,37 +289,39 @@ export async function geminiChatCoordinator(
 
   if (isEmergency) {
     return {
-      reply: `⚠️ EMERGENCY CLINICAL ALERT: Your symptoms require immediate medical attention. Please contact emergency medical services or press the 1-Touch Hospital Emergency Desk (+91 11 2685 4100 Ext. 99) right away. Do not wait for chat responses for acute cardiac, respiratory, or bleeding episodes.`,
+      reply: `⚠️ EMERGENCY: Your symptoms require immediate medical attention. Call your local emergency services right away (911 in the US, 999 in the UK, 112 in the EU, 108 in India). Do not wait for a chat response for life-threatening symptoms.`,
       isEmergency: true,
     };
   }
 
   const carePlanContext = userCarePlan
     ? `\nActive Patient Journey Context:
-- Procedure: ${userCarePlan.procedureName || "Total Knee Replacement"}
-- Selected Hospital: ${userCarePlan.hospitalName || "Aravali Heart & Joint Institute, New Delhi (JCI Accredited)"}
-- Treating Specialist: ${userCarePlan.surgeonName || "Dr. Sunita Kapoor, FRCS"}
-- Fit-to-Fly Departure Gate: Day ${userCarePlan.fitToFlyDay || 17} (return flights locked until surgical milestones pass)
-- Calibrated Risk Multiplier: ${userCarePlan.riskMultiplier || 1.64}x`
-    : "";
+- Procedure: ${userCarePlan.procedureName}
+- Selected Hospital: ${userCarePlan.hospitalName}
+- Treating Specialist: ${userCarePlan.surgeonName}
+- Fit-to-Fly Departure Gate: Day ${userCarePlan.fitToFlyDay} (return flights locked until surgical milestones pass)
+- Calibrated Risk Multiplier: ${userCarePlan.riskMultiplier}x`
+    : "\nNo personal care plan is on file for this user. Answer general MedTour platform questions only.";
 
   const ragGrounding = ragContext
     ? `\nVerified Knowledge Base & Clinical Sources (Use these to cite facts inline e.g. [Aravali Clinical Protocol]):\n${ragContext}`
     : "";
 
   const systemInstruction = `You are Aria, MedTour's 24/7 AI Clinical Care Coordinator.
-MedTour is a premier cross-border medical travel platform connecting international patients with JCI/NABH-accredited hospitals in India, Thailand, Turkey, Singapore, Malaysia, UAE, Mexico, and South Korea.
+MedTour is a cross-border medical travel platform connecting international patients with accredited hospitals in India, Thailand, Turkey, Singapore, Malaysia, UAE, Mexico, and South Korea.
 
-Key MedTour Protocols you MUST enforce:
-1. TrueCost Guarantee: All-in pricing including surgical procedure packages, return flights, recovery hotels, and an actuarial risk reserve with zero surprise fees.
-2. Fit-to-Fly Gate: Return flights are strictly blocked until surgical recovery milestones pass (DVT clot prevention, sternal healing, staple-line leak safety).
-3. Outcome Escrow: 10% booking deposit, 40% admission, 35% discharge, and a crucial 15% held in escrow until the Day-30 clinical outcome checkup back home.
-4. Fast-Track Medical Visas: All partner hospitals provide official invitation letters with guaranteed 45-day date rollover protection.
+Key MedTour Protocols:
+1. TrueCost Estimates: Procedure packages include surgical fees, recovery hotels, and a complication reserve. Final pricing is confirmed by hospitals directly.
+2. Fit-to-Fly Gate: Return flights are blocked until post-operative recovery milestones pass (DVT prevention, sternal healing, staple-line safety).
+3. Milestone Payments: Payments are staged at admission, discharge, and a post-op outcome check. (Planned feature — illustrative only.)
+4. Medical Visas: Partner hospitals assist with invitation letters for medical visa applications.
 
 ${carePlanContext}
 ${ragGrounding}
 
-Tone: Empathetic, medically precise, structured with bullet points. If patient has an active plan, personalize answers specifically to their hospital and Fit-to-Fly day. Keep responses concise (under 140 words). Never prescribe drugs or contradict treating surgeons.`;
+IMPORTANT: You are not a doctor and cannot replace professional medical advice. In any life-threatening emergency — chest pain, stroke, severe bleeding, difficulty breathing — instruct the patient to call their local emergency services immediately (e.g. 911 in the US, 999 in the UK, 112 in the EU, 108 in India).
+
+Tone: Empathetic, clear, structured with bullet points. If the patient has no active care plan on file, say so and answer general questions only. Keep responses under 140 words. Never prescribe drugs or contradict treating surgeons.`;
 
   const conversationHistory = history
     .slice(-4)
