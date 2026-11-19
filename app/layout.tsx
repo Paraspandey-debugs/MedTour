@@ -25,6 +25,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" className={`${sans.variable} ${serif.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-sans bg-cream text-ink selection:bg-tealBrand selection:text-white">
+        {/* Demo prototype banner */}
+        <div className="w-full bg-tealDeep text-white text-center text-xs py-1.5 px-4 leading-snug z-50">
+          <strong>Demo prototype.</strong> Hospitals, doctors, prices and ratings are illustrative sample data, not real providers or quotes.
+        </div>
         <Nav user={navUser} />
         <main className="flex-1">{children}</main>
         <footer className="mt-24 border-t border-sand bg-surface">
