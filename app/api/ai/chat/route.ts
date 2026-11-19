@@ -1,47 +1,73 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { geminiChatCoordinator } from "@/lib/gemini";
 import { searchClinicalKnowledge } from "@/lib/rag";
 import { createClient } from "@/lib/supabase/server";
+import { rateLimit } from "@/lib/rate-limit";
+
+const BodySchema = z.object({
+  message: z.string().min(1).max(2_000, "Message exceeds 2 000 characters"),
+  history: z
+    .array(
+      z.object({
+        sender: z.string(),
+        text: z.string().max(2_000),
+      })
+    )
+    .max(20)
+    .optional(),
+  carePlan: z
+    .object({
+      procedureName: z.string().optional(),
+      hospitalName: z.string().optional(),
+      surgeonName: z.string().optional(),
+      fitToFlyDay: z.number().optional(),
+      riskMultiplier: z.number().optional(),
+    })
+    .optional(),
+});
 
 export async function POST(request: Request) {
+  // 1. Auth guard
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: "Authentication required." }, { status: 401 });
+  }
+
+  // 2. Rate limit: 20 req/min per user
+  if (rateLimit(`chat:${user.id}`, 20)) {
+    return NextResponse.json({ error: "Too many requests. Please wait a moment." }, { status: 429 });
+  }
+
+  // 3. Validate body
+  let body: z.infer<typeof BodySchema>;
   try {
-    const { message, history, carePlan } = await request.json();
-
-    if (!message || typeof message !== "string") {
-      return NextResponse.json({ error: "Message is required." }, { status: 400 });
+    const raw = await request.json();
+    const parsed = BodySchema.safeParse(raw);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: parsed.error.issues[0]?.message ?? "Invalid request." },
+        { status: 400 }
+      );
     }
+    body = parsed.data;
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
+  }
 
-    // 1. Check logged-in user session if carePlan was not passed directly
-    let activeCarePlan = carePlan;
-    if (!activeCarePlan) {
-      try {
-        const supabase = await createClient();
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+  // 4. Perform RAG search on clinical & hospital knowledge base
+  const ragResult = await searchClinicalKnowledge(body.message, 3);
 
-        if (user) {
-          activeCarePlan = {
-            procedureName: "Total Knee Replacement",
-            hospitalName: "Aravali Heart & Joint Institute, New Delhi",
-            surgeonName: "Dr. Sunita Kapoor, FRCS",
-            fitToFlyDay: 17,
-            riskMultiplier: 1.64,
-          };
-        }
-      } catch (e) {
-        // Continue with default concierge context
-      }
-    }
-
-    // 2. Perform RAG search on clinical & hospital knowledge base
-    const ragResult = await searchClinicalKnowledge(message, 3);
-
-    // 3. Invoke Gemini with RAG grounding and personalized patient care plan
+  // 5. Invoke Gemini with RAG grounding and optional care plan
+  try {
     const { reply, isEmergency } = await geminiChatCoordinator(
-      message,
-      history || [],
-      activeCarePlan,
+      body.message,
+      body.history ?? [],
+      body.carePlan,
       ragResult.contextText
     );
 
@@ -50,10 +76,10 @@ export async function POST(request: Request) {
       isEmergency,
       citations: ragResult.citations,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Chat error in /api/ai/chat:", error);
     return NextResponse.json(
-      { error: error.message || "Failed to process chat" },
+      { error: "Failed to process chat. Please try again." },
       { status: 500 }
     );
   }
