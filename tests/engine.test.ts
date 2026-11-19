@@ -99,6 +99,17 @@ describe("MedTour Engine Core Logic", () => {
       expect(matches[0].score).toBeLessThanOrEqual(100);
       expect(matches[0].cost).toBeDefined();
     });
+
+    it("ensures every seeded treatment has matching hospitals", () => {
+      for (const treatment of TREATMENTS) {
+        const matches = matchHospitals(treatment, HOMES.UK, DEFAULT_WEIGHTS, {
+          riskMultiplier: 1.0,
+          companion: false,
+          premium: false,
+        });
+        expect(matches.length).toBeGreaterThanOrEqual(1);
+      }
+    });
   });
 
   describe("buildJourney", () => {

@@ -57,6 +57,14 @@ Valid procedure IDs:
 - "spine" (Lumbar Spinal Fusion, Spine)
 - "bariatric" (Gastric Sleeve Surgery, Bariatric)
 - "dental" (Full-Arch Dental Implants, Dental)
+- "cataract" (Cataract Surgery with Multifocal IOL, Ophthalmology)
+- "ivf" (In-Vitro Fertilization Cycle, Fertility)
+- "rhinoplasty" (Cosmetic Rhinoplasty & Septoplasty, Cosmetics)
+- "hair" (FUE Hair Follicle Transplant, Cosmetics)
+- "gallbladder" (Laparoscopic Cholecystectomy, General Surgery)
+- "valve" (Heart Valve Replacement / TAVR, Cardiac)
+- "hernia" (Inguinal Hernia Repair, General Surgery)
+- "oncology" (Stereotactic CyberKnife & Proton Radiotherapy, Oncology)
 
 Valid country codes:
 - "IN" (India)
@@ -73,7 +81,7 @@ Valid tiers: "Platinum", "Gold", "Verified"
 
 Return ONLY valid JSON in this exact format:
 {
-  "procedure": "knee" | "hip" | "cabg" | "spine" | "bariatric" | "dental" | null,
+  "procedure": "knee" | "hip" | "cabg" | "spine" | "bariatric" | "dental" | "cataract" | "ivf" | "rhinoplasty" | "hair" | "gallbladder" | "valve" | "hernia" | "oncology" | null,
   "country": "IN" | "TH" | "TR" | "SG" | "MY" | "AE" | "MX" | "KR" | null,
   "maxPriceUsd": number | null,
   "accreditation": string | null,

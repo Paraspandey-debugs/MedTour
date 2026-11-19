@@ -1,4 +1,5 @@
 import { analyzeReport } from "./engine";
+import { type TreatmentId } from "./data";
 
 const GEMINI_API_KEY =
   process.env.GEMINI_API_KEY ||
@@ -36,8 +37,8 @@ export interface BiomarkerMap {
 }
 
 export interface StructuredAnalysisResponse {
-  treatment: "knee" | "hip" | "cabg" | "spine" | "bariatric" | "dental" | null;
-  procedure_category: "knee" | "hip" | "cabg" | "spine" | "bariatric" | "dental" | null;
+  treatment: TreatmentId | null;
+  procedure_category: TreatmentId | null;
   confidence: number;
   age: number | null;
   biomarkers: BiomarkerMap;
@@ -118,6 +119,14 @@ Carefully examine the document or text to extract:
    - "spine": Lumbar Spinal Fusion / TLIF / PLIF / spondylolisthesis / spinal stenosis / disc herniation requiring fusion
    - "bariatric": Bariatric Surgery / Laparoscopic Sleeve Gastrectomy / Gastric Bypass / morbid obesity (BMI ≥ 35 with comorbidities or BMI ≥ 40)
    - "dental": Full-Arch Dental Implants / All-on-4 / All-on-6 / severe periodontitis / complete edentulism / full mouth reconstruction
+   - "cataract": Cataract Surgery / Multifocal or Toric IOL / Phacoemulsification / cloudy lens / severe visual impairment
+   - "ivf": In-Vitro Fertilization (IVF) / ICSI / egg retrieval / embryo transfer / ovarian stimulation / fertility treatment
+   - "rhinoplasty": Open or Closed Rhinoplasty / Septoplasty / deviated nasal septum / nasal airway reconstruction
+   - "hair": Sapphire FUE Hair Transplant / Follicular Unit Extraction / Norwood alopecia / hairline restoration
+   - "gallbladder": Laparoscopic Cholecystectomy / symptomatic gallstones (cholelithiasis) / biliary colic
+   - "valve": Transcatheter Aortic Valve Replacement (TAVR / TAVI) / Mitral Valve Replacement (MVR) / severe aortic stenosis
+   - "hernia": Laparoscopic Inguinal or Umbilical Hernia Repair / mesh herniorrhaphy / reducible groin hernia
+   - "oncology": Targeted Stereotactic Radiotherapy / CyberKnife / Proton Therapy / localized tumor ablation
    If no surgical procedure applies, set procedure_category to null.
 
 2. Biomarkers & Vitals:

@@ -268,12 +268,12 @@ export default function MatchPage() {
     runAnalysis(sampleText);
   };
 
-  const treatmentId = override ?? analysis?.treatment ?? null;
-  const treatment = treatmentId ? treatmentById(treatmentId) : null;
+  const treatmentId: TreatmentId = override ?? analysis?.treatment ?? "knee";
+  const treatment = treatmentById(treatmentId);
   const risk = analysis?.riskMultiplier ?? 1;
 
   const matches = useMemo(
-    () => (treatment ? matchHospitals(treatment, HOMES[home], weights, { companion, riskMultiplier: risk }) : []),
+    () => matchHospitals(treatment, HOMES[home], weights, { companion, riskMultiplier: risk }),
     [treatment, home, weights, companion, risk]
   );
 
@@ -872,88 +872,122 @@ export default function MatchPage() {
         </section>
       </div>
 
-      {/* Hospital Matches Section */}
-      {analysis && (
-        <div id="hospital-matches" className="mx-auto max-w-6xl px-4 sm:px-6 mt-12 grid gap-6 lg:grid-cols-[300px_1fr]">
-          <aside className="card p-5 self-start lg:sticky lg:top-20 space-y-4">
-            <div>
-              <p className="eyebrow">Personalized Ranking</p>
-              <p className="mt-1 text-xs text-muted">Adjust weights to reflect what matters most to your journey.</p>
-            </div>
+      {/* Hospital Matches Section — Always available for live comparison */}
+      <div id="hospital-matches" className="mx-auto max-w-6xl px-4 sm:px-6 mt-12 grid gap-6 lg:grid-cols-[300px_1fr]">
+        <aside className="card p-5 self-start lg:sticky lg:top-20 space-y-4">
+          <div>
+            <p className="eyebrow">Personalized Ranking</p>
+            <p className="mt-1 text-xs text-muted">Adjust weights to reflect what matters most to your journey.</p>
+          </div>
 
-            <div className="space-y-3.5 pt-1">
-              {(Object.keys(weights) as (keyof Weights)[]).map((k) => (
-                <div key={k}>
-                  <div className="flex justify-between text-sm">
-                    <label htmlFor={`w-${k}`} className="font-semibold text-xs text-ink">{WEIGHT_LABELS[k][0]}</label>
-                    <span className="num text-muted text-xs">{Math.round((weights[k] / wsum) * 100)}%</span>
-                  </div>
-                  <input
-                    id={`w-${k}`}
-                    type="range"
-                    min={0}
-                    max={100}
-                    step={5}
-                    value={weights[k]}
-                    onChange={(e) => setWeights({ ...weights, [k]: +e.target.value })}
-                    className="w-full accent-teal"
-                  />
-                  <p className="text-[11px] text-muted">{WEIGHT_LABELS[k][1]}</p>
+          <div className="space-y-3.5 pt-1">
+            {(Object.keys(weights) as (keyof Weights)[]).map((k) => (
+              <div key={k}>
+                <div className="flex justify-between text-sm">
+                  <label htmlFor={`w-${k}`} className="font-semibold text-xs text-ink">{WEIGHT_LABELS[k][0]}</label>
+                  <span className="num text-muted text-xs">{Math.round((weights[k] / wsum) * 100)}%</span>
                 </div>
-              ))}
-            </div>
-
-            <div className="grid gap-3 pt-3 border-t border-line">
-              <div>
-                <label className="label" htmlFor="home-country">Travelling from</label>
-                <select id="home-country" className="field" value={home} onChange={(e) => setHome(e.target.value as HomeId)}>
-                  {Object.values(HOMES).map((h) => (
-                    <option key={h.id} value={h.id}>{h.flag} {h.name}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="label" htmlFor="treatment-select">Procedure</label>
-                <select
-                  id="treatment-select"
-                  className="field"
-                  value={treatmentId ?? ""}
-                  onChange={(e) => setOverride((e.target.value as TreatmentId) || null)}
-                >
-                  {!treatmentId && <option value="">Choose a procedure…</option>}
-                  {TREATMENTS.map((t) => (
-                    <option key={t.id} value={t.id}>{t.name}</option>
-                  ))}
-                </select>
-              </div>
-
-              <label className="flex items-center gap-2 text-xs font-medium text-ink cursor-pointer pt-1">
                 <input
-                  type="checkbox"
-                  checked={companion}
-                  onChange={(e) => setCompanion(e.target.checked)}
-                  className="size-4 accent-teal rounded-sm"
+                  id={`w-${k}`}
+                  type="range"
+                  min={0}
+                  max={100}
+                  step={5}
+                  value={weights[k]}
+                  onChange={(e) => setWeights({ ...weights, [k]: +e.target.value })}
+                  className="w-full accent-teal"
                 />
-                Travelling with a companion
-              </label>
-            </div>
-          </aside>
-
-          <section className="space-y-4">
-            <div className="flex items-end justify-between gap-4">
-              <div>
-                <h2 className="font-display text-2xl sm:text-3xl">
-                  {treatment
-                    ? `${matches.length} hospitals for ${treatment.short.toLowerCase()}`
-                    : "Select a procedure to view hospital matches"}
-                </h2>
-                <p className="text-xs text-muted mt-1">
-                  Ranked by personalized clinical risk adjustment, total trip cost, and verified hospital accreditation.
-                </p>
+                <p className="text-[11px] text-muted">{WEIGHT_LABELS[k][1]}</p>
               </div>
+            ))}
+          </div>
+
+          <div className="grid gap-3 pt-3 border-t border-line">
+            <div>
+              <label className="label" htmlFor="home-country">Travelling from</label>
+              <select id="home-country" className="field" value={home} onChange={(e) => setHome(e.target.value as HomeId)}>
+                {Object.values(HOMES).map((h) => (
+                  <option key={h.id} value={h.id}>{h.flag} {h.name}</option>
+                ))}
+              </select>
             </div>
 
+            <div>
+              <label className="label" htmlFor="treatment-select">Procedure ({TREATMENTS.length} seeded)</label>
+              <select
+                id="treatment-select"
+                className="field"
+                value={treatmentId}
+                onChange={(e) => setOverride(e.target.value as TreatmentId)}
+              >
+                {TREATMENTS.map((t) => (
+                  <option key={t.id} value={t.id}>{t.name} ({t.specialty})</option>
+                ))}
+              </select>
+            </div>
+
+            <label className="flex items-center gap-2 text-xs font-medium text-ink cursor-pointer pt-1">
+              <input
+                type="checkbox"
+                checked={companion}
+                onChange={(e) => setCompanion(e.target.checked)}
+                className="size-4 accent-teal rounded-sm"
+              />
+              Travelling with a companion
+            </label>
+          </div>
+        </aside>
+
+        <section className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+            <div>
+              <h2 className="font-display text-2xl sm:text-3xl">
+                {matches.length} hospitals for {treatment.short.toLowerCase()}
+              </h2>
+              <p className="text-xs text-muted mt-1">
+                {analysis
+                  ? `Ranked with your personalized risk adjustment (${risk.toFixed(2)}×), real trip flight costs, and verified clinical tier.`
+                  : "Ranked by baseline clinical outcomes, total all-in trip costs, and verified hospital accreditation."}
+              </p>
+            </div>
+            <span className="text-xs text-teal font-semibold bg-mint px-2.5 py-1 rounded-full self-start sm:self-auto">
+              Specialty: {treatment.specialty}
+            </span>
+          </div>
+
+          {/* Quick Procedure Selector Pills */}
+          <div className="flex gap-1.5 overflow-x-auto pb-2 scrollbar-none pt-1">
+            {TREATMENTS.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => setOverride(t.id)}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all shrink-0 ${
+                  treatmentId === t.id
+                    ? "bg-teal text-white font-semibold shadow-xs"
+                    : "bg-white border border-line text-muted hover:text-ink hover:border-teal/40"
+                }`}
+              >
+                {t.short}
+              </button>
+            ))}
+          </div>
+
+          {matches.length === 0 ? (
+            <div className="card p-8 text-center space-y-3">
+              <p className="font-display text-xl text-ink">No hospitals currently listed for this specialty corridor</p>
+              <p className="text-xs text-muted max-w-md mx-auto">
+                No partner hospitals currently provide {treatment.name} under the selected filters.
+              </p>
+              <button
+                type="button"
+                onClick={() => setOverride("knee")}
+                className="btn btn-primary text-xs"
+              >
+                Switch to Knee Replacement
+              </button>
+            </div>
+          ) : (
             <ol className="space-y-4">
               {matches.map((m, i) => (
                 <li key={m.hospital.id} className={`card p-5 ${i === 0 ? "ring-2 ring-teal" : ""}`}>
@@ -1040,9 +1074,9 @@ export default function MatchPage() {
                 </li>
               ))}
             </ol>
-          </section>
-        </div>
-      )}
+          )}
+        </section>
+      </div>
     </>
   );
 }

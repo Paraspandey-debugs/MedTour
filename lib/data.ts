@@ -2,10 +2,34 @@
 // Hospitals are fictional. Prices, rates and recovery windows are not medical
 // or financial advice.
 
-export type TreatmentId = "knee" | "hip" | "cabg" | "spine" | "bariatric" | "dental";
+export type TreatmentId =
+  | "knee"
+  | "hip"
+  | "cabg"
+  | "spine"
+  | "bariatric"
+  | "dental"
+  | "cataract"
+  | "ivf"
+  | "rhinoplasty"
+  | "hair"
+  | "gallbladder"
+  | "valve"
+  | "hernia"
+  | "oncology";
 export type CountryId = "IN" | "TH" | "TR" | "SG" | "MY" | "AE" | "MX" | "KR";
 export type HomeId = "US" | "UK" | "CA" | "AU" | "AE" | "NG";
-export type Specialty = "Orthopaedics" | "Cardiac" | "Spine" | "Bariatric" | "Dental";
+export type Specialty =
+  | "Orthopaedics"
+  | "Cardiac"
+  | "Spine"
+  | "Bariatric"
+  | "Dental"
+  | "Ophthalmology"
+  | "Fertility"
+  | "Cosmetics"
+  | "General Surgery"
+  | "Oncology";
 
 export interface Treatment {
   id: TreatmentId;
@@ -127,6 +151,142 @@ export const TREATMENTS: Treatment[] = [
     price: { IN: 5500, TH: 9000, TR: 6000, SG: 15000, MY: 7000, AE: 11000, MX: 8000, KR: 10500 },
     keywords: ["edentulous", "implant", "dental", "periodont", "all-on-4", "tooth loss", "teeth"],
   },
+  {
+    id: "cataract",
+    name: "Cataract Surgery with Multifocal IOL",
+    short: "Cataract surgery",
+    specialty: "Ophthalmology",
+    hospitalDays: 0,
+    localRecoveryDays: 3,
+    fitToFlyDay: 3,
+    fitToFlyWhy:
+      "Intraocular pressure stabilizes within 48 to 72 hours; cabin pressure changes are safe after post-op slit-lamp clearance.",
+    followUps: [3, 14, 30],
+    baseComplication: 0.015,
+    revisionFactor: 0.4,
+    homeCost: { US: 7500, UK: 4500, CA: 5000, AU: 4800, AE: 4200, NG: 2500 },
+    price: { IN: 1200, TH: 2200, TR: 1600, SG: 4500, MY: 1800, AE: 3200, MX: 2000, KR: 2800 },
+    keywords: ["cataract", "lens", "iol", "phacoemulsification", "vision", "blur", "eye", "glaucoma", "cornea", "retina", "ophthalmology"],
+  },
+  {
+    id: "ivf",
+    name: "In-Vitro Fertilization (IVF Cycle with ICSI)",
+    short: "IVF treatment",
+    specialty: "Fertility",
+    hospitalDays: 0,
+    localRecoveryDays: 10,
+    fitToFlyDay: 7,
+    fitToFlyWhy:
+      "Ovarian hyperstimulation syndrome (OHSS) monitoring and embryo implantation window require local rest before flight.",
+    followUps: [7, 14, 28],
+    baseComplication: 0.025,
+    revisionFactor: 0.6,
+    homeCost: { US: 22000, UK: 11000, CA: 14000, AU: 13000, AE: 12000, NG: 6500 },
+    price: { IN: 3800, TH: 7500, TR: 4200, SG: 11500, MY: 5800, AE: 8500, MX: 5500, KR: 8000 },
+    keywords: ["ivf", "icsi", "fertility", "infertility", "embryo", "blastocyst", "ovarian", "follicle", "amh", "egg retrieval", "pregnancy"],
+  },
+  {
+    id: "rhinoplasty",
+    name: "Open Ultrasonic Rhinoplasty & Septoplasty",
+    short: "Rhinoplasty",
+    specialty: "Cosmetics",
+    hospitalDays: 1,
+    localRecoveryDays: 7,
+    fitToFlyDay: 8,
+    fitToFlyWhy:
+      "Nasal splint removal and sinus barotrauma prevention mandate waiting until internal mucosal swelling subsides.",
+    followUps: [7, 30, 90],
+    baseComplication: 0.02,
+    revisionFactor: 0.7,
+    homeCost: { US: 12500, UK: 8500, CA: 9500, AU: 9000, AE: 8000, NG: 4500 },
+    price: { IN: 2800, TH: 4200, TR: 3200, SG: 7800, MY: 3600, AE: 6000, MX: 3800, KR: 4800 },
+    keywords: ["rhinoplasty", "nose", "septoplasty", "deviated septum", "nasal", "hump", "cartilage", "cosmetic", "plastic surgery"],
+  },
+  {
+    id: "hair",
+    name: "Sapphire FUE Hair Follicle Transplantation",
+    short: "Hair transplant",
+    specialty: "Cosmetics",
+    hospitalDays: 0,
+    localRecoveryDays: 4,
+    fitToFlyDay: 4,
+    fitToFlyWhy:
+      "Grafts must anchor securely against cabin pressure and altitude fluctuations; first wash is supervised on day 3.",
+    followUps: [3, 30, 180],
+    baseComplication: 0.015,
+    revisionFactor: 0.4,
+    homeCost: { US: 14000, UK: 9000, CA: 11000, AU: 10500, AE: 8500, NG: 4000 },
+    price: { IN: 1800, TH: 3200, TR: 2200, SG: 6500, MY: 2800, AE: 4500, MX: 2900, KR: 4200 },
+    keywords: ["hair", "fue", "transplant", "follicle", "graft", "alopecia", "scalp", "balding", "norwood", "hairline"],
+  },
+  {
+    id: "gallbladder",
+    name: "Laparoscopic Cholecystectomy (Gallbladder Removal)",
+    short: "Gallbladder removal",
+    specialty: "General Surgery",
+    hospitalDays: 1,
+    localRecoveryDays: 6,
+    fitToFlyDay: 7,
+    fitToFlyWhy:
+      "Carbon dioxide insufflation gas must resorb to avoid severe chest pain and subdiaphragmatic irritation in-flight.",
+    followUps: [7, 30],
+    baseComplication: 0.03,
+    revisionFactor: 0.8,
+    homeCost: { US: 24000, UK: 9500, CA: 12000, AU: 13000, AE: 10500, NG: 5500 },
+    price: { IN: 3200, TH: 6200, TR: 4100, SG: 9800, MY: 4800, AE: 7500, MX: 4500, KR: 6800 },
+    keywords: ["gallbladder", "cholecystectomy", "cholelithiasis", "gallstone", "biliary", "colic", "laparoscopic"],
+  },
+  {
+    id: "valve",
+    name: "Transcatheter Aortic Valve Replacement (TAVR)",
+    short: "Heart valve replacement",
+    specialty: "Cardiac",
+    hospitalDays: 4,
+    localRecoveryDays: 10,
+    fitToFlyDay: 14,
+    fitToFlyWhy:
+      "Hemodynamic stability, conduction block monitoring, and vascular puncture healing must be confirmed by echo before flying.",
+    followUps: [14, 30, 90, 180],
+    baseComplication: 0.05,
+    revisionFactor: 0.8,
+    homeCost: { US: 85000, UK: 26000, CA: 36000, AU: 34000, AE: 31000, NG: 15000 },
+    price: { IN: 11000, TH: 19500, TR: 14000, SG: 28000, MY: 16000, AE: 26000, MX: 21000, KR: 25000 },
+    keywords: ["valve", "tavr", "tavi", "aortic stenosis", "mvr", "mitral", "prosthetic", "murmur", "stenosis", "heart valve"],
+  },
+  {
+    id: "hernia",
+    name: "Laparoscopic Inguinal Hernia Repair with Mesh",
+    short: "Hernia repair",
+    specialty: "General Surgery",
+    hospitalDays: 1,
+    localRecoveryDays: 5,
+    fitToFlyDay: 6,
+    fitToFlyWhy:
+      "Intra-abdominal pressure during turbulence and lifting luggage risks mesh displacement if attempted too early.",
+    followUps: [6, 30],
+    baseComplication: 0.02,
+    revisionFactor: 0.6,
+    homeCost: { US: 15000, UK: 6500, CA: 8000, AU: 7800, AE: 7000, NG: 3800 },
+    price: { IN: 2400, TH: 4800, TR: 3100, SG: 7500, MY: 3600, AE: 5800, MX: 3400, KR: 5200 },
+    keywords: ["hernia", "inguinal", "umbilical", "mesh", "bulge", "groin", "herniorrhaphy"],
+  },
+  {
+    id: "oncology",
+    name: "Stereotactic CyberKnife & Proton Radiotherapy",
+    short: "Targeted radiotherapy",
+    specialty: "Oncology",
+    hospitalDays: 0,
+    localRecoveryDays: 14,
+    fitToFlyDay: 10,
+    fitToFlyWhy:
+      "Acute radiation fatigue, blood count nadirs, and tumor response evaluations must stabilize before travel.",
+    followUps: [14, 30, 90],
+    baseComplication: 0.04,
+    revisionFactor: 0.7,
+    homeCost: { US: 95000, UK: 35000, CA: 48000, AU: 44000, AE: 40000, NG: 22000 },
+    price: { IN: 8500, TH: 18000, TR: 11500, SG: 27000, MY: 13500, AE: 24000, MX: 19000, KR: 22000 },
+    keywords: ["oncology", "radiation", "cyberknife", "proton", "tumor", "carcinoma", "neoplasm", "radiotherapy", "cancer", "chemotherapy"],
+  },
 ];
 
 export interface Country {
@@ -226,84 +386,84 @@ export interface Hospital {
 export const HOSPITALS: Hospital[] = [
   {
     id: "aravali", name: "Aravali Heart & Joint Institute", city: "New Delhi", country: "IN",
-    specialties: ["Cardiac", "Orthopaedics", "Spine"], accreditations: ["JCI", "NABH"],
+    specialties: ["Cardiac", "Orthopaedics", "Spine", "General Surgery", "Oncology"], accreditations: ["JCI", "NABH"],
     priceIdx: 1.05, riskIdx: 0.75, languages: ["English", "Hindi", "Arabic"], intlPatients: 14000,
     rating: 4.8, reviews: 2140, tier: "Platinum", stepsPassed: 6, lastAudit: "2026-09-12",
     blurb: "High-volume cardiac and joint centre with a dedicated international wing and in-house rehab.", hue: 172,
   },
   {
     id: "sahyadri", name: "Sahyadri Multispeciality", city: "Mumbai", country: "IN",
-    specialties: ["Orthopaedics", "Bariatric", "Dental"], accreditations: ["NABH"],
+    specialties: ["Orthopaedics", "Bariatric", "Dental", "Ophthalmology", "General Surgery"], accreditations: ["NABH"],
     priceIdx: 0.9, riskIdx: 0.95, languages: ["English", "Hindi"], intlPatients: 5200,
     rating: 4.5, reviews: 980, tier: "Gold", stepsPassed: 5, lastAudit: "2026-07-03",
     blurb: "Value-focused multispeciality hospital close to the airport, popular for bundled packages.", hue: 28,
   },
   {
     id: "kaveri", name: "Kaveri Spine & Ortho Centre", city: "Chennai", country: "IN",
-    specialties: ["Spine", "Orthopaedics"], accreditations: ["JCI", "NABH"],
+    specialties: ["Spine", "Orthopaedics", "General Surgery"], accreditations: ["JCI", "NABH"],
     priceIdx: 0.95, riskIdx: 0.8, languages: ["English", "Tamil", "Bengali"], intlPatients: 7600,
     rating: 4.7, reviews: 1320, tier: "Platinum", stepsPassed: 6, lastAudit: "2026-10-01",
     blurb: "Specialist spine unit with navigation-assisted surgery and a step-down recovery residence.", hue: 205,
   },
   {
     id: "chaophraya", name: "Chao Phraya International", city: "Bangkok", country: "TH",
-    specialties: ["Cardiac", "Orthopaedics", "Spine", "Bariatric", "Dental"], accreditations: ["JCI"],
+    specialties: ["Cardiac", "Orthopaedics", "Spine", "Bariatric", "Dental", "Ophthalmology", "Fertility", "Cosmetics", "General Surgery", "Oncology"], accreditations: ["JCI"],
     priceIdx: 1.1, riskIdx: 0.8, languages: ["English", "Thai", "Arabic", "Japanese"], intlPatients: 31000,
     rating: 4.8, reviews: 4410, tier: "Platinum", stepsPassed: 6, lastAudit: "2026-08-20",
     blurb: "One of the region's largest international hospitals, with interpreters for 20+ languages.", hue: 340,
   },
   {
     id: "andaman", name: "Andaman Wellness Hospital", city: "Phuket", country: "TH",
-    specialties: ["Dental", "Bariatric", "Orthopaedics"], accreditations: ["HA Thailand"],
+    specialties: ["Dental", "Bariatric", "Orthopaedics", "Cosmetics", "Ophthalmology"], accreditations: ["HA Thailand"],
     priceIdx: 0.9, riskIdx: 1.05, languages: ["English", "Thai", "Russian"], intlPatients: 6100,
     rating: 4.4, reviews: 760, tier: "Verified", stepsPassed: 4, lastAudit: "2026-05-14",
     blurb: "Resort-side recovery with a strong dental and bariatric programme.", hue: 190,
   },
   {
     id: "bosphorus", name: "Bosphorus Medical Park", city: "Istanbul", country: "TR",
-    specialties: ["Bariatric", "Dental", "Orthopaedics", "Cardiac"], accreditations: ["JCI"],
+    specialties: ["Bariatric", "Dental", "Orthopaedics", "Cardiac", "Cosmetics", "General Surgery"], accreditations: ["JCI"],
     priceIdx: 1.0, riskIdx: 0.9, languages: ["English", "Turkish", "Arabic", "German"], intlPatients: 18500,
     rating: 4.6, reviews: 2890, tier: "Gold", stepsPassed: 5, lastAudit: "2026-09-28",
     blurb: "Large private campus a short transfer from the airport, with fixed all-inclusive packages.", hue: 12,
   },
   {
     id: "anatolia", name: "Anatolia Smile & Surgery", city: "Antalya", country: "TR",
-    specialties: ["Dental", "Bariatric"], accreditations: ["TEMOS"],
+    specialties: ["Dental", "Bariatric", "Cosmetics", "Ophthalmology"], accreditations: ["TEMOS"],
     priceIdx: 0.85, riskIdx: 1.15, languages: ["English", "Turkish", "Russian"], intlPatients: 4300,
     rating: 4.3, reviews: 640, tier: "Verified", stepsPassed: 4, lastAudit: "2026-04-22",
     blurb: "Boutique clinic group known for aggressive pricing on dental and sleeve packages.", hue: 48,
   },
   {
     id: "merlion", name: "Merlion Specialist Centre", city: "Singapore", country: "SG",
-    specialties: ["Cardiac", "Spine", "Orthopaedics"], accreditations: ["JCI"],
+    specialties: ["Cardiac", "Spine", "Orthopaedics", "Oncology", "Fertility"], accreditations: ["JCI"],
     priceIdx: 1.1, riskIdx: 0.65, languages: ["English", "Mandarin", "Malay", "Bahasa"], intlPatients: 9800,
     rating: 4.9, reviews: 1710, tier: "Platinum", stepsPassed: 6, lastAudit: "2026-10-19",
     blurb: "Premium tertiary centre with the lowest audited complication rates on the platform.", hue: 258,
   },
   {
     id: "penang", name: "Penang Straits Hospital", city: "George Town", country: "MY",
-    specialties: ["Cardiac", "Orthopaedics", "Dental"], accreditations: ["JCI", "MSQH"],
+    specialties: ["Cardiac", "Orthopaedics", "Dental", "Ophthalmology", "Fertility"], accreditations: ["JCI", "MSQH"],
     priceIdx: 0.95, riskIdx: 0.85, languages: ["English", "Malay", "Mandarin", "Bahasa"], intlPatients: 11200,
     rating: 4.6, reviews: 1540, tier: "Gold", stepsPassed: 5, lastAudit: "2026-08-02",
     blurb: "Well-regarded heart centre with transparent, itemised billing.", hue: 150,
   },
   {
     id: "alnoor", name: "Al Noor Gulf Hospital", city: "Dubai", country: "AE",
-    specialties: ["Orthopaedics", "Cardiac", "Bariatric"], accreditations: ["JCI"],
+    specialties: ["Orthopaedics", "Cardiac", "Bariatric", "Cosmetics", "General Surgery", "Fertility"], accreditations: ["JCI"],
     priceIdx: 1.0, riskIdx: 0.85, languages: ["English", "Arabic", "Urdu", "Hindi"], intlPatients: 8700,
     rating: 4.6, reviews: 1180, tier: "Gold", stepsPassed: 5, lastAudit: "2026-06-30",
     blurb: "Hub-airport convenience for patients from Africa, South Asia and the Gulf.", hue: 36,
   },
   {
     id: "baja", name: "Baja Pacific Surgical", city: "Tijuana", country: "MX",
-    specialties: ["Bariatric", "Dental"], accreditations: ["CSG Mexico"],
+    specialties: ["Bariatric", "Dental", "Cosmetics", "General Surgery"], accreditations: ["CSG Mexico"],
     priceIdx: 0.9, riskIdx: 1.1, languages: ["English", "Spanish"], intlPatients: 6900,
     rating: 4.4, reviews: 1020, tier: "Verified", stepsPassed: 4, lastAudit: "2026-03-18",
     blurb: "Cross-border bariatric and dental centre with shuttle transfers from San Diego.", hue: 300,
   },
   {
     id: "hanriver", name: "Han River University Hospital", city: "Seoul", country: "KR",
-    specialties: ["Spine", "Cardiac", "Orthopaedics"], accreditations: ["JCI", "KOIHA"],
+    specialties: ["Spine", "Cardiac", "Orthopaedics", "Cosmetics", "Oncology"], accreditations: ["JCI", "KOIHA"],
     priceIdx: 1.0, riskIdx: 0.7, languages: ["English", "Korean", "Mandarin", "Russian"], intlPatients: 10400,
     rating: 4.8, reviews: 1890, tier: "Platinum", stepsPassed: 6, lastAudit: "2026-09-05",
     blurb: "University teaching hospital with robotic spine and minimally-invasive cardiac programmes.", hue: 222,
@@ -601,5 +761,30 @@ Co-morbidities: obstructive sleep apnea on CPAP, hypertension (BP 152/96), pre-d
 Failed supervised diet programme x 2 years. Never smoked. Hemoglobin 10.4 g/dL.
 Upper GI endoscopy: normal, no hiatus hernia.
 Plan: Candidate for bariatric surgery - laparoscopic sleeve gastrectomy.`,
+  },
+  {
+    label: "Cataract & Vision Loss",
+    text: `Patient: 68-year-old male. History: Progressive visual blur in bilateral eyes, glare during night driving.
+Slit-lamp exam: Nuclear sclerosis grade 3+ right eye, 2+ left eye. Posterior subcapsular opacity.
+Intraocular pressure: 16 mmHg OD, 15 mmHg OS.
+Vitals: BP 132/82 mmHg, HbA1c 6.4%, BMI 26.5.
+Diagnosis: Bilateral senile cataracts.
+Recommendation: Phacoemulsification with multifocal IOL (cataract surgery).`,
+  },
+  {
+    label: "IVF / Fertility Consult",
+    text: `Patient: 35-year-old female, nulligravida. Primary infertility for 3 years.
+Hormonal profile: AMH 0.9 ng/mL (diminished ovarian reserve), FSH 11.2 mIU/mL, LH 6.8 mIU/mL.
+Ultrasound: Antral follicle count 6. Uterine cavity normal, endometrial thickness 8.5mm.
+Partner semen analysis: Moderate oligoasthenoteratozoospermia.
+Plan: Indicated for IVF cycle with ICSI (Intracytoplasmic Sperm Injection) and blastocyst culture.`,
+  },
+  {
+    label: "Gallstones (Cholelithiasis)",
+    text: `Patient: 46-year-old female. Recurrent right upper quadrant postprandial biliary colic, nausea after fatty meals.
+Abdominal Ultrasound: Multiple mobile gallstones in gallbladder lumen, maximum size 14mm. Gallbladder wall thickness 3.2mm. Common bile duct 5mm, clear.
+Vitals: BP 128/78 mmHg, BMI 29.1, HbA1c 5.6%.
+Impression: Symptomatic cholelithiasis.
+Advice: Elective laparoscopic cholecystectomy (gallbladder removal).`,
   },
 ];

@@ -147,7 +147,15 @@ VALUES
 ('cabg', 'Coronary Artery Bypass (CABG)', 'Heart bypass', 'Cardiac', 8, 14, 21, 'The sternum and lungs need time to recover; cabin pressure changes are avoided until a cardiology review confirms stability.', 0.070, 0.60),
 ('spine', 'Lumbar Spinal Fusion', 'Spinal fusion', 'Spine', 5, 12, 16, 'Prolonged sitting loads the fused segment; travel waits until pain is controlled and the wound is checked.', 0.060, 0.80),
 ('bariatric', 'Gastric Sleeve Surgery', 'Gastric sleeve', 'Bariatric', 3, 7, 10, 'Staple-line leaks typically present in the first week; flying waits until the leak window has passed and fluids are tolerated.', 0.045, 0.90),
-('dental', 'Full-Arch Dental Implants', 'Dental implants', 'Dental', 0, 7, 3, 'Swelling and bleeding settle within a few days; sinus-lift cases wait longer because of cabin pressure.', 0.030, 0.50)
+('dental', 'Full-Arch Dental Implants', 'Dental implants', 'Dental', 0, 7, 3, 'Swelling and bleeding settle within a few days; sinus-lift cases wait longer because of cabin pressure.', 0.030, 0.50),
+('cataract', 'Cataract Surgery with Multifocal IOL', 'Cataract surgery', 'Ophthalmology', 0, 3, 3, 'Intraocular pressure stabilizes within 48 to 72 hours; cabin pressure changes are safe after post-op slit-lamp clearance.', 0.015, 0.40),
+('ivf', 'In-Vitro Fertilization (IVF Cycle with ICSI)', 'IVF treatment', 'Fertility', 0, 10, 7, 'Ovarian hyperstimulation syndrome (OHSS) monitoring and embryo implantation window require local rest before flight.', 0.025, 0.60),
+('rhinoplasty', 'Open Ultrasonic Rhinoplasty & Septoplasty', 'Rhinoplasty', 'Cosmetics', 1, 7, 8, 'Nasal splint removal and sinus barotrauma prevention mandate waiting until internal mucosal swelling subsides.', 0.020, 0.70),
+('hair', 'Sapphire FUE Hair Follicle Transplantation', 'Hair transplant', 'Cosmetics', 0, 4, 4, 'Grafts must anchor securely against cabin pressure and altitude fluctuations; first wash is supervised on day 3.', 0.015, 0.40),
+('gallbladder', 'Laparoscopic Cholecystectomy (Gallbladder Removal)', 'Gallbladder removal', 'General Surgery', 1, 6, 7, 'Carbon dioxide insufflation gas must resorb to avoid severe chest pain and subdiaphragmatic irritation in-flight.', 0.030, 0.80),
+('valve', 'Transcatheter Aortic Valve Replacement (TAVR)', 'Heart valve replacement', 'Cardiac', 4, 10, 14, 'Hemodynamic stability, conduction block monitoring, and vascular puncture healing must be confirmed by echo before flying.', 0.050, 0.80),
+('hernia', 'Laparoscopic Inguinal Hernia Repair with Mesh', 'Hernia repair', 'General Surgery', 1, 5, 6, 'Intra-abdominal pressure during turbulence and lifting luggage risks mesh displacement if attempted too early.', 0.020, 0.60),
+('oncology', 'Stereotactic CyberKnife & Proton Radiotherapy', 'Targeted radiotherapy', 'Oncology', 0, 14, 10, 'Acute radiation fatigue, blood count nadirs, and tumor response evaluations must stabilize before travel.', 0.040, 0.70)
 ON CONFLICT (id) DO NOTHING;
 
 -- =========================================================================

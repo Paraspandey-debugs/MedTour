@@ -42,4 +42,15 @@ describe("Prescription and Medical Report Analysis", () => {
     expect(result.confidence).toBe(0);
     expect(result.riskMultiplier).toBe(1.0);
   });
+
+  it("identifies newly seeded procedures such as cataract, ivf, and gallbladder", () => {
+    const cataractDoc = "Advised phacoemulsification with multifocal IOL for dense nuclear cataract right eye.";
+    expect(analyzeReport(cataractDoc).treatment).toBe("cataract");
+
+    const ivfDoc = "Couple evaluated for secondary infertility. Advised IVF cycle with ICSI.";
+    expect(analyzeReport(ivfDoc).treatment).toBe("ivf");
+
+    const choleDoc = "Ultrasound reveals multiple gallstones. Scheduled for laparoscopic cholecystectomy.";
+    expect(analyzeReport(choleDoc).treatment).toBe("gallbladder");
+  });
 });
