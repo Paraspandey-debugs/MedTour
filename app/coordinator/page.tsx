@@ -12,21 +12,21 @@ interface ChatMessage {
 }
 
 const PRESET_QUERIES = [
-  "When should I stop taking blood thinners before surgery?",
-  "What happens if my medical visa is delayed past my travel date?",
-  "How does the Family Companion live tracker work during surgery?",
-  "How will my home doctor receive my surgical notes and implants record?",
+  { label: "💊 Stopping Blood Thinners", text: "When should I stop taking blood thinners before surgery?" },
+  { label: "✈️ Visa Delays & Policy", text: "What happens if my medical visa is delayed past my travel date?" },
+  { label: "👨‍👩‍👧 Live Family Tracker", text: "How does the Family Companion live tracker work during surgery?" },
+  { label: "📋 Home Doctor Handover", text: "How will my home doctor receive my surgical notes and implants record?" },
 ];
 
 const KNOWLEDGE_BASE: Record<string, string> = {
   thinners:
-    "Standard protocol requires discontinuing oral anticoagulants (e.g. Warfarin, Apixaban) 5 to 7 days prior to elective surgery, only after written sign-off from your cardiologist. MedTour's pre-op coordinator coordinates directly with your surgical team to arrange bridging low-molecular-weight heparin if clinically indicated.",
+    "• Discontinue oral blood thinners (e.g. Warfarin, Apixaban) 5 to 7 days before surgery, strictly following your cardiologist's written instructions.\n• MedTour coordinates directly with your hospital team to arrange bridging low-molecular-weight heparin if clinically indicated.\n• Always keep original prescription bottles in your carry-on luggage.",
   visa:
-    "All MedTour partner hospitals issue an expedited Government Medical Visa Invitation with an unalterable hospital registration hash. If the consulate delays processing, your price-lock quote and hospital operating theatre slot automatically rollover up to 45 days at zero penalty fee.",
+    "• Fast-Track Medical Visa: All partner hospitals provide an official government invitation letter with hospital registration code.\n• 45-Day Protected Rollover: If the consulate delays your visa, your hospital operating slot and price lock rollover up to 45 days at zero penalty.\n• Coordinator Assistance: Your desk coordinator will contact the embassy medical attaché directly.",
   tracker:
-    "The Family Companion View uses a secure end-to-end tokenized link (no account creation required for family). During surgery, the circulating theatre nurse logs status updates directly to the portal (Theatre Entry, Anaesthesia Complete, Procedure Underway, Post-Op Recovery Transfer) with live push notifications.",
+    "• Real-Time Theatre Feed: Family members receive a private token link (no account registration needed).\n• Circulating Nurse Updates: Live status timestamps: Theatre Entry → Anaesthesia Induction → Procedure Underway → ICU / Recovery Transfer.\n• Direct Surgeon Briefing: A video briefing link is shared right after procedure completion.",
   doctor:
-    "Upon hospital discharge, your treating surgeon signs an internationally standardized HL7/FHIR-compliant summary, including 3D implant serial numbers, surgical photos, and culture sensitivities. This is automatically dispatched to your home GP and stored in your encrypted Care Passport.",
+    "• Standardized Handover: Your treating surgeon generates an HL7/FHIR compliant electronic discharge summary.\n• Implant Records: Full 3D manufacturer lot numbers and sterile certifications are included.\n• Direct GP Sync: The summary is automatically dispatched to your home family doctor and saved in your encrypted Care Passport.",
 };
 
 export default function CoordinatorPage() {
@@ -115,7 +115,7 @@ export default function CoordinatorPage() {
                     <span className="text-[10px] text-muted">{m.time}</span>
                   </div>
                   <div
-                    className={`max-w-[85%] rounded-2xl p-3.5 text-sm leading-relaxed ${
+                    className={`max-w-[85%] rounded-2xl p-3.5 text-sm leading-relaxed whitespace-pre-line ${
                       m.sender === "patient"
                         ? "bg-teal text-white rounded-tr-none"
                         : "bg-sand/60 text-ink rounded-tl-none border border-line/60"
@@ -129,15 +129,15 @@ export default function CoordinatorPage() {
 
             {/* Quick Prompt Chips */}
             <div className="pt-2 border-t border-line/60">
-              <p className="text-[11px] text-muted mb-2 font-medium">Suggested patient questions:</p>
+              <p className="text-[11px] text-muted mb-2 font-medium">Common patient questions (click to ask):</p>
               <div className="flex flex-wrap gap-1.5 mb-3">
                 {PRESET_QUERIES.map((q) => (
                   <button
-                    key={q}
-                    onClick={() => handleSend(q)}
+                    key={q.label}
+                    onClick={() => handleSend(q.text)}
                     className="text-left text-[11px] bg-white border border-line hover:border-teal rounded-full px-2.5 py-1 text-muted hover:text-teal transition-colors"
                   >
-                    {q}
+                    {q.label}
                   </button>
                 ))}
               </div>

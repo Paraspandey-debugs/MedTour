@@ -91,61 +91,100 @@ export default function MatchPage() {
 
         <section className="card p-5 sm:p-6 self-start min-h-64" aria-live="polite">
           {!analysis ? (
-            <div className="h-full grid place-items-center text-center py-12">
+            <div className="py-6 space-y-4">
               <div>
-                <p className="font-display text-2xl">Your summary appears here</p>
-                <p className="mt-2 text-sm text-muted max-w-xs mx-auto">
-                  Pick a sample on the left to see the reader extract values and risk factors.
+                <span className="text-xs font-semibold uppercase tracking-wider text-teal bg-mint px-2.5 py-0.5 rounded-full">
+                  How This Helps You
+                </span>
+                <p className="font-display text-2xl text-ink mt-2">Decode Your Medical Report</p>
+                <p className="text-xs text-muted mt-1 leading-relaxed">
+                  Medical reports are full of confusing jargon. We extract the key biomarkers that surgeons
+                  care about and translate them into a clear travel recovery profile.
                 </p>
               </div>
+
+              <div className="space-y-2.5 pt-2">
+                <div className="p-3 rounded-xl bg-sand/30 border border-line text-xs">
+                  <p className="font-semibold text-ink">1. Plain-English Summary</p>
+                  <p className="text-muted mt-0.5">Identifies the recommended procedure, affected joints or organs, and urgent findings.</p>
+                </div>
+                <div className="p-3 rounded-xl bg-sand/30 border border-line text-xs">
+                  <p className="font-semibold text-ink">2. Biomarker Extraction</p>
+                  <p className="text-muted mt-0.5">Scans HbA1c, Blood Pressure, BMI, and organ functions to forecast surgical recovery.</p>
+                </div>
+                <div className="p-3 rounded-xl bg-sand/30 border border-line text-xs">
+                  <p className="font-semibold text-ink">3. Explainable Hospital Ranking</p>
+                  <p className="text-muted mt-0.5">Ranks verified hospitals with visible score breakdowns and zero hidden sponsorships.</p>
+                </div>
+              </div>
+
+              <p className="text-[11px] text-muted text-center pt-2">
+                &larr; Click any sample report on the left or paste your own to begin.
+              </p>
             </div>
           ) : (
             <>
               <div className="flex items-center justify-between gap-3">
                 <p className="eyebrow">Plain-language summary</p>
                 {analysis.treatment && (
-                  <span className="text-xs text-muted num">Confidence {Math.round(analysis.confidence * 100)}%</span>
+                  <span className="text-xs text-muted num font-semibold">Match Confidence {Math.round(analysis.confidence * 100)}%</span>
                 )}
               </div>
-              <ul className="mt-3 space-y-2 text-sm">
+              <ul className="mt-3 space-y-2 text-xs sm:text-sm">
                 {analysis.summary.map((s) => (
-                  <li key={s} className="flex gap-2"><span className="text-teal">●</span><span>{s}</span></li>
+                  <li key={s} className="flex gap-2">
+                    <span className="text-teal font-bold">✓</span>
+                    <span>{s}</span>
+                  </li>
                 ))}
               </ul>
 
               {analysis.findings.length > 0 && (
-                <div className="mt-5 grid gap-2 sm:grid-cols-2">
-                  {analysis.findings.map((f) => (
-                    <div key={f.label} className="rounded-xl border border-line bg-white p-3">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-xs text-muted">{f.label}</span>
-                        <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${STATUS[f.status]}`}>
-                          {f.status === "ok" ? "Normal" : f.status === "watch" ? "Watch" : "Flagged"}
-                        </span>
+                <div className="mt-5 space-y-2">
+                  <div className="flex justify-between items-center">
+                    <p className="text-xs font-semibold text-muted uppercase tracking-wider">
+                      Extracted Health Markers &amp; Clinical Context
+                    </p>
+                    <span className="text-[11px] text-muted">{analysis.findings.length} findings</span>
+                  </div>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {analysis.findings.map((f) => (
+                      <div key={f.label} className="rounded-xl border border-line bg-white p-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-xs font-medium text-muted">{f.label}</span>
+                          <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${STATUS[f.status]}`}>
+                            {f.status === "ok" ? "Normal Range" : f.status === "watch" ? "Borderline / Watch" : "Attention Required"}
+                          </span>
+                        </div>
+                        <p className="mt-1 font-semibold text-sm num text-ink">{f.value}</p>
+                        <p className="mt-1 text-[11px] text-muted leading-snug">{f.note}</p>
                       </div>
-                      <p className="mt-1 font-semibold num">{f.value}</p>
-                      <p className="mt-0.5 text-xs text-muted">{f.note}</p>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               )}
 
-              <div className="mt-5 rounded-xl bg-blush/60 p-4">
+              <div className="mt-5 rounded-2xl bg-blush/60 border border-coral/20 p-4">
                 <div className="flex items-baseline justify-between">
-                  <p className="text-sm font-semibold">Personal risk multiplier</p>
-                  <p className="font-display text-2xl text-coral num">{risk.toFixed(2)}×</p>
+                  <div>
+                    <p className="text-sm font-semibold text-ink">Personal Risk Multiplier</p>
+                    <p className="text-[11px] text-muted">
+                      {risk <= 1.1 ? "Standard clinical risk" : risk < 1.8 ? "Moderate clinical complexity" : "Higher surgical acuity"}
+                    </p>
+                  </div>
+                  <p className="font-display text-2xl text-coral num font-bold">{risk.toFixed(2)}×</p>
                 </div>
                 {analysis.risks.length ? (
-                  <ul className="mt-2 space-y-1.5 text-xs">
+                  <ul className="mt-3 space-y-1.5 text-xs border-t border-coral/15 pt-2">
                     {analysis.risks.map((r) => (
-                      <li key={r.id} className="flex justify-between gap-3">
-                        <span><b>{r.label}</b> - {r.why}</span>
-                        <span className="num shrink-0 text-coral font-semibold">×{r.multiplier}</span>
+                      <li key={r.id} className="flex justify-between gap-3 text-ink/90">
+                        <span><b>{r.label}</b> — {r.why}</span>
+                        <span className="num shrink-0 text-coral font-bold">×{r.multiplier}</span>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="mt-1 text-xs text-muted">No added risk factors found in this report.</p>
+                  <p className="mt-2 text-xs text-muted">No added risk factors found in this report.</p>
                 )}
               </div>
             </>

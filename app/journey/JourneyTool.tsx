@@ -125,33 +125,49 @@ export default function JourneyTool() {
 
         <div className={`mt-4 rounded-2xl p-5 sm:p-6 border ${j.blocked ? "bg-blush border-coral/40" : "bg-mint border-teal/20"}`}>
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="font-display text-xl sm:text-2xl">
-              {j.blocked ? "Return flight blocked" : "Return flight cleared"}
-            </p>
+            <div>
+              <p className="font-display text-xl sm:text-2xl">
+                {j.blocked ? "Return flight blocked for safety" : "Return flight medically cleared"}
+              </p>
+              <p className="text-xs text-muted mt-0.5">
+                {j.blocked ? "Premature air travel carries severe hypoxia and deep-vein thrombosis (DVT) risks" : "Approved by clinical recovery guidelines for this procedure"}
+              </p>
+            </div>
             <span className={`rounded-full px-3 py-1 text-xs font-bold ${j.blocked ? "bg-coral text-white" : "bg-teal text-white"}`}>
-              Fit-to-Fly gate: day {gate}
+              Fit-to-Fly gate: Day {gate} post-op
             </span>
           </div>
-          <label htmlFor="stay" className="mt-3 block text-sm">
-            I want to fly home <b className="num">{requested}</b> day{requested === 1 ? "" : "s"} after the procedure
+          <label htmlFor="stay" className="mt-3 block text-sm font-semibold">
+            I want to fly home <b className="num text-teal">{requested}</b> day{requested === 1 ? "" : "s"} after the procedure
           </label>
           <input
             id="stay" type="range" min={1} max={gate + 10} value={requested}
             onChange={(e) => setStay(+e.target.value)} className="w-full mt-1"
           />
-          <p className="mt-2 text-sm">
+          <p className="mt-2 text-xs sm:text-sm text-ink/90 leading-relaxed">
             {j.blocked ? (
               <>
-                <b>MedTour will not book this.</b> Day {requested} is {gate - requested} day{gate - requested === 1 ? "" : "s"} before
-                clearance, so the itinerary below keeps you until day {gate}. {t.fitToFlyWhy}
+                <b className="text-coral">MedTour will not book this flight.</b> Day {requested} is {gate - requested} day{gate - requested === 1 ? "" : "s"} before
+                safe clearance. The itinerary automatically holds you at your partner recovery hotel until day {gate}. {t.fitToFlyWhy}
               </>
             ) : (
               <>
-                {t.fitToFlyWhy}
-                {safe.extraDays > 0 && ` Your risk profile adds ${safe.extraDays} day${safe.extraDays > 1 ? "s" : ""} to the standard ${gate - safe.extraDays}.`}
+                ✓ Day {requested} is safe for long-haul commercial flight. {t.fitToFlyWhy}
+                {safe.extraDays > 0 && ` Your personalized risk multiplier added ${safe.extraDays} safety day${safe.extraDays > 1 ? "s" : ""} to standard recovery.`}
               </>
             )}
           </p>
+        </div>
+
+        {/* CLINICAL PHASES EXPLAINER */}
+        <div className="mt-4 p-4 rounded-2xl bg-surface border border-sand text-xs space-y-2">
+          <p className="font-semibold text-ink">Understanding Your 4 Journey Phases:</p>
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 text-muted">
+            <span className="p-2 rounded-lg bg-cream/60 border border-sand"><b>1. Prepare:</b> Medical dossier review &amp; expedited visa.</span>
+            <span className="p-2 rounded-lg bg-cream/60 border border-sand"><b>2. Care:</b> Hospital admission &amp; procedure by chief surgeon.</span>
+            <span className="p-2 rounded-lg bg-cream/60 border border-sand"><b>3. Recovery:</b> Monitored hotel stay until Fit-to-Fly gate clears.</span>
+            <span className="p-2 rounded-lg bg-cream/60 border border-sand"><b>4. Outcome:</b> Day-30 checkup &amp; final escrow release.</span>
+          </div>
         </div>
 
         <ol className="mt-6 relative">

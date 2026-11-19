@@ -43,6 +43,21 @@ export default function HospitalsPage() {
       </PageHead>
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        {/* PATIENT SAFETY GUIDE */}
+        <div className="rounded-2xl border border-sand bg-surface p-4 sm:p-5 mb-5 shadow-sm text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <span className="font-semibold text-teal uppercase tracking-wider text-[11px]">
+              Patient Safety Standard
+            </span>
+            <span className="text-muted">100% International Desk &amp; English Coverage</span>
+          </div>
+          <p className="text-ink/80 leading-relaxed">
+            <b>How are hospitals verified?</b> Every facility listed here is audited against 6 sequential quality gates.
+            Accreditations such as <b>JCI (USA)</b>, <b>NABH (India)</b>, and <b>TEMOS (Europe)</b> ensure rigorous
+            operating theatre hygiene, patient privacy, and audited complication rate reporting.
+          </p>
+        </div>
+
         <div className="card p-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <label className="label" htmlFor="q">Search</label>
