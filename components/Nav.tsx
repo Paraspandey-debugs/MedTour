@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { signout } from "@/app/login/actions";
 
@@ -11,281 +11,183 @@ export interface NavUser {
   email: string;
 }
 
-const PRIMARY_LINKS = [
-  { href: "/match", label: "Care Passport" },
-  { href: "/hospitals", label: "Hospitals & Doctors" },
-  { href: "/cost", label: "TrueCost" },
-  { href: "/journey", label: "Journey" },
-  { href: "/coordinator", label: "24/7 Concierge" },
+const MAIN_LINKS = [
+  { href: "/hospitals", label: "Compare hospitals" },
+  { href: "/#how-it-works", label: "How it works" },
+  { href: "/security", label: "Security & privacy" },
 ];
 
-const PLATFORM_LINKS = [
-  { href: "/security", label: "Security & Escrow", desc: "PHI privacy architecture & milestone payment staging" },
-  { href: "/loyalty", label: "Offers & Loyalty", desc: "HealthMiles & curated partner packages" },
-  { href: "/partners", label: "Partners", desc: "Hospital audit & provider onboarding" },
+const ACCOUNT_LINKS = [
+  { href: "/dashboard", label: "Dashboard" },
+  { href: "/match", label: "Analyse my report" },
+  { href: "/journey", label: "Trip plan" },
+  { href: "/coordinator", label: "Ask the assistant" },
 ];
 
 export default function Nav({ user: initialUser }: { user?: NavUser | null }) {
   const path = usePathname();
   const router = useRouter();
   const [user, setUser] = useState<NavUser | null>(initialUser ?? null);
-  const [prevInitialUser, setPrevInitialUser] = useState(initialUser);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
-  if (initialUser !== prevInitialUser) {
-    setPrevInitialUser(initialUser);
+  useEffect(() => {
     setUser(initialUser ?? null);
-  }
+  }, [initialUser]);
 
   useEffect(() => {
     const supabase = createClient();
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        setUser({ id: session.user.id, email: session.user.email || "" });
-      } else {
-        setUser(null);
-      }
+      setUser(session?.user ? { id: session.user.id, email: session.user.email || "" } : null);
       router.refresh();
     });
-
-    return () => {
-      subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, [router]);
 
+  // Close menus on route change
+  useEffect(() => {
+    setMobileOpen(false);
+    setMenuOpen(false);
+  }, [path]);
+
+  // Mobile sheet: Escape closes, Tab is trapped inside, focus moves in on open
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const sheet = sheetRef.current;
+    const focusables = () =>
+      Array.from(sheet?.querySelectorAll<HTMLElement>("a[href], button:not([disabled])") ?? []);
+    focusables()[0]?.focus();
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setMobileOpen(false);
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const items = focusables();
+      if (items.length === 0) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [mobileOpen]);
+
+  // Account menu: close on outside click / Escape
+  useEffect(() => {
+    if (!menuOpen) return;
+    function onClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false);
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setMenuOpen(false);
+    }
+    document.addEventListener("mousedown", onClick);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [menuOpen]);
+
   const initials = user?.email ? user.email.slice(0, 2).toUpperCase() : "PT";
+  const linkCls = (href: string) =>
+    `whitespace-nowrap text-sm font-medium transition-colors ${
+      !href.includes("#") && path.startsWith(href) ? "text-ink font-semibold" : "text-muted hover:text-ink"
+    }`;
 
   return (
     <header className="sticky top-0 z-50 bg-cream/95 backdrop-blur border-b border-sand">
-      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-6">
-
-        {/* Brand */}
-        <Link href="/" className="flex items-center gap-2.5 shrink-0" onClick={() => setMobileOpen(false)}>
-          <span className="w-8 h-8 rounded-full bg-tealBrand text-white flex items-center justify-center font-bold text-lg leading-none">
-            +
-          </span>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-6">
+        <Link href="/" className="flex items-center gap-2.5 shrink-0" aria-label="MedTour home">
+          <span className="w-8 h-8 rounded-full bg-tealBrand text-white flex items-center justify-center font-bold text-lg leading-none" aria-hidden>+</span>
           <span className="font-serif text-2xl tracking-tight text-ink">MedTour</span>
         </Link>
 
-        {/* Primary Navigation (Single Line, No Wrapping) */}
-        <nav className="hidden lg:flex items-center gap-6 text-sm font-medium text-muted">
-          {PRIMARY_LINKS.map((link) => {
-            const active = path.startsWith(link.href);
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`whitespace-nowrap transition-colors ${
-                  active ? "text-ink font-semibold" : "hover:text-ink"
-                }`}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
-
-          {/* Secondary Links Grouped in Platform Dropdown */}
-          <div
-            className="relative"
-            onMouseEnter={() => setDropdownOpen(true)}
-            onMouseLeave={() => setDropdownOpen(false)}
-          >
-            <button
-              type="button"
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="whitespace-nowrap flex items-center gap-1 hover:text-ink transition-colors py-2"
-            >
-              Platform
-              <svg
-                className={`w-3.5 h-3.5 opacity-70 transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-
-            {dropdownOpen && (
-              <div className="absolute left-0 top-full pt-1 w-64 z-50">
-                <div className="bg-surface border border-sand rounded-2xl shadow-xl p-2 text-sm">
-                  {PLATFORM_LINKS.map((p) => (
-                    <Link
-                      key={p.href}
-                      href={p.href}
-                      onClick={() => setDropdownOpen(false)}
-                      className="block px-3.5 py-2.5 rounded-xl hover:bg-cream transition-colors"
-                    >
-                      <p className="font-semibold text-ink text-xs">{p.label}</p>
-                      <p className="text-[11px] text-muted leading-tight mt-0.5">{p.desc}</p>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+        <nav aria-label="Main" className="hidden lg:flex items-center gap-7">
+          {MAIN_LINKS.map((l) => (
+            <Link key={l.href} href={l.href} className={linkCls(l.href)}>{l.label}</Link>
+          ))}
         </nav>
 
-        {/* Right Actions */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
           {user ? (
-            /* Logged in state: Show Dashboard, User Badge, Sign Out */
-            <div className="flex items-center gap-2.5">
-              <Link
-                href="/dashboard"
-                className={`whitespace-nowrap text-xs font-semibold px-3.5 py-1.5 rounded-full transition-colors ${
-                  path === "/"
-                    ? "bg-tealBrand text-white hover:bg-tealDeep shadow-sm"
-                    : "bg-surface border border-sand text-ink hover:border-ink/40"
-                }`}
+            <div className="relative hidden lg:block" ref={menuRef}>
+              <button
+                type="button"
+                aria-haspopup="menu"
+                aria-expanded={menuOpen}
+                onClick={() => setMenuOpen((v) => !v)}
+                className="flex items-center gap-2 min-h-11 pl-1.5 pr-3 rounded-full bg-surface border border-sand text-xs text-ink hover:border-ink/40"
               >
-                {path === "/" ? "Go to Dashboard →" : "Dashboard"}
-              </Link>
-
-              <div
-                className="flex items-center gap-1.5 pl-1 pr-2 py-0.5 rounded-full bg-sand/50 border border-sand text-xs text-ink max-w-[160px] truncate"
-                title={user.email}
-              >
-                <span className="size-6 rounded-full bg-tealBrand text-white flex items-center justify-center font-bold text-[10px] shrink-0">
-                  {initials}
-                </span>
-                <span className="truncate text-[11px] font-medium hidden md:inline">
-                  {user.email.split("@")[0]}
-                </span>
-              </div>
-
-              <form action={signout} className="inline">
-                <button
-                  type="submit"
-                  className="whitespace-nowrap text-xs font-medium text-muted hover:text-terracotta px-1.5 py-1 transition-colors"
-                >
-                  Sign Out
-                </button>
-              </form>
+                <span className="size-7 rounded-full bg-tealBrand text-white flex items-center justify-center font-bold text-[10px]" aria-hidden>{initials}</span>
+                <span className="max-w-[140px] truncate font-medium">{user.email.split("@")[0]}</span>
+                <span aria-hidden>▾</span>
+              </button>
+              {menuOpen && (
+                <div role="menu" className="absolute right-0 top-full mt-2 w-56 rounded-2xl border border-sand bg-surface shadow-xl p-2 text-sm">
+                  {ACCOUNT_LINKS.map((l) => (
+                    <Link key={l.href} role="menuitem" href={l.href} className="block px-3.5 py-2.5 rounded-xl hover:bg-cream">{l.label}</Link>
+                  ))}
+                  <form action={signout} className="mt-1 pt-1 border-t border-sand">
+                    <button type="submit" role="menuitem" className="w-full text-left px-3.5 py-2.5 rounded-xl text-terracotta hover:bg-cream">Sign out</button>
+                  </form>
+                </div>
+              )}
             </div>
           ) : (
-            /* Logged out state: Show Sign In & Analyse Report */
             <>
-              <Link
-                href="/login"
-                className="whitespace-nowrap text-sm font-medium text-muted hover:text-ink px-2 py-1.5 transition-colors"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/match"
-                className="whitespace-nowrap text-sm font-medium bg-tealBrand text-white px-4 py-2 rounded-full hover:bg-tealDeep transition-colors"
-              >
-                Analyse Report
-              </Link>
+              <Link href="/login" className="hidden lg:inline-flex items-center min-h-11 px-3 text-sm font-medium text-muted hover:text-ink">Sign in</Link>
+              <Link href="/hospitals" className="hidden lg:inline-flex items-center min-h-11 text-sm font-medium bg-tealBrand text-white px-5 rounded-full hover:bg-tealDeep transition-colors">Compare hospitals</Link>
             </>
           )}
 
-          {/* Mobile Menu Button */}
           <button
             type="button"
-            className="lg:hidden p-1.5 text-muted hover:text-ink"
-            aria-label="Toggle Menu"
-            onClick={() => setMobileOpen(!mobileOpen)}
+            className="lg:hidden grid place-items-center size-11 text-muted hover:text-ink"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-menu"
+            onClick={() => setMobileOpen((v) => !v)}
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              {mobileOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-              )}
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden>
+              {mobileOpen ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /> : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />}
             </svg>
           </button>
         </div>
-
       </div>
 
-      {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="lg:hidden border-t border-sand bg-cream/98 px-6 py-4 space-y-3">
-          {user && (
-            <div className="p-3 rounded-2xl bg-surface border border-sand mb-2 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="size-8 rounded-full bg-tealBrand text-white flex items-center justify-center font-bold text-xs">
-                  {initials}
-                </span>
-                <div>
-                  <p className="text-xs font-semibold text-ink">{user.email}</p>
-                  <p className="text-[10px] text-muted">Patient Workspace</p>
-                </div>
-              </div>
-              <Link
-                href="/dashboard"
-                onClick={() => setMobileOpen(false)}
-                className="text-xs font-semibold text-tealBrand hover:underline"
-              >
-                Open Dashboard →
-              </Link>
-            </div>
-          )}
-
-          <div className="space-y-1">
-            <p className="text-[11px] font-semibold text-muted uppercase tracking-wider mb-1">Navigation</p>
-            {user && (
-              <Link
-                href="/dashboard"
-                onClick={() => setMobileOpen(false)}
-                className="block py-2 text-sm font-semibold text-tealBrand"
-              >
-                Patient Dashboard
-              </Link>
-            )}
-            {PRIMARY_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className="block py-2 text-sm font-medium text-ink hover:text-tealBrand"
-              >
-                {link.label}
-              </Link>
+        <div id="mobile-menu" ref={sheetRef} className="lg:hidden border-t border-sand bg-cream px-4 py-3">
+          <nav aria-label="Mobile" className="flex flex-col">
+            {MAIN_LINKS.map((l) => (
+              <Link key={l.href} href={l.href} className="min-h-11 flex items-center text-sm font-medium text-ink">{l.label}</Link>
             ))}
-          </div>
-
-          <div className="pt-3 border-t border-sand space-y-1">
-            <p className="text-[11px] font-semibold text-muted uppercase tracking-wider mb-1">Platform Tools</p>
-            {PLATFORM_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className="block py-2 text-sm text-ink hover:text-tealBrand"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-
-          <div className="pt-3 border-t border-sand flex items-center justify-end gap-3">
             {user ? (
-              <form action={signout}>
-                <button
-                  type="submit"
-                  onClick={() => setMobileOpen(false)}
-                  className="text-xs font-medium text-terracotta hover:underline"
-                >
-                  Sign Out
-                </button>
-              </form>
+              <>
+                <p className="mt-3 pt-3 border-t border-sand text-[11px] font-semibold uppercase tracking-wider text-muted">Your account</p>
+                <p className="text-xs text-muted truncate">{user.email}</p>
+                {ACCOUNT_LINKS.map((l) => (
+                  <Link key={l.href} href={l.href} className="min-h-11 flex items-center text-sm font-medium text-ink">{l.label}</Link>
+                ))}
+                <form action={signout}>
+                  <button type="submit" className="min-h-11 text-sm font-medium text-terracotta">Sign out</button>
+                </form>
+              </>
             ) : (
-              <Link
-                href="/login"
-                onClick={() => setMobileOpen(false)}
-                className="text-xs font-medium text-muted hover:text-ink"
-              >
-                Sign In
-              </Link>
+              <Link href="/login" className="mt-2 pt-3 border-t border-sand min-h-11 flex items-center text-sm font-medium text-tealBrand">Sign in</Link>
             )}
-          </div>
+          </nav>
         </div>
       )}
     </header>

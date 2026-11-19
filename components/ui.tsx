@@ -1,6 +1,8 @@
 import { COUNTRIES, usd, type Hospital, type Tier } from "@/lib/data";
 import type { TrueCost } from "@/lib/engine";
 
+const TIER_LABEL: Record<Tier, string> = { Platinum: "Platinum", Gold: "Gold", Verified: "Entry" };
+
 const TIER_STYLE: Record<Tier, string> = {
   Platinum: "bg-ink text-white",
   Gold: "bg-gold/15 text-gold border border-gold/40",
@@ -9,12 +11,12 @@ const TIER_STYLE: Record<Tier, string> = {
 
 export function TierBadge({ tier, steps }: { tier: Tier; steps?: number }) {
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${TIER_STYLE[tier]}`}>
-      <svg viewBox="0 0 16 16" className="size-3" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-        <path d="M3 8.5l3.2 3L13 4.5" />
-      </svg>
-      {tier}
-      {steps ? <span className="opacity-70 font-normal">{steps}/6</span> : null}
+    <span
+      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${TIER_STYLE[tier]}`}
+      title="Illustrative sample tier. No real audit has taken place."
+    >
+      {TIER_LABEL[tier]} tier
+      {steps ? <span className="opacity-70 font-normal">{steps}/6 sample</span> : null}
     </span>
   );
 }
@@ -57,7 +59,7 @@ export function CostBar({ cost, max }: { cost: TrueCost; max: number }) {
     <div
       className="flex h-3.5 w-full overflow-hidden rounded-full bg-sand"
       role="img"
-      aria-label={`Total ${usd(cost.total)}, of which risk reserve ${usd(cost.riskReserve)}`}
+      aria-label={`Total ${usd(cost.total)}, of which complication buffer ${usd(cost.riskReserve)}`}
     >
       {cost.lines.map((l) => (
         <span
