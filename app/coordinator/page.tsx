@@ -33,23 +33,59 @@ export default function CoordinatorPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       sender: "aria",
-      text: "Hello! I'm Aria, your 24/7 MedTour Care Coordinator. I'm connected to your clinical travel file, treating hospital desks, and pre-op clearance protocols. How can I assist you or your family today?",
+      text: "Hello! I'm Aria, your 24/7 MedTour Care Coordinator powered by Google Gemini AI. I'm connected to your clinical travel file, treating hospital desks, and pre-op clearance protocols. How can I assist you or your family today?",
       time: "10:30 AM",
-      tag: "Clinical Concierge",
+      tag: "Aria · Google Gemini AI",
     },
   ]);
   const [inputText, setInputText] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
   const [activePlatform, setActivePlatform] = useState<"ios" | "android">("ios");
   const [phoneScreen, setPhoneScreen] = useState<"passport" | "vitals" | "sos">("passport");
 
-  const handleSend = (text: string) => {
-    if (!text.trim()) return;
+  const handleSend = async (text: string) => {
+    if (!text.trim() || isTyping) return;
     const userMsg: ChatMessage = {
       sender: "patient",
       text: text,
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     };
 
+    setMessages((prev) => [...prev, userMsg]);
+    setInputText("");
+    setIsTyping(true);
+
+    try {
+      const res = await fetch("/api/ai/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: text,
+          history: messages.slice(-4),
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.reply) {
+          setMessages((prev) => [
+            ...prev,
+            {
+              sender: "aria",
+              text: data.reply,
+              time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+              tag: "Aria · Google Gemini AI",
+            },
+          ]);
+          setIsTyping(false);
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn("AI chat API failed, falling back to local protocol engine:", err);
+    }
+
+    // Local deterministic fallback
     let reply = "I have noted that for your assigned human Care Coordinator (Dr. Rachel Vance, EMEA & Asia desk). Based on current clinical protocols, our 24/7 medical desk will confirm hospital instructions within 15 minutes.";
     const lower = text.toLowerCase();
     if (lower.includes("thinner") || lower.includes("medication") || lower.includes("aspirin")) {
@@ -62,15 +98,16 @@ export default function CoordinatorPage() {
       reply = KNOWLEDGE_BASE.doctor;
     }
 
-    const ariaReply: ChatMessage = {
-      sender: "aria",
-      text: reply,
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      tag: "Aria · AI Care Desk",
-    };
-
-    setMessages((prev) => [...prev, userMsg, ariaReply]);
-    setInputText("");
+    setMessages((prev) => [
+      ...prev,
+      {
+        sender: "aria",
+        text: reply,
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        tag: "Aria · Care Desk",
+      },
+    ]);
+    setIsTyping(false);
   };
 
   return (
@@ -88,17 +125,22 @@ export default function CoordinatorPage() {
         <div className="space-y-6">
           {/* Interactive Chat Console */}
           <div className="card p-5 sm:p-6 flex flex-col h-[560px]">
-            <div className="flex items-center justify-between pb-3 border-b border-line">
+            <div className="flex items-center justify-between pb-3 border-b border-line flex-wrap gap-2">
               <div className="flex items-center gap-3">
                 <span className="size-3 rounded-full bg-emerald-500 animate-pulse" />
                 <div>
                   <h2 className="font-semibold text-sm">Aria · 24/7 Clinical Care Concierge</h2>
-                  <p className="text-xs text-muted">Active with backup human surgical team on-call</p>
+                  <p className="text-xs text-muted">Powered by Google Gemini 3.1 AI · Human surgical team on-call</p>
                 </div>
               </div>
-              <span className="text-xs bg-mint text-teal font-medium px-2.5 py-0.5 rounded-full">
-                HIPAA &amp; GDPR Encrypted
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] bg-emerald-100 text-emerald-800 font-semibold px-2.5 py-0.5 rounded-full border border-emerald-200">
+                  ✨ Gemini 3.1 Live
+                </span>
+                <span className="text-xs bg-mint text-teal font-medium px-2.5 py-0.5 rounded-full">
+                  HIPAA &amp; GDPR
+                </span>
+              </div>
             </div>
 
             {/* Message Stream */}
@@ -125,6 +167,19 @@ export default function CoordinatorPage() {
                   </div>
                 </div>
               ))}
+              {isTyping && (
+                <div className="flex flex-col items-start animate-fade-in">
+                  <div className="flex items-baseline gap-2 mb-1">
+                    <span className="text-[11px] font-semibold text-muted">Aria · Google Gemini AI</span>
+                    <span className="text-[10px] text-muted">Consulting clinical guidelines…</span>
+                  </div>
+                  <div className="bg-sand/60 text-ink rounded-2xl rounded-tl-none border border-line/60 p-3 flex items-center gap-1.5">
+                    <span className="size-2 rounded-full bg-teal animate-bounce" style={{ animationDelay: "0ms" }} />
+                    <span className="size-2 rounded-full bg-teal animate-bounce" style={{ animationDelay: "150ms" }} />
+                    <span className="size-2 rounded-full bg-teal animate-bounce" style={{ animationDelay: "300ms" }} />
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Quick Prompt Chips */}

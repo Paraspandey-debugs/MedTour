@@ -1,21 +1,37 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { COUNTRIES, DOCTORS, HOSPITALS, TREATMENTS, hospitalById, offers, pct, priceAt, treatmentById, usd, type Tier } from "@/lib/data";
+import { useState, useEffect } from "react";
+import { COUNTRIES, DOCTORS, HOSPITALS, TREATMENTS, hospitalById, offers, pct, priceAt, treatmentById, usd, type Tier, type Hospital, type Doctor } from "@/lib/data";
+import { getHospitals, getDoctors } from "@/lib/supabase/db";
 import { complicationAt } from "@/lib/engine";
 import { HospitalMark, PageHead, Place, TierBadge } from "@/components/ui";
 
 export default function HospitalsPage() {
+  const [hospitalsList, setHospitalsList] = useState<Hospital[]>(HOSPITALS);
+  const [doctorsList, setDoctorsList] = useState<Doctor[]>(DOCTORS);
   const [viewMode, setViewMode] = useState<"hospitals" | "doctors">("hospitals");
   const [q, setQ] = useState("");
   const [tid, setTid] = useState("all");
   const [country, setCountry] = useState("all");
   const [tier, setTier] = useState<"all" | Tier>("all");
 
+  useEffect(() => {
+    async function loadDb() {
+      try {
+        const [h, d] = await Promise.all([getHospitals(), getDoctors()]);
+        if (h && h.length > 0) setHospitalsList(h);
+        if (d && d.length > 0) setDoctorsList(d);
+      } catch (err) {
+        console.warn("Using fallback local provider dataset:", err);
+      }
+    }
+    loadDb();
+  }, []);
+
   const t = tid === "all" ? null : treatmentById(tid);
-  const countries = [...new Set(HOSPITALS.map((h) => h.country))];
-  const list = HOSPITALS.filter(
+  const countries = [...new Set(hospitalsList.map((h) => h.country))];
+  const list = hospitalsList.filter(
     (h) =>
       (!t || offers(h, t)) &&
       (country === "all" || h.country === country) &&
@@ -23,7 +39,7 @@ export default function HospitalsPage() {
       `${h.name} ${h.city} ${COUNTRIES[h.country].name} ${h.specialties.join(" ")}`.toLowerCase().includes(q.toLowerCase()),
   ).sort((a, b) => (t ? priceAt(a, t) - priceAt(b, t) : b.rating - a.rating));
 
-  const filteredDoctors = DOCTORS.filter((d) => {
+  const filteredDoctors = doctorsList.filter((d) => {
     const hosp = hospitalById(d.hospitalId);
     if (!hosp) return false;
     const matchesCountry = country === "all" || hosp.country === country;

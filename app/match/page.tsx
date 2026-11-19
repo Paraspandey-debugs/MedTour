@@ -24,18 +24,47 @@ const PART_COLORS: Record<keyof Weights, string> = {
 export default function MatchPage() {
   const [text, setText] = useState("");
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
+  const [aiPowered, setAiPowered] = useState(false);
+  const [patientQuestions, setPatientQuestions] = useState<string[]>([]);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [override, setOverride] = useState<TreatmentId | null>(null);
   const [home, setHome] = useState<HomeId>("UK");
   const [weights, setWeights] = useState<Weights>(DEFAULT_WEIGHTS);
   const [companion, setCompanion] = useState(true);
 
-  const run = (value = text) => {
+  const run = async (value = text) => {
     if (!value.trim()) return;
+    setIsAnalyzing(true);
+
+    try {
+      const res = await fetch("/api/ai/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reportText: value }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setAnalysis(data);
+        setAiPowered(!!data.aiPowered);
+        setPatientQuestions(data.patientQuestions || []);
+        setOverride(null);
+        setWeights(data.riskMultiplier >= 1.4 ? { outcomes: 55, cost: 20, travel: 10, trust: 15 } : DEFAULT_WEIGHTS);
+        setIsAnalyzing(false);
+        return;
+      }
+    } catch (err) {
+      console.warn("Failed calling /api/ai/analyze, falling back to rule engine:", err);
+    }
+
+    // Local deterministic fallback
     const a = analyzeReport(value);
     setAnalysis(a);
+    setAiPowered(false);
+    setPatientQuestions([]);
     setOverride(null);
-    // Explainable default: a riskier patient gets outcomes weighted up automatically.
     setWeights(a.riskMultiplier >= 1.4 ? { outcomes: 55, cost: 20, travel: 10, trust: 15 } : DEFAULT_WEIGHTS);
+    setIsAnalyzing(false);
   };
 
   const treatmentId = override ?? analysis?.treatment ?? null;
@@ -57,7 +86,12 @@ export default function MatchPage() {
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 grid gap-6 lg:grid-cols-[1fr_1fr]">
         <section className="card p-5 sm:p-6 self-start">
-          <label htmlFor="report" className="label">Medical report text</label>
+          <div className="flex items-center justify-between mb-2">
+            <label htmlFor="report" className="label !mb-0">Medical report text</label>
+            <span className="text-[11px] text-teal font-medium flex items-center gap-1 bg-mint px-2 py-0.5 rounded-full">
+              ✨ Google Gemini 3.1 AI
+            </span>
+          </div>
           <textarea
             id="report"
             value={text}
@@ -78,13 +112,24 @@ export default function MatchPage() {
               </button>
             ))}
           </div>
-          <button onClick={() => run()} disabled={!text.trim()} className="btn btn-primary mt-4 w-full disabled:opacity-40">
-            Analyse report
+          <button
+            onClick={() => run()}
+            disabled={!text.trim() || isAnalyzing}
+            className="btn btn-primary mt-4 w-full disabled:opacity-40 flex items-center justify-center gap-2"
+          >
+            {isAnalyzing ? (
+              <>
+                <span className="size-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                <span>Analysing with Gemini AI...</span>
+              </>
+            ) : (
+              "Analyse report"
+            )}
           </button>
           <div className="mt-4">
             <Disclaimer>
-              Prototype: analysis runs in your browser with a transparent rule-based reader and is
-              not a diagnosis. A surgeon confirms every plan before booking.
+              Prototype: analysis is augmented with Google AI Studio (Gemini 3.1 Flash Lite) and is
+              not a medical diagnosis. A human surgeon confirms every surgical plan before booking.
             </Disclaimer>
           </div>
         </section>
@@ -124,8 +169,15 @@ export default function MatchPage() {
             </div>
           ) : (
             <>
-              <div className="flex items-center justify-between gap-3">
-                <p className="eyebrow">Plain-language summary</p>
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <p className="eyebrow">Plain-language summary</p>
+                  {aiPowered && (
+                    <span className="text-[10px] bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded-full border border-emerald-200">
+                      ✨ Gemini AI Live
+                    </span>
+                  )}
+                </div>
                 {analysis.treatment && (
                   <span className="text-xs text-muted num font-semibold">Match Confidence {Math.round(analysis.confidence * 100)}%</span>
                 )}
@@ -187,6 +239,27 @@ export default function MatchPage() {
                   <p className="mt-2 text-xs text-muted">No added risk factors found in this report.</p>
                 )}
               </div>
+
+              {/* AI Surgeon Questions */}
+              {patientQuestions.length > 0 && (
+                <div className="mt-5 rounded-2xl bg-teal/5 border border-teal/20 p-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base">💬</span>
+                    <p className="text-sm font-semibold text-ink">AI-Generated Teleconsultation Questions</p>
+                  </div>
+                  <p className="text-[11px] text-muted mt-1">
+                    Questions generated by Gemini AI for your virtual pre-op consultation with the treating surgeon:
+                  </p>
+                  <ul className="mt-3 space-y-2 text-xs">
+                    {patientQuestions.map((q, idx) => (
+                      <li key={idx} className="flex gap-2.5 items-start bg-white p-3 rounded-xl border border-line shadow-xs">
+                        <span className="font-bold text-teal">{idx + 1}.</span>
+                        <span className="text-ink/90 leading-relaxed">{q}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </>
           )}
         </section>
