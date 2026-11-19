@@ -6,6 +6,25 @@ const GEMINI_API_KEY =
 
 const TEXT_MODEL = "gemini-3.1-flash-lite";
 const EMBED_MODEL = "gemini-embedding-001";
+const BASE_URL = "https://generativelanguage.googleapis.com";
+
+/** Centralized Gemini POST helper — sends the API key via header, never URL param. */
+async function geminiPost(
+  endpoint: string, // e.g. "/v1beta/models/gemini-3.1-flash-lite:generateContent"
+  body: unknown,
+  timeoutMs = 15_000
+): Promise<Response> {
+  if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is not set");
+  return fetch(`${BASE_URL}${endpoint}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-goog-api-key": GEMINI_API_KEY,
+    },
+    body: JSON.stringify(body),
+    signal: AbortSignal.timeout(timeoutMs),
+  });
+}
 
 export interface BiomarkerMap {
   hba1c?: string | null;
@@ -156,21 +175,17 @@ Ensure risk_multiplier is bounded between 1.0 and 2.5 (1.0 = standard risk, 1.3-
       : "\nAnalyze the attached medical document.";
     parts.push({ text: `${prompt}\n${clinicalContext}` });
 
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${TEXT_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
+    const res = await geminiPost(
+      `/v1beta/models/${TEXT_MODEL}:generateContent`,
       {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts }],
-          generationConfig: {
-            temperature: 0.1,
-            topP: 0.9,
-            responseMimeType: "application/json",
-          },
-        }),
-        signal: AbortSignal.timeout(15000),
-      }
+        contents: [{ parts }],
+        generationConfig: {
+          temperature: 0.1,
+          topP: 0.9,
+          responseMimeType: "application/json",
+        },
+      },
+      15_000
     );
 
     if (!res.ok) {
@@ -314,20 +329,16 @@ Tone: Empathetic, medically precise, structured with bullet points. If patient h
   const prompt = `${systemInstruction}\n\nRecent Conversation:\n${conversationHistory}\n\nPatient Question: ${userMessage}\n\nAria's Grounded Response:`;
 
   try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${TEXT_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
+    const res = await geminiPost(
+      `/v1beta/models/${TEXT_MODEL}:generateContent`,
       {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            temperature: 0.3,
-            maxOutputTokens: 500,
-          },
-        }),
-        signal: AbortSignal.timeout(10000),
-      }
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.3,
+          maxOutputTokens: 500,
+        },
+      },
+      10_000
     );
 
     if (!res.ok) {
@@ -356,18 +367,14 @@ export async function getGeminiEmbedding(text: string): Promise<number[] | null>
   if (!GEMINI_API_KEY || !text.trim()) return null;
 
   try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1/models/${EMBED_MODEL}:embedContent?key=${GEMINI_API_KEY}`,
+    const res = await geminiPost(
+      `/v1/models/${EMBED_MODEL}:embedContent`,
       {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          content: {
-            parts: [{ text: text.slice(0, 2048) }],
-          },
-        }),
-        signal: AbortSignal.timeout(8000),
-      }
+        content: {
+          parts: [{ text: text.slice(0, 2048) }],
+        },
+      },
+      8_000
     );
 
     if (!res.ok) {
