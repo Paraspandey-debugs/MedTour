@@ -1,20 +1,27 @@
 import { describe, expect, it } from "vitest";
 import { MEDICAL_HUBS } from "@/components/Globe";
-import { ORIGIN_LOCATIONS } from "@/app/onboarding/OnboardingWizard";
+import { GLOBAL_ORIGINS, ORIGIN_LOCATIONS } from "@/app/onboarding/OnboardingWizard";
 import { HOMES, HomeId } from "@/lib/data";
 
-describe("Patient Onboarding & Globe Routing", () => {
-  it("provides comprehensive origin locations with valid geographic coordinates", () => {
-    expect(ORIGIN_LOCATIONS.length).toBeGreaterThanOrEqual(6);
+describe("Flexible Patient Onboarding & Global Origin Routing", () => {
+  it("provides extensive global origin locations across all continents with valid coordinates", () => {
+    expect(GLOBAL_ORIGINS.length).toBeGreaterThanOrEqual(30);
 
-    for (const loc of ORIGIN_LOCATIONS) {
+    for (const loc of GLOBAL_ORIGINS) {
       expect(loc.name).toBeTruthy();
       expect(loc.flag).toBeTruthy();
+      expect(loc.phoneCode).toMatch(/^\+\d+/);
       expect(loc.lat).toBeGreaterThanOrEqual(-90);
       expect(loc.lat).toBeLessThanOrEqual(90);
       expect(loc.lng).toBeGreaterThanOrEqual(-180);
       expect(loc.lng).toBeLessThanOrEqual(180);
     }
+  });
+
+  it("maintains backward compatibility with ORIGIN_LOCATIONS slice", () => {
+    expect(ORIGIN_LOCATIONS.length).toBe(8);
+    expect(ORIGIN_LOCATIONS[0].id).toBe("US");
+    expect(ORIGIN_LOCATIONS[1].id).toBe("UK");
   });
 
   it("covers major international medical hubs for flight path rendering", () => {

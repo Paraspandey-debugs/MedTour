@@ -6,10 +6,13 @@ import { TREATMENTS, hospitalById } from "@/lib/data";
 
 const BodySchema = z.object({
   email: z.string().trim().email().max(254),
+  patientName: z.string().trim().max(128).optional(),
+  phone: z.string().trim().max(32).optional(),
+  companion: z.boolean().optional(),
   hospitalId: z.string().min(1).max(64),
   procedure: z.string().min(1).max(64),
   preferredMonth: z.string().trim().max(32).optional(),
-  message: z.string().trim().max(2000).optional(),
+  message: z.string().trim().max(3000).optional(),
   consent: z.literal(true),
 });
 
@@ -47,13 +50,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unknown hospital or procedure." }, { status: 400 });
   }
 
+  const compositeMessage = [
+    body.patientName ? `Patient Legal Name: ${body.patientName}` : null,
+    body.phone ? `WhatsApp / Contact Phone: ${body.phone}` : null,
+    body.companion !== undefined ? `Travelling with Companion: ${body.companion ? "Yes" : "Solo"}` : null,
+    body.message ? `Clinical Notes: ${body.message}` : null,
+  ].filter(Boolean).join("\n\n");
+
   const { error } = await supabase.from("quote_requests").insert({
     user_id: user?.id ?? null,
     email: body.email,
     hospital_id: body.hospitalId,
     procedure: body.procedure,
     preferred_month: body.preferredMonth || null,
-    message: body.message || null,
+    message: compositeMessage || null,
   });
 
   if (error) {
