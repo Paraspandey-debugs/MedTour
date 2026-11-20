@@ -216,8 +216,15 @@ export default function CostTool() {
               <p className="font-display text-2xl num">{usd(homeTotal)}</p>
             </div>
             <div className="mt-3 flex h-3.5 w-full overflow-hidden rounded-full bg-sand">
-              <span style={{ width: `${(t.homeCost[home] / max) * 100}%`, background: "#10292c" }} />
-              <span style={{ width: `${((homeTotal - t.homeCost[home]) / max) * 100}%`, background: LINE_COLORS.risk }} />
+              {(() => {
+                const homePriceVal = t.homeCost[home] ?? t.homeCost.US ?? 20000;
+                return (
+                  <>
+                    <span style={{ width: `${(homePriceVal / max) * 100}%`, background: "#10292c" }} />
+                    <span style={{ width: `${((homeTotal - homePriceVal) / max) * 100}%`, background: LINE_COLORS.risk }} />
+                  </>
+                );
+              })()}
             </div>
             <p className="mt-2 text-xs text-muted">The same complication buffer is applied at home, using the platform-average complication rate.</p>
           </li>

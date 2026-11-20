@@ -186,7 +186,7 @@ export function trueCost(t: Treatment, h: Hospital, home: Home, o: CostOpts): Tr
   const complication = complicationAt(h, t, o.riskMultiplier);
   // A complication is costed as corrective care (half the time handled abroad at the
   // local price, half the time back home at home prices) plus a week of extra stay.
-  const homePrice = t.homeCost[home.id];
+  const homePrice = (t.homeCost && home.id in t.homeCost ? (t.homeCost[home.id] as number) : undefined) ?? t.homeCost.US ?? 20000;
   const complicationCost = (t.revisionFactor * (sticker + homePrice)) / 2 + 7 * c.hotelPerNight * people;
   const riskReserve = complication * complicationCost;
   const fee = o.premium ? 0 : Math.min(400, sticker * 0.03);

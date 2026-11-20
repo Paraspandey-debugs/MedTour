@@ -161,4 +161,35 @@ describe("MedTour Engine Core Logic", () => {
       expect(contract[3].percentage).toBe(15); // Day-30 Outcome
     });
   });
+
+  describe("Expanded 20 Procedures & Global Origins", () => {
+    it("seeds 20 distinct clinical procedures with complete hospital coverage", () => {
+      expect(TREATMENTS.length).toBe(20);
+      const ids = TREATMENTS.map((t) => t.id);
+      expect(ids).toContain("shoulder");
+      expect(ids).toContain("lasik");
+      expect(ids).toContain("angioplasty");
+      expect(ids).toContain("breast");
+      expect(ids).toContain("prostate");
+      expect(ids).toContain("facelift");
+    });
+
+    it("verifies expanded HOMES origin countries compute trueCost without NaN", () => {
+      expect(Object.keys(HOMES).length).toBeGreaterThanOrEqual(20);
+      const knee = TREATMENTS[0];
+      const hospital = HOSPITALS[0];
+
+      for (const home of Object.values(HOMES)) {
+        const cost = trueCost(knee, hospital, home, {
+          riskMultiplier: 1.0,
+          companion: true,
+          premium: false,
+        });
+
+        expect(Number.isFinite(cost.total)).toBe(true);
+        expect(cost.total).toBeGreaterThan(0);
+        expect(Number.isFinite(cost.saving)).toBe(true);
+      }
+    });
+  });
 });

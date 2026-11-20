@@ -52,5 +52,17 @@ describe("Prescription and Medical Report Analysis", () => {
 
     const choleDoc = "Ultrasound reveals multiple gallstones. Scheduled for laparoscopic cholecystectomy.";
     expect(analyzeReport(choleDoc).treatment).toBe("gallbladder");
+
+    const shoulderDoc = "MRI shows full-thickness supraspinatus tear. Advised arthroscopic rotator cuff repair.";
+    expect(analyzeReport(shoulderDoc).treatment).toBe("shoulder");
+
+    const lasikDoc = "Myopia -4.50 D OD, -4.75 D OS. Evaluated for Femto-LASIK refractive correction.";
+    expect(analyzeReport(lasikDoc).treatment).toBe("lasik");
+
+    const angioDoc = "Coronary angiogram indicates 85% mid-LAD stenosis. Recommend coronary angioplasty with drug-eluting stent.";
+    expect(analyzeReport(angioDoc).treatment).toBe("angioplasty");
+
+    const prostateDoc = "Biopsy confirms Gleason 3+4 prostatic adenocarcinoma. Indicated for robotic Da Vinci prostatectomy.";
+    expect(analyzeReport(prostateDoc).treatment).toBe("prostate");
   });
 });

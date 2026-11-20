@@ -15,9 +15,32 @@ export type TreatmentId =
   | "gallbladder"
   | "valve"
   | "hernia"
-  | "oncology";
+  | "oncology"
+  | "shoulder"
+  | "lasik"
+  | "angioplasty"
+  | "breast"
+  | "prostate"
+  | "facelift";
 export type CountryId = "IN" | "TH" | "TR" | "SG" | "MY" | "AE" | "MX" | "KR";
-export type HomeId = "US" | "UK" | "CA" | "AU" | "AE" | "NG";
+export type CoreHomeId = "US" | "UK" | "CA" | "AU" | "AE" | "NG";
+export type HomeId =
+  | CoreHomeId
+  | "DE"
+  | "FR"
+  | "IE"
+  | "NL"
+  | "NZ"
+  | "ZA"
+  | "SG"
+  | "SA"
+  | "QA"
+  | "KW"
+  | "KE"
+  | "GH"
+  | "PH"
+  | "IN"
+  | "MX";
 export type Specialty =
   | "Orthopaedics"
   | "Cardiac"
@@ -42,7 +65,7 @@ export interface Treatment {
   followUps: number[]; // tele follow-ups, days after procedure
   baseComplication: number; // baseline complication probability
   revisionFactor: number; // cost of managing a complication, as a multiple of procedure price
-  homeCost: Record<HomeId, number>;
+  homeCost: Partial<Record<HomeId, number>> & Record<CoreHomeId, number>;
   price: Record<CountryId, number>;
   keywords: string[];
 }
@@ -286,6 +309,108 @@ export const TREATMENTS: Treatment[] = [
     price: { IN: 8500, TH: 18000, TR: 11500, SG: 27000, MY: 13500, AE: 24000, MX: 19000, KR: 22000 },
     keywords: ["oncology", "radiation", "cyberknife", "proton", "tumor", "carcinoma", "neoplasm", "radiotherapy", "cancer", "chemotherapy"],
   },
+  {
+    id: "shoulder",
+    name: "Rotator Cuff Repair & Shoulder Arthroscopy",
+    short: "Shoulder surgery",
+    specialty: "Orthopaedics",
+    hospitalDays: 1,
+    localRecoveryDays: 7,
+    fitToFlyDay: 8,
+    fitToFlyWhy:
+      "Arm immobilisation and pressure changes require post-op clearance; risk of stiffness and swelling decreases after first week.",
+    followUps: [7, 21, 60],
+    baseComplication: 0.028,
+    revisionFactor: 0.85,
+    homeCost: { US: 26000, UK: 11000, CA: 15000, AU: 14000, AE: 12000, NG: 6000 },
+    price: { IN: 4200, TH: 6800, TR: 5200, SG: 11500, MY: 5800, AE: 9500, MX: 6500, KR: 9200 },
+    keywords: ["shoulder", "rotator cuff", "arthroscopy", "impingement", "subacromial", "labrum", "supraspinatus"],
+  },
+  {
+    id: "lasik",
+    name: "Custom Wavefront Femto-LASIK & SMILE",
+    short: "LASIK eye surgery",
+    specialty: "Ophthalmology",
+    hospitalDays: 0,
+    localRecoveryDays: 3,
+    fitToFlyDay: 3,
+    fitToFlyWhy:
+      "Corneal flap requires stabilization in low-humidity cabin environment; protective eyewear and tear drops mandatory.",
+    followUps: [1, 7, 30],
+    baseComplication: 0.015,
+    revisionFactor: 0.6,
+    homeCost: { US: 4500, UK: 3200, CA: 3800, AU: 3600, AE: 3000, NG: 1800 },
+    price: { IN: 950, TH: 1800, TR: 1400, SG: 3200, MY: 1500, AE: 2400, MX: 1600, KR: 2100 },
+    keywords: ["lasik", "femtosecond", "smile", "refractive", "cornea", "myopia", "astigmatism", "prk", "vision correction"],
+  },
+  {
+    id: "angioplasty",
+    name: "Coronary Angioplasty & Drug-Eluting Stents (PTCA)",
+    short: "Angioplasty & stent",
+    specialty: "Cardiac",
+    hospitalDays: 2,
+    localRecoveryDays: 5,
+    fitToFlyDay: 7,
+    fitToFlyWhy:
+      "Femoral or radial puncture site must heal fully without hematoma; cardiac telemetry and antiplatelet titration must be stable.",
+    followUps: [7, 30, 90],
+    baseComplication: 0.025,
+    revisionFactor: 0.95,
+    homeCost: { US: 42000, UK: 16000, CA: 22000, AU: 21000, AE: 18000, NG: 9000 },
+    price: { IN: 5200, TH: 9500, TR: 7200, SG: 14500, MY: 7800, AE: 12500, MX: 8800, KR: 13000 },
+    keywords: ["angioplasty", "stent", "ptca", "coronary", "ischemic", "atherosclerosis", "stenosis", "artery", "cardiac catheterization"],
+  },
+  {
+    id: "breast",
+    name: "Dual-Plane Breast Augmentation & Lift",
+    short: "Breast surgery",
+    specialty: "Cosmetics",
+    hospitalDays: 1,
+    localRecoveryDays: 6,
+    fitToFlyDay: 7,
+    fitToFlyWhy:
+      "Pectoral tension and drain removal must be verified prior to air travel; compression garment compliance mandatory.",
+    followUps: [7, 14, 45],
+    baseComplication: 0.028,
+    revisionFactor: 0.75,
+    homeCost: { US: 11000, UK: 7500, CA: 8500, AU: 8200, AE: 7000, NG: 4000 },
+    price: { IN: 3200, TH: 4800, TR: 3600, SG: 8500, MY: 4200, AE: 6500, MX: 4200, KR: 5800 },
+    keywords: ["breast", "augmentation", "implants", "mastopexy", "mammoplasty", "breast lift", "silicone"],
+  },
+  {
+    id: "prostate",
+    name: "Robotic Da Vinci Prostatectomy",
+    short: "Robotic prostatectomy",
+    specialty: "Oncology",
+    hospitalDays: 3,
+    localRecoveryDays: 8,
+    fitToFlyDay: 10,
+    fitToFlyWhy:
+      "Catheter removal and continence milestone must be verified; pelvic venous thrombosis risk monitored before long flight.",
+    followUps: [14, 30, 90],
+    baseComplication: 0.038,
+    revisionFactor: 0.9,
+    homeCost: { US: 65000, UK: 22000, CA: 30000, AU: 28000, AE: 26000, NG: 13000 },
+    price: { IN: 7800, TH: 14500, TR: 10500, SG: 22000, MY: 11000, AE: 18500, MX: 14000, KR: 17500 },
+    keywords: ["prostate", "prostatectomy", "da vinci", "robotic prostatectomy", "psa", "adenocarcinoma", "prostatic", "gleason"],
+  },
+  {
+    id: "facelift",
+    name: "Deep Plane SMAS Facelift & Neck Rejuvenation",
+    short: "Facelift",
+    specialty: "Cosmetics",
+    hospitalDays: 1,
+    localRecoveryDays: 8,
+    fitToFlyDay: 9,
+    fitToFlyWhy:
+      "Facial tissue edema, suture line healing, and submental recovery require clinical inspection before cabin pressure changes.",
+    followUps: [7, 14, 30],
+    baseComplication: 0.024,
+    revisionFactor: 0.7,
+    homeCost: { US: 18000, UK: 12000, CA: 14000, AU: 13500, AE: 11500, NG: 6000 },
+    price: { IN: 3800, TH: 5900, TR: 4200, SG: 11000, MY: 4900, AE: 8500, MX: 5400, KR: 7200 },
+    keywords: ["facelift", "rhytidectomy", "smas", "neck lift", "jowls", "facial rejuvenation", "platysmaplasty"],
+  },
 ];
 
 export interface Country {
@@ -348,6 +473,81 @@ export const HOMES: Record<HomeId, Home> = {
     id: "NG", name: "Nigeria", flag: "🇳🇬", waitWeeks: 6,
     flight: { IN: 900, TH: 1100, TR: 700, SG: 1200, MY: 1150, AE: 600, MX: 1600, KR: 1300 },
     hours: { IN: 12, TH: 15, TR: 7, SG: 16, MY: 16, AE: 8, MX: 20, KR: 18 },
+  },
+  DE: {
+    id: "DE", name: "Germany", flag: "🇩🇪", waitWeeks: 8,
+    flight: { IN: 650, TH: 800, TR: 280, SG: 880, MY: 820, AE: 520, MX: 850, KR: 880 },
+    hours: { IN: 8, TH: 11, TR: 3, SG: 12, MY: 12, AE: 6, MX: 12, KR: 11 },
+  },
+  FR: {
+    id: "FR", name: "France", flag: "🇫🇷", waitWeeks: 10,
+    flight: { IN: 680, TH: 820, TR: 290, SG: 890, MY: 840, AE: 530, MX: 820, KR: 890 },
+    hours: { IN: 9, TH: 12, TR: 4, SG: 13, MY: 13, AE: 7, MX: 11, KR: 12 },
+  },
+  IE: {
+    id: "IE", name: "Ireland", flag: "🇮🇪", waitWeeks: 24,
+    flight: { IN: 720, TH: 860, TR: 320, SG: 910, MY: 860, AE: 560, MX: 780, KR: 910 },
+    hours: { IN: 10, TH: 13, TR: 4, SG: 13, MY: 14, AE: 8, MX: 10, KR: 12 },
+  },
+  NL: {
+    id: "NL", name: "Netherlands", flag: "🇳🇱", waitWeeks: 12,
+    flight: { IN: 660, TH: 810, TR: 290, SG: 870, MY: 830, AE: 510, MX: 830, KR: 870 },
+    hours: { IN: 8, TH: 11, TR: 3, SG: 12, MY: 12, AE: 6, MX: 11, KR: 11 },
+  },
+  NZ: {
+    id: "NZ", name: "New Zealand", flag: "🇳🇿", waitWeeks: 16,
+    flight: { IN: 900, TH: 700, TR: 1400, SG: 600, MY: 550, AE: 1200, MX: 1600, KR: 850 },
+    hours: { IN: 16, TH: 12, TR: 21, SG: 10, MY: 10, AE: 16, MX: 16, KR: 11 },
+  },
+  ZA: {
+    id: "ZA", name: "South Africa", flag: "🇿🇦", waitWeeks: 6,
+    flight: { IN: 750, TH: 850, TR: 650, SG: 900, MY: 850, AE: 550, MX: 1500, KR: 1100 },
+    hours: { IN: 11, TH: 13, TR: 10, SG: 11, MY: 11, AE: 8, MX: 18, KR: 15 },
+  },
+  SG: {
+    id: "SG", name: "Singapore", flag: "🇸🇬", waitWeeks: 1,
+    flight: { IN: 350, TH: 180, TR: 650, SG: 0, MY: 120, AE: 450, MX: 1600, KR: 450 },
+    hours: { IN: 5, TH: 2, TR: 11, SG: 0, MY: 1, AE: 7, MX: 20, KR: 6 },
+  },
+  SA: {
+    id: "SA", name: "Saudi Arabia", flag: "🇸🇦", waitWeeks: 4,
+    flight: { IN: 320, TH: 520, TR: 380, SG: 620, MY: 560, AE: 180, MX: 1550, KR: 820 },
+    hours: { IN: 4, TH: 7, TR: 4, SG: 8, MY: 8, AE: 2, MX: 20, KR: 9 },
+  },
+  QA: {
+    id: "QA", name: "Qatar", flag: "🇶🇦", waitWeeks: 3,
+    flight: { IN: 310, TH: 510, TR: 390, SG: 610, MY: 550, AE: 120, MX: 1520, KR: 810 },
+    hours: { IN: 4, TH: 7, TR: 4, SG: 8, MY: 8, AE: 1, MX: 20, KR: 9 },
+  },
+  KW: {
+    id: "KW", name: "Kuwait", flag: "🇰🇼", waitWeeks: 3,
+    flight: { IN: 330, TH: 530, TR: 370, SG: 630, MY: 570, AE: 150, MX: 1540, KR: 830 },
+    hours: { IN: 4, TH: 7, TR: 4, SG: 8, MY: 8, AE: 2, MX: 20, KR: 9 },
+  },
+  KE: {
+    id: "KE", name: "Kenya", flag: "🇰🇪", waitWeeks: 8,
+    flight: { IN: 500, TH: 750, TR: 550, SG: 800, MY: 750, AE: 400, MX: 1700, KR: 1000 },
+    hours: { IN: 6, TH: 9, TR: 7, SG: 10, MY: 10, AE: 5, MX: 22, KR: 13 },
+  },
+  GH: {
+    id: "GH", name: "Ghana", flag: "🇬🇭", waitWeeks: 10,
+    flight: { IN: 850, TH: 1050, TR: 650, SG: 1150, MY: 1100, AE: 650, MX: 1550, KR: 1250 },
+    hours: { IN: 11, TH: 14, TR: 6, SG: 15, MY: 15, AE: 8, MX: 18, KR: 16 },
+  },
+  PH: {
+    id: "PH", name: "Philippines", flag: "🇵🇭", waitWeeks: 8,
+    flight: { IN: 450, TH: 220, TR: 750, SG: 180, MY: 150, AE: 550, MX: 1400, KR: 300 },
+    hours: { IN: 6, TH: 3, TR: 12, SG: 3, MY: 4, AE: 9, MX: 17, KR: 4 },
+  },
+  IN: {
+    id: "IN", name: "India", flag: "🇮🇳", waitWeeks: 2,
+    flight: { IN: 0, TH: 250, TR: 450, SG: 300, MY: 280, AE: 250, MX: 1600, KR: 550 },
+    hours: { IN: 0, TH: 4, TR: 7, SG: 5, MY: 5, AE: 3, MX: 22, KR: 7 },
+  },
+  MX: {
+    id: "MX", name: "Mexico", flag: "🇲🇽", waitWeeks: 5,
+    flight: { IN: 1600, TH: 1500, TR: 1200, SG: 1700, MY: 1650, AE: 1400, MX: 0, KR: 1400 },
+    hours: { IN: 22, TH: 21, TR: 14, SG: 22, MY: 23, AE: 16, MX: 0, KR: 15 },
   },
 };
 
@@ -653,6 +853,57 @@ export const DOCTORS: Doctor[] = [
     reviewsCount: 410,
     availableDaysNotice: 5,
     bio: "Expert in patient-specific 3D printed knee guides and joint preservation surgery for international patients across EMEA.",
+  },
+  {
+    id: "dr-chatterjee",
+    name: "Dr. Ananya Chatterjee",
+    title: "Chief of Robotic Surgical Oncology",
+    hospitalId: "aravali",
+    specialties: ["Oncology", "General Surgery"],
+    experienceYears: 20,
+    surgeriesPerformed: 4100,
+    auditedComplicationRate: 0.023,
+    credentials: ["MS (Gen Surg)", "MCh (Surg Onco - Tata Memorial)", "Fellow, Memorial Sloan Kettering (USA)"],
+    education: "Tata Memorial Hospital & Memorial Sloan Kettering Cancer Center",
+    languages: ["English", "Hindi", "Bengali"],
+    rating: 4.9,
+    reviewsCount: 520,
+    availableDaysNotice: 5,
+    bio: "Pioneered nerve-sparing robotic radical prostatectomy and cytoreductive oncology with multi-disciplinary tumor board consensus.",
+  },
+  {
+    id: "dr-somporn",
+    name: "Dr. Somporn Vachiraphan",
+    title: "Director of Aesthetic & Reconstructive Surgery",
+    hospitalId: "chaophraya",
+    specialties: ["Cosmetics"],
+    experienceYears: 22,
+    surgeriesPerformed: 6200,
+    auditedComplicationRate: 0.014,
+    credentials: ["MD (Chulalongkorn)", "Diplomate, American Board of Hair & Plastic Surgery", "ISAPS Member"],
+    education: "Chulalongkorn University & Beverly Hills Plastic Surgery Fellowship",
+    languages: ["English", "Thai"],
+    rating: 4.9,
+    reviewsCount: 780,
+    availableDaysNotice: 4,
+    bio: "Internationally renowned for deep-plane SMAS rhytidectomy, dual-plane breast reconstruction, and natural high-density FUE hair restoration.",
+  },
+  {
+    id: "dr-kaya",
+    name: "Dr. Zeynep Kaya",
+    title: "Head of Cornea & Refractive Laser Centre",
+    hospitalId: "anatolia",
+    specialties: ["Ophthalmology"],
+    experienceYears: 15,
+    surgeriesPerformed: 7900,
+    auditedComplicationRate: 0.011,
+    credentials: ["MD (Hacettepe)", "Fellow, European Board of Ophthalmology (FEBO)", "ESCRS Member"],
+    education: "Hacettepe Faculty of Medicine & Moorfields Eye Hospital, London",
+    languages: ["English", "Turkish", "Russian"],
+    rating: 4.85,
+    reviewsCount: 690,
+    availableDaysNotice: 2,
+    bio: "Performs customized topography-guided Femto-LASIK, SMILE, and premium trifocal cataract lenses with 99.1% 20/20 visual recovery.",
   },
 ];
 
