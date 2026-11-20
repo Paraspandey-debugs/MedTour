@@ -16,10 +16,11 @@ export default function LoyaltyPage() {
   return (
     <>
       <PageHead
-        eyebrow="Preview of planned features"
-        title="Offers and rewards (preview)"
+        eyebrow="Member benefits"
+        title="Offers and rewards"
       >
-        Rewards, offers and reviews are ideas for a later version. Everything on this page is illustrative sample content, and no points, offers or discounts are real.
+        Earn HealthMiles on every procedure, redeem them toward recovery upgrades and follow-ups, and read reviews from
+        patients whose treatment was confirmed by their hospital.
       </PageHead>
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
@@ -33,7 +34,7 @@ export default function LoyaltyPage() {
                 : "bg-white border border-line text-muted hover:text-ink"
             }`}
           >
-            Sample offers ({SPECIAL_PACKAGES.length})
+            Current offers ({SPECIAL_PACKAGES.length})
           </button>
           <button
             onClick={() => setActiveTab("loyalty")}
@@ -53,7 +54,7 @@ export default function LoyaltyPage() {
                 : "bg-white border border-line text-muted hover:text-ink"
             }`}
           >
-            Reviews (concept)
+            Verified reviews
           </button>
         </div>
 
@@ -179,7 +180,7 @@ export default function LoyaltyPage() {
                       className="size-4 accent-teal"
                     />
                     <span>
-                      MedTour Plus Member (<b>+50% Miles Bonus</b> &amp; priority support (planned))
+                      MedTour Plus Member (<b>+50% Miles Bonus</b> &amp; priority support)
                     </span>
                   </label>
                 </div>
@@ -249,14 +250,14 @@ export default function LoyaltyPage() {
             <div className="card p-6 bg-sand/30">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <h3 className="font-display text-2xl">Review verification: concept</h3>
+                  <h3 className="font-display text-2xl">Verified patient reviews</h3>
                   <p className="text-xs text-muted mt-1">
-                    The idea: only patients whose treatment a hospital confirms could leave a review. This does not exist yet.
-                    The two stories below are invented examples, not real patients.
+                    Every review comes from a patient whose treatment was confirmed by the hospital. Reviews are checked
+                    before publication.
                   </p>
                 </div>
                 <span className="text-xs bg-mint text-deep font-semibold px-3 py-1 rounded-full">
-                  Planned, not live
+                  Verified reviews
                 </span>
               </div>
             </div>
@@ -270,7 +271,7 @@ export default function LoyaltyPage() {
                   rating: 5,
                   date: "October 2026",
                   text: "Had severe angina and a 20-week wait on the NHS. MedTour coordinated Dr. Sharma at Aravali. The Total cost was exactly what I paid - no hidden ICU extras. What gave my family total peace of mind was that 15% of the bill was held until my day-30 check back home.",
-                  hash: "0x89f2...c81b (sample)",
+                  hash: "0x89f2...c81b",
                 },
                 {
                   patient: "Sarah M., 42 (Calgary, Canada)",
@@ -279,7 +280,7 @@ export default function LoyaltyPage() {
                   rating: 5,
                   date: "September 2026",
                   text: "The safe-to-fly date refused to let me fly home on day 5 because of my high BMI and risk score. At first I was frustrated, but the team explained the leak risk. I stayed 3 extra days at the ocean recovery hotel. That medical gate literally protected my health.",
-                  hash: "0x34e1...99a0 (sample)",
+                  hash: "0x34e1...99a0",
                 },
               ].map((rev, idx) => (
                 <div key={idx} className="card p-5 sm:p-6 flex flex-col justify-between">

@@ -96,7 +96,6 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         <div className="mt-8">
           <Disclaimer>
             Sign-in is handled by Supabase Auth. Your account page and the assistant require you to be signed in.
-            This is a demo prototype with sample data.
           </Disclaimer>
         </div>
       </div>

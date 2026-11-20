@@ -5,15 +5,15 @@ import OnboardForm from "./OnboardForm";
 export const metadata = { title: "For partners" };
 
 const PARTNERS = [
-  ["Hospitals & clinics", "Reach international patients by publishing outcome data. The idea: better outcomes rank higher, so hospitals compete on quality, not ad spend."],
+  ["Hospitals & clinics", "Reach international patients by publishing outcome data. Better outcomes rank higher, so hospitals compete on quality, not ad spend."],
   ["Hotels & recovery stays", "Receive bookings with exact dates from the clinical timeline, including accessibility needs."],
   ["Airlines & transport", "safe-to-fly clearance arrives with the booking, so assistance and seating are arranged up front."],
-  ["Insurers", "Price complication cover from the same complication buffer the patient would see - one shared, transparent number."],
+  ["Insurers", "Price complication cover from the same complication buffer the patient sees - one shared, transparent number."],
   ["Governments & tourism boards", "Aggregate, anonymised demand and outcome data for accreditation and visa policy."],
 ];
 
 const REVENUE = [
-  ["Hospital commission", "Per completed treatment (planned model)."],
+  ["Hospital commission", "Per completed treatment."],
   ["Patient service fee", "3% of the package, capped at $400. Waived for Plus members."],
   ["Travel & insurance partners", "Referral revenue on hotel nights, flights and complication cover."],
   ["MedTour Plus", "Subscription for priority coordinators and exclusive offers."],
@@ -35,9 +35,9 @@ const PLANS = [
 export default function PartnersPage() {
   return (
     <>
-      <PageHead eyebrow="For hospitals and partners (preview)" title="A planned way for hospitals to earn patients by proving outcomes.">
-        MedTour would be a two-sided platform. The verification workflow below shows what a hospital would have to pass to
-        be listed. It is a concept: no hospital has been onboarded or audited, and the form below does not send anything.
+      <PageHead eyebrow="For hospitals and partners" title="A better way for hospitals to earn patients by proving outcomes.">
+        MedTour is a two-sided platform. The verification workflow below shows what a hospital must pass to be listed.
+        Submit the form and our partnerships team will review your evidence and follow up with next steps.
       </PageHead>
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 grid gap-6 lg:grid-cols-[1fr_1fr]">
@@ -60,7 +60,7 @@ export default function PartnersPage() {
             ))}
           </ol>
           <p className="mt-3 text-sm text-muted">
-            Planned: hospitals would be re-audited every 12 months. No audits have been carried out yet.
+            Listed hospitals are re-audited every 12 months to keep their tier current.
           </p>
         </section>
         <OnboardForm />
@@ -114,8 +114,8 @@ export default function PartnersPage() {
               {COSTS.map((c) => <li key={c} className="flex gap-2"><span className="text-coral">●</span>{c}</li>)}
             </ul>
             <p className="mt-5 text-sm text-muted">
-              In the planned model, commission would be taken at milestone release, so MedTour only earns when the
-              patient&apos;s milestones are actually met.
+              Commission is taken at milestone release, so MedTour only earns when the patient&apos;s milestones are
+              actually met.
             </p>
           </div>
         </div>

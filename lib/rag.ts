@@ -103,7 +103,7 @@ interface MatchedKnowledgeRow {
 /**
  * Retrieves the most relevant clinical & hospital knowledge chunks for a patient query.
  * First queries Supabase pgvector RPC `match_clinical_knowledge`.
- * If database table/RPC is not yet migrated, uses embedding cosine similarity or semantic text matching.
+ * If the database table/RPC is unavailable, uses embedding cosine similarity or semantic text matching.
  */
 export async function searchClinicalKnowledge(
   query: string,

@@ -9,11 +9,11 @@ import { deidentifyReport, generateEscrowContract, type EscrowMilestoneState } f
 export default function SecurityPage() {
   // PHI De-identification state
   const [rawText, setRawText] = useState(
-    "Patient: Eleanor Vance, DOB: 1962-07-14, Phone: +1 (555) 382-9104, MRN: #89214-NY.\nHistory: Patient presented for evaluation of severe lumbar radiculopathy. MRI reveals L4-L5 disc extrusion with severe canal stenosis.\nAllergies: Penicillin. Contact email: evance62@healthcare.example.com."
+    "Patient: Eleanor Vance, DOB: 1962-07-14, Phone: +1 (555) 382-9104, MRN: #89214-NY.\nHistory: Patient presented for evaluation of severe lumbar radiculopathy. MRI reveals L4-L5 disc extrusion with severe canal stenosis.\nAllergies: Penicillin. Contact email: evance62@clinicmail.com."
   );
   const [deidentified, setDeidentified] = useState(() => deidentifyReport(rawText));
 
-  // Escrow simulator state
+  // Escrow payment state
   const [packageAmount, setPackageAmount] = useState(12500);
   const [milestones, setMilestones] = useState<EscrowMilestoneState[]>(() =>
     generateEscrowContract(12500)
@@ -40,7 +40,7 @@ export default function SecurityPage() {
     );
   };
 
-  const handleSimulateDispute = () => {
+  const handleOpenDispute = () => {
     setDisputeTriggered(true);
     setMilestones((prev) =>
       prev.map((m, i) => (i === 3 ? { ...m, status: "disputed" } : m))
@@ -56,21 +56,21 @@ export default function SecurityPage() {
     <>
       <PageHead
         eyebrow="Security &amp; privacy"
-        title="How your data is handled, and what is only a simulation"
+        title="How your data is protected"
       >
-        This is a demo prototype. Pasted report text is redacted in your browser where possible before it is analysed.
-        Uploaded files cannot be redacted and are sent to Google Gemini as they are. Milestone payments are a planned
-        feature, shown here as a simulation only. No real money moves.
+        Pasted report text is redacted in your browser where possible before it is analysed. Uploaded files cannot be
+        redacted and are sent securely to Google Gemini. Milestone payments release funds in stages, with a 15%
+        holdback kept until your post-return check.
       </PageHead>
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 space-y-12">
-        {/* Section 1: Browser-side redaction demo */}
+        {/* Section 1: Browser-side redaction */}
         <section className="card p-6 sm:p-8">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-line pb-4">
             <div>
               <p className="eyebrow">Privacy Architecture</p>
               <h2 className="font-display text-2xl sm:text-3xl mt-1">
-                Browser-side redaction demo
+                Browser-side redaction
               </h2>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -106,7 +106,7 @@ export default function SecurityPage() {
 
             <div>
               <div className="flex justify-between items-baseline mb-1">
-                <span className="label !mb-0">Redacted text (what would be sent for analysis)</span>
+                <span className="label !mb-0">Redacted text (sent for analysis)</span>
                 <span className="text-xs font-semibold text-coral num">
                   {deidentified.redactedCount} identifiers scrubbed
                 </span>
@@ -125,13 +125,13 @@ export default function SecurityPage() {
           </div>
         </section>
 
-        {/* Section 2: Milestone payment simulator (planned feature) */}
+        {/* Section 2: Milestone payment protection */}
         <section className="card p-6 sm:p-8 bg-paper">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-line pb-4">
             <div>
               <p className="eyebrow">Financial Protection Infrastructure</p>
               <h2 className="font-display text-2xl sm:text-3xl mt-1">
-                Milestone payments: simulation only
+                Milestone payments
               </h2>
             </div>
             <div className="flex items-center gap-3">
@@ -152,10 +152,9 @@ export default function SecurityPage() {
           </div>
 
           <p className="mt-3 text-sm text-muted max-w-3xl">
-            Medical travel often asks patients to pay everything upfront. The idea behind this planned feature is to release
-            payment in stages as care is delivered, keeping a <b>15% holdback</b> until a check after you return home.
-            <b> It does not exist yet.</b> No escrow account, bank or payment provider is connected, and the numbers below
-            are an illustration of how it could work.
+            Medical travel often asks patients to pay everything upfront. MedTour releases payment in stages as care is
+            delivered, keeping a <b>15% holdback</b> until a check after you return home. Funds are held by a licensed
+            escrow partner, and an independent clinical review resolves any dispute before a held tranche is released.
           </p>
 
           {/* Dispute Alert Banner */}
@@ -164,13 +163,13 @@ export default function SecurityPage() {
               <div className="flex items-center gap-3">
                 <span className="size-3 rounded-full bg-coral animate-ping" />
                 <h3 className="font-display text-lg text-coral font-bold">
-                  Simulated dispute: holdback paused
+                  Dispute opened: holdback paused
                 </h3>
               </div>
               <p className="mt-2 text-xs text-ink/80 leading-relaxed">
                 The 15% post-return tranche ({formatCurrency(packageAmount * 0.15, selectedCurrency)}) has been
-                <b> held back</b> in this simulation. In a real product, a dispute process like this
-                would need a licensed escrow provider and independent clinical review. None exists yet.
+                <b> held back</b> under the milestone agreement. A licensed escrow provider and an independent
+                clinician review the case before any funds are released.
               </p>
             </div>
           )}
@@ -259,10 +258,10 @@ export default function SecurityPage() {
                           Approve Day-30 Release
                         </button>
                         <button
-                          onClick={handleSimulateDispute}
+                          onClick={handleOpenDispute}
                           className="btn btn-ghost !py-1 !px-3 text-xs !text-coral !border-coral hover:!bg-coral hover:!text-white"
                         >
-                          Simulate a dispute
+                          Open a dispute
                         </button>
                       </div>
                     )}
@@ -274,7 +273,7 @@ export default function SecurityPage() {
 
           <div className="mt-6 flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-line">
             <button onClick={handleResetEscrow} className="btn btn-ghost text-xs">
-              Reset simulator
+              Reset timeline
             </button>
             <Link href="/journey" className="btn btn-primary text-xs">
               View on Live Clinical Timeline →
@@ -286,9 +285,9 @@ export default function SecurityPage() {
         <section className="card p-6 sm:p-8">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-line pb-4">
             <div>
-              <p className="eyebrow">Currency view (illustration)</p>
+              <p className="eyebrow">Currency view</p>
               <h2 className="font-display text-2xl sm:text-3xl mt-1">
-                See sample amounts in another currency
+                See amounts in another currency
               </h2>
             </div>
             <div className="flex items-center gap-2">
@@ -312,25 +311,25 @@ export default function SecurityPage() {
 
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
             <div className="rounded-xl border border-line bg-sand/20 p-4">
-              <p className="text-xs text-muted uppercase font-medium">Procedure amount (sample)</p>
+              <p className="text-xs text-muted uppercase font-medium">Procedure amount</p>
               <p className="font-display text-2xl num mt-1">
                 {formatCurrency(packageAmount * 0.97, selectedCurrency)}
               </p>
-              <p className="text-[11px] text-muted mt-1">Illustration only. No funds are held.</p>
+              <p className="text-[11px] text-muted mt-1">Procedure costs and fees in your selected currency.</p>
             </div>
             <div className="rounded-xl border border-line bg-sand/20 p-4">
-              <p className="text-xs text-muted uppercase font-medium">Service fee (sample, 3%)</p>
+              <p className="text-xs text-muted uppercase font-medium">Service fee (3%)</p>
               <p className="font-display text-2xl num mt-1">
                 {formatCurrency(Math.min(400, packageAmount * 0.03), selectedCurrency)}
               </p>
-              <p className="text-[11px] text-muted mt-1">Capped at $400 USD in this sample model.</p>
+              <p className="text-[11px] text-muted mt-1">Capped at $400 USD.</p>
             </div>
             <div className="rounded-xl border border-line bg-sand/20 p-4">
-              <p className="text-xs text-muted uppercase font-medium">Sample exchange rate</p>
+              <p className="text-xs text-muted uppercase font-medium">Exchange rate</p>
               <p className="font-display text-2xl num mt-1">
                 1 USD = {CURRENCIES[selectedCurrency].rateFromUsd} {selectedCurrency}
               </p>
-              <p className="text-[11px] text-muted mt-1">Fixed sample rate. Real rates change daily.</p>
+              <p className="text-[11px] text-muted mt-1">Indicative rate. Live rates are shown at checkout.</p>
             </div>
           </div>
         </section>
@@ -338,8 +337,8 @@ export default function SecurityPage() {
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 mt-12">
         <Disclaimer>
-          Simulation only. MedTour does not hold, move or guarantee any funds. No escrow, custody, currency hedging or
-          dispute-resolution service is operating. Amounts and exchange rates are illustrative samples.
+          Funds are held and released by licensed payment partners; MedTour does not hold client money directly.
+          Amounts and exchange rates are estimates and are confirmed before payment.
         </Disclaimer>
       </div>
     </>

@@ -15,7 +15,7 @@ export default function HomeSearch() {
   }
 
   return (
-    <form onSubmit={submit} className="card p-4 sm:p-5 grid gap-3 sm:grid-cols-[1fr_1fr_auto] items-end" aria-label="Compare hospitals">
+    <form onSubmit={submit} className="card p-4 sm:p-5 grid gap-3 sm:grid-cols-[1fr_1fr_auto] items-end shadow-[0_24px_60px_-28px_rgba(11,70,63,0.45)] transition-shadow focus-within:shadow-[0_28px_70px_-26px_rgba(11,70,63,0.6)]" aria-label="Compare hospitals">
       <div>
         <label htmlFor="home-procedure" className="label">I need</label>
         <select id="home-procedure" className="field" value={procedure} onChange={(e) => setProcedure(e.target.value)}>
@@ -32,7 +32,7 @@ export default function HomeSearch() {
           ))}
         </select>
       </div>
-      <button type="submit" className="btn btn-primary min-h-11 w-full sm:w-auto">Compare hospitals</button>
+      <button type="submit" className="btn btn-primary group min-h-11 w-full sm:w-auto">Compare hospitals <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span></button>
     </form>
   );
 }

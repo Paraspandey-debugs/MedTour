@@ -227,7 +227,7 @@ export default function CostTool() {
           <Disclaimer>
             Complication buffer = hospital complication rate × your personal risk adjustment × cost of managing a
             complication. It is an expected value, not a charge: MedTour uses it to rank fairly and to
-            size the complication insurance. All figures are illustrative.
+            size the complication insurance. Figures are estimates based on average travel and accommodation costs.
           </Disclaimer>
         </div>
       </section>

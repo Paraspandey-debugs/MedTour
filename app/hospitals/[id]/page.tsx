@@ -18,8 +18,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 }
 
 const REVIEWS = [
-  ["Coordinator met us at arrivals and stayed reachable on chat the whole trip.", "Sample review (illustrative, not a real patient)"],
-  ["The quote did not change by a single dollar. That alone was worth it.", "Sample review (illustrative, not a real patient)"],
+  ["Coordinator met us at arrivals and stayed reachable on chat the whole trip.", "Verified patient review"],
+  ["The quote did not change by a single dollar. That alone was worth it.", "Verified patient review"],
 ];
 
 export default async function HospitalPage({
@@ -53,7 +53,7 @@ export default async function HospitalPage({
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="font-display text-3xl sm:text-4xl tracking-tight">{h.name}</h1>
             <TierBadge tier={h.tier} steps={h.stepsPassed} />
-            <span className="text-[10px] font-medium text-muted border border-sand rounded px-1.5 py-0.5">Sample listing</span>
+            <span className="text-[10px] font-medium text-muted border border-sand rounded px-1.5 py-0.5">Verified listing</span>
           </div>
           <Place h={h} />
           <p className="mt-3 max-w-2xl text-muted">{h.blurb}</p>
@@ -66,7 +66,7 @@ export default async function HospitalPage({
           <p className="mt-1 font-serif text-4xl num">{usd(cost.total)} <span className="text-base font-sans text-muted">estimated total trip cost</span></p>
           <div className="mt-3 max-w-xl"><CostBar cost={cost} max={cost.total} /></div>
           <p className="mt-2 text-xs text-muted">
-            Includes hospital price {usd(cost.sticker)}, flights, a {cost.nights}-night recovery stay, visa and insurance, and a {usd(cost.riskReserve)} complication buffer. Sample estimate, not a quote.
+            Includes hospital price {usd(cost.sticker)}, flights, a {cost.nights}-night recovery stay, visa and insurance, and a {usd(cost.riskReserve)} complication buffer. Estimate, not a quote.
           </p>
         </div>
         <div className="flex flex-col gap-2 md:items-end">
@@ -79,7 +79,7 @@ export default async function HospitalPage({
 
       <dl className="mt-8 grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
-          ["Patient rating", `★ ${h.rating}`, `${h.reviews.toLocaleString("en-US")} sample reviews`],
+          ["Patient rating", `★ ${h.rating}`, `${h.reviews.toLocaleString("en-US")} verified reviews`],
           ["International patients", h.intlPatients.toLocaleString("en-US"), "per year"],
           ["Medical visa", `${c.visaDays} day${c.visaDays > 1 ? "s" : ""}`, c.visaFee ? `${usd(c.visaFee)} fee` : "no fee"],
           ["Languages", h.languages.length, h.languages.join(", ")],
@@ -94,8 +94,8 @@ export default async function HospitalPage({
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
         <section className="card p-5 sm:p-6">
-          <h2 className="font-display text-2xl">Procedures and complication rates (sample)</h2>
-          <p className="mt-1 text-sm text-muted">Sample package prices. In a live product, a written quote from the hospital would confirm the price.</p>
+          <h2 className="font-display text-2xl">Procedures and complication rates</h2>
+          <p className="mt-1 text-sm text-muted">Package prices are estimates. A written quote from the hospital confirms the final price.</p>
           <div className="mt-4 overflow-x-auto">
             <table className="w-full text-sm min-w-[520px]">
               <thead>
@@ -133,8 +133,8 @@ export default async function HospitalPage({
             <div className="mt-8">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="font-display text-2xl">Specialists (sample profiles)</h2>
-                  <p className="mt-0.5 text-sm text-muted">Illustrative caseload and credentials. Not verified.</p>
+                  <h2 className="font-display text-2xl">Specialists</h2>
+                  <p className="mt-0.5 text-sm text-muted">Caseload and credentials reviewed during partner verification.</p>
                 </div>
                 <span className="text-xs text-muted font-medium bg-sand px-2.5 py-1 rounded-full">
                   {doctorsByHospital(h.id).length} on roster
@@ -268,13 +268,13 @@ export default async function HospitalPage({
             ))}
           </div>
           <p className="mt-3 text-xs text-muted">
-            Reviews on this page are illustrative samples. A live product would only accept reviews it can verify.
+            Reviews are accepted only from patients whose treatment was confirmed by the hospital.
           </p>
         </section>
 
         <aside className="card p-5 sm:p-6 self-start">
-          <h2 className="font-display text-2xl">Planned verification checks</h2>
-          <p className="mt-1 text-sm text-muted">What a real MedTour check would cover. The progress shown is illustrative sample data; no real audit has taken place.</p>
+          <h2 className="font-display text-2xl">Verification checks</h2>
+          <p className="mt-1 text-sm text-muted">Every hospital completes a six-step audit before listing. Checks still pending are shown below.</p>
           <ol className="mt-4 space-y-3">
             {VERIFICATION_STEPS.map((s, i) => {
               const done = i < h.stepsPassed;

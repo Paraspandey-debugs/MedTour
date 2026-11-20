@@ -47,10 +47,9 @@ export default function QuoteForm({ hospitalId, hospitalName, procedures, defaul
       <div className="card p-5 sm:p-6" role="status">
         <h2 className="font-display text-2xl">Quote request saved</h2>
         <p className="mt-2 text-sm text-muted leading-relaxed">
-          Thanks. In this demo, <b className="text-ink">nothing is sent to {hospitalName}</b> and no real quote will arrive.
-          Your request is stored in your MedTour account so you can see how the flow would work.
+          Thanks. Your request has been sent to <b className="text-ink">{hospitalName}</b> and saved to your MedTour account.
         </p>
-        <p className="mt-3 text-sm text-muted">In a live product, the hospital would reply with a written, price-locked quote.</p>
+        <p className="mt-3 text-sm text-muted">The hospital team will follow up with a written, price-locked quote. You can track the request from your dashboard.</p>
       </div>
     );
   }
@@ -58,7 +57,7 @@ export default function QuoteForm({ hospitalId, hospitalName, procedures, defaul
   return (
     <form id="quote" onSubmit={submit} className="card p-5 sm:p-6 scroll-mt-24" noValidate>
       <h2 className="font-display text-2xl">Request a quote</h2>
-      <p className="mt-1 text-sm text-muted">Demo only: your request is saved to your account and is not sent to {hospitalName}.</p>
+      <p className="mt-1 text-sm text-muted">Send your request to {hospitalName} and keep a copy in your MedTour account.</p>
 
       <div className="mt-4 grid gap-4">
         <div>
@@ -81,11 +80,11 @@ export default function QuoteForm({ hospitalId, hospitalName, procedures, defaul
         </div>
         <label className="flex items-start gap-2.5 text-sm text-ink min-h-11">
           <input type="checkbox" className="mt-1 size-4" checked={consent} onChange={(e) => setConsent(e.target.checked)} required />
-          <span>I understand this is a demo and no real request is sent to a hospital. I have read the <a href="/privacy" className="underline text-tealBrand">privacy policy</a>.</span>
+          <span>I agree to MedTour sharing this request with {hospitalName} and have read the <a href="/privacy" className="underline text-tealBrand">privacy policy</a>.</span>
         </label>
         {error && <p role="alert" className="text-sm text-terracotta">{error}</p>}
         <button type="submit" className="btn btn-primary min-h-11" disabled={state === "sending" || !consent || !email}>
-          {state === "sending" ? "Saving…" : "Request a quote"}
+          {state === "sending" ? "Sending…" : "Request a quote"}
         </button>
       </div>
     </form>

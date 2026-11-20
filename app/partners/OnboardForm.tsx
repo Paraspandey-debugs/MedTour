@@ -13,7 +13,7 @@ export default function OnboardForm() {
   const [sent, setSent] = useState(false);
   const [applicationId, setApplicationId] = useState("");
 
-  // Steps are sequential: the tier is set by the first check a hospital cannot yet pass.
+  // Steps are sequential: the tier is set by the first check a hospital does not pass.
   const firstGap = ready.indexOf(false);
   const passed = firstGap === -1 ? ready.length : firstGap;
   const tier = passed === 6 ? "Platinum" : passed === 5 ? "Gold" : passed >= 4 ? "Verified" : null;
@@ -88,7 +88,7 @@ export default function OnboardForm() {
         </div>
 
         <p className="text-[11px] text-muted italic">
-          Prototype demo: this application has been drafted client-side. No commercial contracts are live.
+          Your application summary is ready. Our partnerships team will review your evidence and follow up with next steps.
         </p>
 
         <div className="flex gap-2 pt-2">
@@ -119,7 +119,7 @@ export default function OnboardForm() {
       <div className="border-b border-line pb-3">
         <h3 className="font-display text-2xl text-ink">Check Your Listing Tier</h3>
         <p className="text-xs text-muted mt-1">
-          Evaluate what tier your healthcare institution or clinic would qualify for based on auditable clinical criteria.
+          Find out which tier your healthcare institution or clinic qualifies for based on auditable clinical criteria.
         </p>
       </div>
 

@@ -45,7 +45,7 @@ export default function GlobalError({
         </div>
 
         <p className="text-[11px] text-muted pt-2 border-t border-line">
-          Informational prototype. In an emergency, contact your local healthcare provider or emergency services.
+          Informational only. In an emergency, contact your local healthcare provider or emergency services.
         </p>
       </div>
     </div>

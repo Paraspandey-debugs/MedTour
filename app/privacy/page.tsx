@@ -16,17 +16,16 @@ export default function PrivacyPage() {
       </PageHead>
 
       <div className="mx-auto max-w-4xl px-4 sm:px-6 pb-20 space-y-10 text-sm leading-relaxed text-ink/90">
-        {/* Prototype Transparency Notice */}
+        {/* Service notice */}
         <div className="rounded-2xl border border-sand bg-terracottaSoft p-5 text-ink space-y-2">
           <div className="flex items-center gap-2">
             <span className="text-base">ℹ️</span>
-            <p className="font-semibold text-sm">Prototype &amp; Demonstration Notice</p>
+            <p className="font-semibold text-sm">Our approach to privacy</p>
           </div>
           <p className="text-xs text-muted leading-relaxed">
-            MedTour is an advanced cross-border healthcare navigation prototype. While our client-side de-identification
-            filter, rate-limiting, and PostgreSQL Row-Level Security (RLS) are actively functional, this policy serves as
-            a good-faith, transparent explanation of our technical architecture. Full regulatory certifications (e.g. HIPAA
-            BAA, ISO 27001, India DPDP registration) are scheduled prior to live commercial operation.
+            MedTour is a cross-border healthcare navigation service. Client-side de-identification, rate limiting and
+            PostgreSQL Row-Level Security (RLS) protect your account and clinical data. This policy explains what we
+            collect, how we use it and the safeguards we apply.
           </p>
         </div>
 
@@ -172,7 +171,7 @@ export default function PrivacyPage() {
             If you have questions regarding this Privacy Policy, wish to exercise your data protection rights, or want to
             request complete deletion of your records, contact the MedTour development team at:
           </p>
-          <p className="font-mono text-xs text-teal font-semibold pt-1">privacy@medtour.example.org</p>
+          <p className="font-mono text-xs text-teal font-semibold pt-1">privacy@medtour.org</p>
         </section>
       </div>
     </>

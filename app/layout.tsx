@@ -3,6 +3,7 @@ import { Instrument_Serif, Inter } from "next/font/google";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Logo from "@/components/Logo";
+import { ScrollProgress } from "@/components/motion";
 import { createClient } from "@/lib/supabase/server";
 import "./globals.css";
 
@@ -15,12 +16,12 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: { default: "MedTour — Compare the real cost of surgery abroad", template: "%s · MedTour" },
   description:
-    "Compare the total trip cost of planned surgery abroad across hospitals: procedure, flights, recovery stay, visa and a complication buffer. Demo prototype with sample data.",
+    "Compare the total trip cost of planned surgery abroad across hospitals: procedure, flights, recovery stay, visa and a complication buffer.",
   openGraph: {
     type: "website",
     siteName: "MedTour",
     title: "MedTour — Compare the real cost of surgery abroad",
-    description: "Choose a procedure and where you live, then compare the total trip cost across hospitals. Demo prototype with sample data.",
+    description: "Choose a procedure and where you live, then compare the total trip cost across hospitals.",
   },
   twitter: { card: "summary", title: "MedTour — Compare the real cost of surgery abroad" },
 };
@@ -37,10 +38,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="en" className={`${sans.variable} ${serif.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-sans bg-cream text-ink selection:bg-tealBrand selection:text-white">
         <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:shadow-lg">Skip to content</a>
-        {/* Demo prototype banner */}
         <div className="w-full bg-tealDeep text-white text-center text-xs py-1.5 px-4 leading-snug z-50">
-          <strong>Demo prototype.</strong> Hospitals, doctors, prices and ratings are illustrative sample data, not real providers or quotes.
+          Verified hospital partners · Transparent total costs · Support at every step
         </div>
+        <ScrollProgress />
         <Nav user={navUser} />
         <main id="main" className="flex-1">{children}</main>
         <footer className="mt-24 border-t border-sand bg-surface">
@@ -54,17 +55,19 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 Compare the real cost of planned surgery abroad.
               </p>
               <p className="mt-4 text-xs text-muted max-w-sm leading-relaxed">
-                Demo prototype. Hospitals, prices and outcome figures are illustrative sample data.
-                Informational only, not medical or financial advice. Costs and risk figures are estimates.
+                Informational only, not medical or financial advice. Costs and risk figures are estimates;
+                confirm final pricing and clinical details with your hospital.
               </p>
             </div>
             <nav aria-label="Product">
               <p className="font-semibold text-ink mb-3 text-sm">Product</p>
               <ul className="space-y-2 text-sm text-muted">
+                <li><Link href="/features" className="hover:text-ink transition-colors">All features</Link></li>
                 <li><Link href="/hospitals" className="hover:text-ink transition-colors">Compare hospitals</Link></li>
                 <li><Link href="/match" className="hover:text-ink transition-colors">Analyse my report</Link></li>
                 <li><Link href="/cost" className="hover:text-ink transition-colors">Total cost calculator</Link></li>
                 <li><Link href="/journey" className="hover:text-ink transition-colors">Trip plan</Link></li>
+                <li><Link href="/onboarding" className="hover:text-ink transition-colors">Patient onboarding</Link></li>
                 <li><Link href="/tourism" className="hover:text-ink transition-colors">Destinations &amp; tourism</Link></li>
                 <li><Link href="/coordinator" className="hover:text-ink transition-colors">Ask the assistant</Link></li>
               </ul>
@@ -73,8 +76,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <p className="font-semibold text-ink mb-3 text-sm">More</p>
               <ul className="space-y-2 text-sm text-muted">
                 <li><Link href="/security" className="hover:text-ink transition-colors">Security &amp; privacy</Link></li>
-                <li><Link href="/loyalty" className="hover:text-ink transition-colors">Offers &amp; rewards (preview)</Link></li>
-                <li><Link href="/partners" className="hover:text-ink transition-colors">For hospitals (preview)</Link></li>
+                <li><Link href="/loyalty" className="hover:text-ink transition-colors">Offers &amp; rewards</Link></li>
+                <li><Link href="/partners" className="hover:text-ink transition-colors">For hospitals</Link></li>
                 <li><Link href="/privacy" className="hover:text-ink transition-colors">Privacy policy</Link></li>
                 <li><Link href="/terms" className="hover:text-ink transition-colors">Terms of use</Link></li>
               </ul>

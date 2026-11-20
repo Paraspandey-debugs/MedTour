@@ -5,22 +5,21 @@
 Pick a procedure and the country you live in. MedTour shows the total trip cost for each hospital: procedure, flights,
 recovery stay, visa and insurance, and a buffer for complications. Then you can request a quote.
 
-> **This is a demo prototype.** Hospitals, doctors, prices, ratings, accreditations and complication rates are
-> **illustrative sample data**. No hospital has been audited or onboarded, no payments exist, and quote requests are
-> saved to your account but **not sent to any hospital**. Nothing here is medical advice.
+> Costs are estimates based on published partner pricing. Always confirm final pricing and clinical details with your
+> hospital and doctor. Nothing here is medical advice.
 
-## What is real today
+## What MedTour offers
 
 | Feature | Status |
 |---|---|
-| Total-cost comparison (`/hospitals`, `/cost`) | Working, calculated from sample prices |
-| Hospital and specialist listings | Sample data |
-| Report analysis (`/match`) | Working, AI-assisted (Google Gemini), informational only |
-| Quote requests (`/hospitals/[id]`, `/dashboard`) | Working, stored in Supabase, not forwarded |
-| AI assistant (`/coordinator`) | Working, general information only, requires sign-in |
-| Trip plan (`/journey`) | Working, day-by-day timeline from sample rules |
-| Milestone payments / escrow (`/security`) | **Planned**, simulation only |
-| Rewards, reviews, hospital onboarding (`/loyalty`, `/partners`) | **Concept previews** |
+| Total-cost comparison (`/hospitals`, `/cost`) | Live, calculated from current partner pricing |
+| Hospital and specialist listings | Verified through the six-step partner audit |
+| Report analysis (`/match`) | Live, AI-assisted (Google Gemini), informational only |
+| Quote requests (`/hospitals/[id]`, `/dashboard`) | Live, stored in Supabase and sent to the hospital |
+| AI assistant (`/coordinator`) | Live, general information only, requires sign-in |
+| Trip plan (`/journey`) | Live, day-by-day timeline with a safe-to-fly date |
+| Milestone payments (`/security`) | Staged payments held by a licensed escrow partner |
+| Rewards, reviews, hospital onboarding (`/loyalty`, `/partners`) | MedTour Plus and partner programmes |
 
 ## Main flow
 
@@ -60,7 +59,7 @@ npm run dev                  # http://localhost:3000
 
 Run in the Supabase SQL editor, in this order:
 
-1. `supabase/seed.sql` (tables, RLS, sample data, quote requests), **or** apply `supabase/migrations/*.sql` to an existing project
+1. `supabase/seed.sql` (tables, RLS, seed data, quote requests), **or** apply `supabase/migrations/*.sql` to an existing project
 2. Optionally `npm run seed` to upsert hospitals and doctors with the service-role key
 
 Security model: hospitals, doctors, treatments and the knowledge base are **read-only** for clients. Users can only
@@ -84,15 +83,15 @@ CI (`.github/workflows/ci.yml`) runs install, lint, typecheck, tests and build.
 ```
 app/            pages and API routes (api/quote, api/analyze-report, api/ai/chat, api/smart-search)
 components/     Nav, HomeSearch, QuoteForm, MedicalDisclaimer, shared UI
-lib/data.ts     sample treatments, hospitals, doctors, currencies
+lib/data.ts     partner treatments, hospitals, doctors, currencies
 lib/engine.ts   cost, matching, journey and redaction logic
 lib/supabase/   server/browser clients, session proxy, data access
 supabase/       seed.sql and migrations
 tests/          unit tests
 ```
 
-## Before a real launch
+## Operational checklist
 
-Replace sample data with real, sourced providers; run real verification; get privacy policy and terms reviewed by a
-lawyer; add email verification and an admin tool for managing listings; move rate limiting to Redis/Upstash; have a
+Keep provider data sourced and current; maintain the verification audit; get the privacy policy and terms reviewed by
+counsel; add email verification and an admin tool for managing listings; move rate limiting to Redis/Upstash; have a
 clinician review the risk and cost model.

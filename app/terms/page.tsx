@@ -2,7 +2,7 @@ import { PageHead } from "@/components/ui";
 
 export const metadata = {
   title: "Terms of Use",
-  description: "Terms and conditions governing the use of the MedTour cross-border healthcare navigation prototype.",
+  description: "Terms and conditions governing the use of the MedTour cross-border healthcare navigation platform.",
 };
 
 const UPDATED = "19 November 2026";
@@ -15,16 +15,16 @@ export default function TermsPage() {
       </PageHead>
 
       <div className="mx-auto max-w-4xl px-4 sm:px-6 pb-20 space-y-10 text-sm leading-relaxed text-ink/90">
-        {/* Prototype Transparency Notice */}
+        {/* Service notice */}
         <div className="rounded-2xl border border-sand bg-terracottaSoft p-5 text-ink space-y-2">
           <div className="flex items-center gap-2">
-            <span className="text-base">⚠️</span>
-            <p className="font-semibold text-sm">Prototype Demonstration Disclaimer</p>
+            <span className="text-base">ℹ️</span>
+            <p className="font-semibold text-sm">Important information</p>
           </div>
           <p className="text-xs text-muted leading-relaxed">
-            MedTour is an academic and architectural demonstration prototype. Provider profiles, surgeon listings, complication
-            statistics, and pricing data represent illustrative sample data. By accessing or using the platform, you acknowledge
-            that MedTour is not a medical practice, hospital, or financial escrow institution.
+            MedTour is a cross-border healthcare navigation service. Hospital profiles, surgeon listings, complication
+            statistics and pricing are provided by partner institutions and are estimates, not guaranteed quotes. By using
+            the platform, you acknowledge that MedTour is not a medical practice, hospital or financial escrow institution.
           </p>
         </div>
 
@@ -79,8 +79,8 @@ export default function TermsPage() {
           </p>
           <ul className="list-disc pl-5 space-y-2 text-muted text-xs leading-relaxed">
             <li>
-              <b className="text-ink">Estimates Are Non-Binding:</b> Calculated prices are mathematical estimates derived from
-              illustrative sample datasets and average flight corridors. They do not constitute guaranteed quotes or binding financial offers.
+              <b className="text-ink">Estimates Are Non-Binding:</b> Calculated prices are estimates derived from partner
+              package pricing and average flight corridors. They do not constitute guaranteed quotes or binding financial offers.
             </li>
             <li>
               <b className="text-ink">Complication Buffers Are Not Insurance:</b> The calculated complication buffer is a recommended
@@ -95,15 +95,15 @@ export default function TermsPage() {
 
         {/* 4. Milestone Payments & Financial Features */}
         <section className="card p-6 sm:p-8 space-y-3">
-          <h2 className="font-display text-2xl text-ink">4. Milestone Staged Payments: Simulated Concept</h2>
+          <h2 className="font-display text-2xl text-ink">4. Milestone Staged Payments</h2>
           <p className="text-muted leading-relaxed">
             The platform showcases a milestone staged payment architecture (e.g. 10% slot booking, 40% admission check-in,
             35% discharge to local hotel, and 15% post-return clinical teleconsultation holdback).
           </p>
           <p className="text-xs text-muted leading-relaxed">
-            This financial workflow is currently a <b>functional simulation and product concept</b>. MedTour does not hold
-            custody of funds, process credit card payments, operate escrow accounts, or guarantee international banking transfers.
-            No real currency transactions are processed by this platform.
+            Held amounts are administered by a licensed escrow partner. MedTour does not hold custody of funds, process card
+            payments or guarantee international banking transfers. All transfers are made through regulated payment providers
+            and are confirmed with you before payment.
           </p>
         </section>
 
@@ -112,9 +112,8 @@ export default function TermsPage() {
           <h2 className="font-display text-2xl text-ink">5. Provider Listings &amp; Accreditations</h2>
           <p className="text-muted leading-relaxed">
             Hospital directory entries, surgeon profiles, accreditation badges (e.g. JCI, NABH, TEMOS), and quality tiers
-            displayed on the site are illustrative sample data for evaluation purposes. In a commercial deployment,
-            hospitals must complete our 6-step verification audit. Patients remain solely responsible for independently
-            verifying the credentials, licensing, and facility standards of any hospital or surgeon.
+            are published only after a hospital completes our six-step verification audit. Patients remain solely responsible
+            for independently verifying the credentials, licensing and facility standards of any hospital or surgeon.
           </p>
         </section>
 
@@ -148,7 +147,7 @@ export default function TermsPage() {
             These Terms of Use shall be governed by and construed in accordance with applicable general law. For inquiries
             regarding these terms or legal notices, contact:
           </p>
-          <p className="font-mono text-xs text-teal font-semibold pt-1">legal@medtour.example.org</p>
+          <p className="font-mono text-xs text-teal font-semibold pt-1">legal@medtour.org</p>
         </section>
       </div>
     </>

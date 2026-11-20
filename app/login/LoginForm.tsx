@@ -10,7 +10,7 @@ interface LoginFormProps {
   nextUrl?: string;
 }
 
-export default function LoginForm({ initialError, initialSuccess, nextUrl = "/dashboard" }: LoginFormProps) {
+export default function LoginForm({ initialError, initialSuccess, nextUrl = "/onboarding" }: LoginFormProps) {
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [loading, setLoading] = useState(false);
   const validatedNext = safeNext(nextUrl);

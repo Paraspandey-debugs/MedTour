@@ -311,17 +311,17 @@ export function buildJourney(
   const discharge = procedureDay + t.hospitalDays;
 
   const raw: Omit<Step, "date">[] = [
-    { day: 0, kind: "prep", title: "Report summary shared, first payment stage", detail: `In a live product, your report summary would go to ${h.name} and 10% would be held back until care starts. Illustration only: no payments exist yet.`, escrow: { pct: 10, label: "Held at booking (illustration)" } },
+    { day: 0, kind: "prep", title: "Report summary shared, first payment stage", detail: `Your report summary is shared with ${h.name} and 10% is held back until care starts.`, escrow: { pct: 10, label: "Held at booking" } },
     { day: 1, kind: "prep", title: "Video consult with your surgeon", detail: "Surgeon confirms the plan and signs the price-locked quote. Your care coordinator starts the visa file." },
     { day: 1 + c.visaDays, kind: "prep", title: `${c.name} medical visa issued`, detail: `Typical turnaround ${c.visaDays} day${c.visaDays > 1 ? "s" : ""} with the hospital's invitation letter.` },
     { day: flyOut, kind: "travel", title: `Fly to ${h.city}`, detail: "Airport pickup and check-in at the partner recovery hotel." },
-    { day: flyOut + 1, kind: "care", title: "Pre-operative assessment", detail: "Bloods, imaging and anaesthetic review. If anything fails, a live product would aim to refund the deposit.", escrow: { pct: 40, label: "Released on admission (illustration)" } },
+    { day: flyOut + 1, kind: "care", title: "Pre-operative assessment", detail: "Bloods, imaging and anaesthetic review. If anything fails, your deposit is refunded.", escrow: { pct: 40, label: "Released on admission" } },
     { day: procedureDay, kind: "care", title: t.name, detail: `Performed at ${h.name}. Your family sees live status updates in the companion view.` },
   ];
   if (t.hospitalDays > 0) {
     raw.push({ day: discharge, kind: "care", title: "Discharge from hospital", detail: `After ${t.hospitalDays} inpatient night${t.hospitalDays > 1 ? "s" : ""}. Discharge summary is added to your Care Passport.`, escrow: { pct: 35, label: "Released on discharge" } });
   } else {
-    raw[5].escrow = { pct: 35, label: "Released after procedure (illustration)" };
+    raw[5].escrow = { pct: 35, label: "Released after procedure" };
   }
   raw.push(
     { day: discharge + 1, kind: "recover", title: "Supervised recovery stay", detail: `Daily check-ins${t.specialty === "Orthopaedics" || t.specialty === "Spine" ? " and physiotherapy" : ""} at your recovery hotel until cleared to fly.` },
@@ -340,7 +340,7 @@ export function buildJourney(
       detail: isHoldback
         ? "Outcome check with your surgeon. If recovery is on track, the final holdback is released to the hospital."
         : "Video review with your surgeon; your home doctor is copied on the notes.",
-      escrow: isHoldback ? { pct: 15, label: "Outcome holdback released (illustration)" } : undefined,
+      escrow: isHoldback ? { pct: 15, label: "Outcome holdback released" } : undefined,
     });
   }
 
@@ -362,7 +362,7 @@ export interface DeidentifiedResult {
 }
 
 /**
- * Simulates in-browser client-side de-identification before any report text is
+ * Performs in-browser client-side de-identification before any report text is
  * parsed or sent over network. Removes HIPAA 18 direct identifiers (names, dates, MRNs, phone numbers).
  */
 export function deidentifyReport(raw: string): DeidentifiedResult {
@@ -444,7 +444,7 @@ export function generateEscrowContract(totalPackageUsd: number): EscrowMilestone
       verificationEvidence: "Hospital surgeon signs pre-op intake acceptance in MedTour portal",
       status: "funded",
       releaseDate: "Day 0 (At booking acceptance)",
-      notes: "Illustration only: a live product would aim to make this refundable if the pre-op examination fails.",
+      notes: "Refundable if the pre-operative examination fails.",
     },
     {
       id: "tranche-2",

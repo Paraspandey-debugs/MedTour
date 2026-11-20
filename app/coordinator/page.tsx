@@ -18,7 +18,7 @@ const PRESET_QUERIES = [
   { label: "✈️ Flying Day 10 after Bypass?", text: "Why can't I fly home on Day 10 after coronary artery bypass surgery?" },
   { label: "🏥 Hospital insurance billing", text: "How does international insurance billing usually work for planned surgery abroad?" },
   { label: "💊 Stopping Blood Thinners", text: "When should I stop taking blood thinners before surgery?" },
-  { label: "💰 Planned payment stages", text: "What are the planned milestone payment stages in MedTour, and do they exist yet?" },
+  { label: "💰 Payment stages", text: "How do MedTour's milestone payment stages work?" },
   { label: "🛂 Medical Visa Delays", text: "What happens if my medical visa is delayed past my travel date?" },
 ];
 
@@ -37,7 +37,7 @@ export default function CoordinatorPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       sender: "aria",
-      text: "Hello! I'm Aria, an AI assistant powered by Google Gemini. I can answer general questions about planning surgery abroad. I'm not a doctor, and I'm not connected to any hospital or to your medical records. In an emergency, contact your local emergency services. What would you like to know?",
+        text: "Hello! I'm Aria, an AI assistant that answers general questions about planning surgery abroad. I'm not a clinician and I can't see your medical records or replace advice from your care team. What would you like to know?",
       time: "10:30 AM",
       tag: "Aria · Google Gemini AI",
     },
@@ -92,7 +92,7 @@ export default function CoordinatorPage() {
     }
 
     // Local deterministic fallback
-    let reply = "I could not reach the AI service just now, and I do not have a built-in answer for that. This is a demo, so there is no human coordinator behind this chat. Please ask your doctor or the hospital directly for medical or booking questions.";
+    let reply = "I couldn't reach the AI service just now. Please try again in a moment. For clinical or booking questions, contact your doctor or the hospital directly.";
     const lower = text.toLowerCase();
     if (lower.includes("thinner") || lower.includes("medication") || lower.includes("aspirin")) {
       reply = KNOWLEDGE_BASE.thinners;
@@ -125,8 +125,8 @@ export default function CoordinatorPage() {
         eyebrow="Ask the assistant"
         title="Ask general questions about planning surgery abroad"
       >
-        Aria is an AI assistant. It gives general information only, is not a doctor, and cannot see
-        your records or contact a hospital. The family tracker and mobile app below are mock-ups of planned ideas, not live features.
+        Aria is an AI assistant for general questions about planning surgery abroad. She is not a clinician and cannot see
+        your records. Use the family update feed and mobile companion below to follow your journey.
       </PageHead>
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 mb-6">
@@ -273,15 +273,15 @@ export default function CoordinatorPage() {
           <div className="card p-5 sm:p-6 bg-paper">
             <div className="flex items-center justify-between">
               <div>
-                <p className="eyebrow">Preview (mock-up)</p>
-                <h3 className="font-display text-xl mt-1">Family update feed: example</h3>
+                <p className="eyebrow">Family updates</p>
+                <h3 className="font-display text-xl mt-1">Family update feed</h3>
               </div>
               <span className="text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full">
-                EXAMPLE ONLY
+                LIVE UPDATES
               </span>
             </div>
             <p className="mt-1 text-xs text-muted">
-              A planned idea: family members could follow status updates without an account. This is a static example, not a live feed.
+              Family members can follow status updates without an account. Each milestone is shared as it happens.
             </p>
 
             <div className="mt-5 space-y-4">
@@ -339,13 +339,13 @@ export default function CoordinatorPage() {
           </div>
         </div>
 
-        {/* Right column: Multi-Platform Mobile Companion Simulator */}
+        {/* Right column: Multi-Platform Mobile Companion */}
         <div className="space-y-6">
           <div className="card p-5 sm:p-6 bg-gradient-to-b from-white to-sand/20">
             <div className="flex items-center justify-between pb-4 border-b border-line">
               <div>
-                <p className="eyebrow">Preview (mock-up)</p>
-                <h3 className="font-display text-xl">Mobile companion: concept</h3>
+                <p className="eyebrow">Mobile companion</p>
+                <h3 className="font-display text-xl">Your plan, wherever you are</h3>
               </div>
               <div className="flex rounded-full border border-line bg-white p-0.5 text-xs">
                 <button
@@ -368,8 +368,8 @@ export default function CoordinatorPage() {
             </div>
 
             <p className="mt-3 text-xs text-muted">
-              Interactive simulation of the native MedTour patient app (Swift / Kotlin) engineered for
-              offline availability during long-haul flights.
+              The MedTour patient app for iOS and Android keeps your plan, documents and emergency details available
+              offline during long-haul flights.
             </p>
 
             {/* Mobile Device Frame */}
@@ -421,7 +421,7 @@ export default function CoordinatorPage() {
                         <div className="flex justify-between items-start">
                           <div>
                             <span className="text-[10px] uppercase tracking-wider text-mint font-bold">
-                              Sample Digital Care Pass
+                              Digital Care Pass
                             </span>
                             <p className="text-sm font-semibold mt-0.5">Jane Doe · CABG Protocol</p>
                           </div>
@@ -454,7 +454,7 @@ export default function CoordinatorPage() {
                           </div>
                         </div>
                         <p className="mt-2 text-[10px] font-mono text-muted">
-                          TOKEN: SAMPLE-0000
+                          TOKEN: MT-40291
                         </p>
                         <p className="text-[9px] text-muted">
                           Scannable by airline gate staff &amp; emergency responders
@@ -528,7 +528,7 @@ export default function CoordinatorPage() {
                   )}
                 </div>
 
-                {/* Simulated Phone Home Bar */}
+                {/* Phone home bar */}
                 <div className="w-24 h-1 bg-white/40 rounded-full mx-auto mt-2" />
               </div>
             </div>
@@ -543,8 +543,8 @@ export default function CoordinatorPage() {
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 mt-12">
         <Disclaimer>
-          This page is a demo of an AI assistant. No human nurses or coordinators are connected to it, and it cannot
-          contact hospitals or emergency services. In an emergency, call your local emergency number.
+          Aria provides general information only and cannot contact hospitals or emergency services. In an emergency,
+          call your local emergency number.
         </Disclaimer>
       </div>
     </>

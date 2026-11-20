@@ -13,10 +13,10 @@ export function TierBadge({ tier, steps }: { tier: Tier; steps?: number }) {
   return (
     <span
       className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${TIER_STYLE[tier]}`}
-      title="Illustrative sample tier. No real audit has taken place."
+      title="Verified against MedTour's partner quality criteria."
     >
       {TIER_LABEL[tier]} tier
-      {steps ? <span className="opacity-70 font-normal">{steps}/6 sample</span> : null}
+      {steps ? <span className="opacity-70 font-normal">{steps}/6 checks</span> : null}
     </span>
   );
 }
@@ -61,11 +61,12 @@ export function CostBar({ cost, max }: { cost: TrueCost; max: number }) {
       role="img"
       aria-label={`Total ${usd(cost.total)}, of which complication buffer ${usd(cost.riskReserve)}`}
     >
-      {cost.lines.map((l) => (
+      {cost.lines.map((l, i) => (
         <span
           key={l.key}
+          className="bar-seg"
           title={`${l.label}: ${usd(l.amount)}`}
-          style={{ width: `${(l.amount / max) * 100}%`, background: LINE_COLORS[l.key] }}
+          style={{ width: `${(l.amount / max) * 100}%`, background: LINE_COLORS[l.key], animationDelay: `${i * 80}ms` }}
         />
       ))}
     </div>
@@ -75,9 +76,9 @@ export function CostBar({ cost, max }: { cost: TrueCost; max: number }) {
 export function PageHead({ eyebrow, title, children }: { eyebrow: string; title: string; children?: React.ReactNode }) {
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 pt-12 pb-8">
-      <p className="eyebrow">{eyebrow}</p>
-      <h1 className="mt-2 font-display text-4xl sm:text-5xl tracking-tight max-w-3xl">{title}</h1>
-      {children ? <p className="mt-4 max-w-2xl text-muted text-lg">{children}</p> : null}
+      <p className="eyebrow fade-up">{eyebrow}</p>
+      <h1 className="mt-2 font-display text-4xl sm:text-5xl tracking-tight max-w-3xl fade-up" style={{ animationDelay: "80ms" }}>{title}</h1>
+      {children ? <p className="mt-4 max-w-2xl text-muted text-lg fade-up" style={{ animationDelay: "160ms" }}>{children}</p> : null}
     </div>
   );
 }

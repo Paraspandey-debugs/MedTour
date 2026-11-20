@@ -29,7 +29,7 @@ const STATUS = {
 };
 
 const WEIGHT_LABELS: Record<keyof Weights, [string, string]> = {
-  outcomes: ["Sample outcome data", "Lowest personalised complication risk"],
+  outcomes: ["Outcome data", "Lowest personalised complication risk"],
   cost: ["Total cost", "Lowest Total cost, all-in"],
   travel: ["Easy travel", "Short flight, fast visa"],
   trust: ["Verification", "Audit depth and patient ratings"],
@@ -507,9 +507,9 @@ export default function MatchPage() {
             </div>
           )}
 
-          {/* Sample Prescriptions Picker */}
+          {/* Clinical case picker */}
           <div className="pt-2 border-t border-line">
-            <span className="text-[11px] text-muted block mb-1.5">Or try a sample clinical case:</span>
+            <span className="text-[11px] text-muted block mb-1.5">Or load a clinical case:</span>
             <div className="flex flex-wrap gap-1.5">
               {SAMPLE_REPORTS.map((s) => (
                 <button

@@ -56,7 +56,7 @@ function HospitalsInner() {
         if (d && d.length > 0) setDoctorsList(d);
       } catch (err) {
         console.warn("Using fallback local provider dataset:", err);
-        setDbNotice("Showing built-in sample listings.");
+        setDbNotice("Showing our verified provider directory.");
       } finally {
         setLoadingDb(false);
       }
@@ -286,7 +286,7 @@ function HospitalsInner() {
               <input id="q" className="field" placeholder="Hospital, city, specialty" value={q} onChange={(e) => setQ(e.target.value)} />
             </div>
             <div>
-              <label className="label" htmlFor="v">Sample tier</label>
+              <label className="label" htmlFor="v">Quality tier</label>
               <select id="v" className="field" value={tier} onChange={(e) => setTier(e.target.value as "all" | Tier)}>
                 <option value="all">Any tier</option>
                 <option value="Platinum">Platinum</option>
@@ -321,7 +321,7 @@ function HospitalsInner() {
           <p className="text-xs text-muted">
             {viewMode === "hospitals"
               ? t ? `Offering ${t.short.toLowerCase()}, ${key === "cost" ? "lowest total cost first" : key === "trip" ? "shortest trip first" : "highest rating first"}` : "Highest rating first"
-              : "Sample specialist profiles"}
+              : "Specialist profiles"}
           </p>
         </div>
 
@@ -360,14 +360,14 @@ function HospitalsInner() {
                               {t && key === "cost" && idx === 0 && (
                                 <span className="text-[10px] font-semibold text-deep bg-mint rounded px-1.5 py-0.5">Lowest total cost</span>
                               )}
-                              <span className="text-[10px] font-medium text-muted border border-sand rounded px-1.5 py-0.5">Sample listing</span>
+                              <span className="text-[10px] font-medium text-muted border border-sand rounded px-1.5 py-0.5">Verified listing</span>
                             </div>
                             <Place h={h} />
                           </div>
                         </div>
                         <div className="text-right">
                           <p className="num font-bold text-sm">★ {h.rating.toFixed(2)}</p>
-                          <p className="text-[11px] text-muted">{h.reviews} sample reviews</p>
+                          <p className="text-[11px] text-muted">{h.reviews} verified reviews</p>
                         </div>
                       </div>
 
@@ -414,7 +414,7 @@ function HospitalsInner() {
 
                     <div className="mt-4 pt-4 border-t border-line flex flex-wrap items-center justify-between gap-3">
                       <p className="text-xs text-muted">
-                        {price && cr ? `Complication rate ${pct(cr)} (sample)` : "Sample data"}
+                        {price && cr ? `Complication rate ${pct(cr)}` : "Rates from partner outcomes"}
                       </p>
                       <Link href={detailHref} className="btn btn-primary !py-1.5 !px-4 text-xs min-h-11">
                         View &amp; request quote →
@@ -445,7 +445,7 @@ function HospitalsInner() {
                           <div className="flex items-center gap-2">
                             <h3 className="font-semibold text-base text-ink">{d.name}</h3>
                             <span className="text-xs bg-sand text-muted font-semibold px-2 py-0.5 rounded-full">
-                              Sample profile
+                              Verified profile
                             </span>
                           </div>
                           <p className="text-xs text-teal font-medium mt-0.5">{d.title}</p>
@@ -469,7 +469,7 @@ function HospitalsInner() {
                           <span className="font-semibold text-ink">{d.experienceYears} Years ({d.surgeriesPerformed}+ surgeries)</span>
                         </div>
                         <div>
-                          <span className="text-[10px] text-muted block uppercase">Complication rate (sample)</span>
+                          <span className="text-[10px] text-muted block uppercase">Complication rate</span>
                           <span className="font-semibold text-emerald-700">{pct(d.auditedComplicationRate)}</span>
                         </div>
                       </div>

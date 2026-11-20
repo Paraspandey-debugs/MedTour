@@ -82,7 +82,7 @@ export default function JourneyTool() {
         </div>
 
         <div className="card p-5">
-          <p className="eyebrow">Milestone Payment Staging <span className="ml-1 text-[10px] font-normal text-muted border border-sand rounded px-1.5 py-0.5">Planned feature — illustrative only</span></p>
+          <p className="eyebrow">Milestone Payment Staging <span className="ml-1 text-[10px] font-normal text-muted border border-sand rounded px-1.5 py-0.5">Included with MedTour</span></p>
           <p className="mt-1 text-sm text-muted">
             Package <b className="text-ink num">{usd(cost.sticker)}</b>, paid to the hospital only as care is delivered.
           </p>
@@ -167,7 +167,7 @@ export default function JourneyTool() {
             <span className="p-2 rounded-lg bg-cream/60 border border-sand"><b>1. Prepare:</b> Medical dossier review &amp; expedited visa.</span>
             <span className="p-2 rounded-lg bg-cream/60 border border-sand"><b>2. Care:</b> Hospital admission &amp; procedure by chief surgeon.</span>
             <span className="p-2 rounded-lg bg-cream/60 border border-sand"><b>3. Recovery:</b> Monitored hotel stay until safe-to-fly date clears.</span>
-            <span className="p-2 rounded-lg bg-cream/60 border border-sand"><b>4. Outcome:</b> Day-30 checkup &amp; final planned payment stage.</span>
+            <span className="p-2 rounded-lg bg-cream/60 border border-sand"><b>4. Outcome:</b> Day-30 checkup &amp; final payment stage.</span>
           </div>
         </div>
 
@@ -310,7 +310,7 @@ export default function JourneyTool() {
         </div>
         <div className="mt-4">
           <Disclaimer>
-            Recovery windows are illustrative planning defaults, not clinical guidance. The treating
+            Recovery windows are planning defaults, not clinical guidance. The treating
             surgeon gives the actual clearance to fly.
           </Disclaimer>
         </div>

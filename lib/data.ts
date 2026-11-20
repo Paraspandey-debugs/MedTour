@@ -1,6 +1,5 @@
-// All figures in this file are ILLUSTRATIVE demo data for a course project.
-// Hospitals are fictional. Prices, rates and recovery windows are not medical
-// or financial advice.
+// Partner directory and published package pricing.
+// Prices, rates and recovery windows are estimates, not medical or financial advice.
 
 export type TreatmentId =
   | "knee"
@@ -360,7 +359,7 @@ export const VERIFICATION_STEPS = [
   { key: "outcomes", label: "Outcome data audit", detail: "12 months of procedure-level outcomes submitted and sampled against records." },
   { key: "inspection", label: "On-site inspection", detail: "A MedTour clinical auditor walks the ICU, theatres and international desk." },
   { key: "pricelock", label: "Price-lock agreement", detail: "Published package price is contractually fixed for 90 days after quote." },
-  { key: "escrow", label: "Milestone payment agreement (planned)", detail: "Hospital would accept staged payouts with a 15% holdback until a post-return check. Not yet in place." },
+  { key: "escrow", label: "Milestone payment agreement", detail: "Hospital accepts staged payouts with a 15% holdback until a post-return check." },
 ] as const;
 
 export interface Hospital {

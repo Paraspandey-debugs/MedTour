@@ -14,7 +14,8 @@ export interface NavUser {
 
 const MAIN_LINKS = [
   { href: "/hospitals", label: "Compare hospitals" },
-  { href: "/tourism", label: "Destinations & Tourism" },
+  { href: "/tourism", label: "Destinations" },
+  { href: "/onboarding", label: "Plan my trip" },
   { href: "/#how-it-works", label: "How it works" },
   { href: "/security", label: "Security & privacy" },
 ];
@@ -105,12 +106,12 @@ export default function Nav({ user: initialUser }: { user?: NavUser | null }) {
 
   const initials = user?.email ? user.email.slice(0, 2).toUpperCase() : "PT";
   const linkCls = (href: string) =>
-    `whitespace-nowrap text-sm font-medium transition-colors ${
+    `underline-grow whitespace-nowrap text-sm font-medium transition-colors ${
       !href.includes("#") && path.startsWith(href) ? "text-ink font-semibold" : "text-muted hover:text-ink"
     }`;
 
   return (
-    <header className="sticky top-0 z-50 bg-cream/95 backdrop-blur border-b border-sand">
+    <header className="sticky top-0 z-50 bg-cream/85 backdrop-blur-md border-b border-sand">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-6">
         <Link href="/" className="flex items-center gap-2.5 shrink-0" aria-label="MedTour home">
           <Logo className="h-7 w-auto shrink-0" />
@@ -138,7 +139,7 @@ export default function Nav({ user: initialUser }: { user?: NavUser | null }) {
                 <span aria-hidden>▾</span>
               </button>
               {menuOpen && (
-                <div role="menu" className="absolute right-0 top-full mt-2 w-56 rounded-2xl border border-sand bg-surface shadow-xl p-2 text-sm">
+                <div role="menu" className="menu-in absolute right-0 top-full mt-2 w-56 rounded-2xl border border-sand bg-surface shadow-xl p-2 text-sm">
                   {ACCOUNT_LINKS.map((l) => (
                     <Link key={l.href} role="menuitem" href={l.href} className="block px-3.5 py-2.5 rounded-xl hover:bg-cream">{l.label}</Link>
                   ))}
@@ -171,7 +172,7 @@ export default function Nav({ user: initialUser }: { user?: NavUser | null }) {
       </div>
 
       {mobileOpen && (
-        <div id="mobile-menu" ref={sheetRef} className="lg:hidden border-t border-sand bg-cream px-4 py-3">
+        <div id="mobile-menu" ref={sheetRef} className="sheet-in lg:hidden border-t border-sand bg-cream px-4 py-3">
           <nav aria-label="Mobile" className="flex flex-col">
             {MAIN_LINKS.map((l) => (
               <Link key={l.href} href={l.href} className="min-h-11 flex items-center text-sm font-medium text-ink">{l.label}</Link>

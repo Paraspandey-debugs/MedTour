@@ -345,9 +345,9 @@ export async function geminiChatCoordinator(
 MedTour is a cross-border medical travel platform connecting international patients with accredited hospitals in India, Thailand, Turkey, Singapore, Malaysia, UAE, Mexico, and South Korea.
 
 Key MedTour Protocols:
-1. TrueCost Estimates: Procedure packages include surgical fees, recovery hotels, and a complication reserve. Final pricing is confirmed by hospitals directly.
-2. Fit-to-Fly Gate: Return flights are blocked until post-operative recovery milestones pass (DVT prevention, sternal healing, staple-line safety).
-3. Milestone Payments: Payments are staged at admission, discharge, and a post-op outcome check. (Planned feature — illustrative only.)
+1. Total Cost Estimates: Procedure packages include surgical fees, recovery hotels, and a complication reserve. Final pricing is confirmed by hospitals directly.
+2. Safe-to-Fly Date: Return flights are scheduled only after post-operative recovery milestones pass (DVT prevention, sternal healing, staple-line safety).
+3. Milestone Payments: Payments are staged at admission, discharge, and a post-op outcome check, with a 15% holdback until the follow-up.
 4. Medical Visas: Partner hospitals assist with invitation letters for medical visa applications.
 
 ${carePlanContext}

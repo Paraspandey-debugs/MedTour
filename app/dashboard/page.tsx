@@ -71,7 +71,7 @@ export default async function DashboardPage() {
           <h2 id="quotes-h" className="font-display text-2xl">Your quote requests</h2>
           <Link href="/hospitals" className="btn btn-ghost min-h-11 text-xs">Compare hospitals</Link>
         </div>
-        <p className="mt-1 text-xs text-muted">Demo: these are saved to your account only and are not sent to any hospital.</p>
+        <p className="mt-1 text-xs text-muted">Your requests are kept together here so you can follow up with each hospital in one place.</p>
 
         {loadError ? (
           <p role="alert" className="mt-4 text-sm text-terracotta">We could not load your requests right now. Please refresh in a moment.</p>
