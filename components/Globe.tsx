@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import createGlobe from "cobe";
 
 export interface GlobeLocation {
   id: string;
@@ -31,29 +32,6 @@ export const MEDICAL_HUBS: MedicalHub[] = [
   { id: "tijuana", name: "Tijuana", country: "Mexico", flag: "🇲🇽", lat: 32.5149, lng: -117.0382 },
 ];
 
-// Pre-calculated representative landmass points for earth continents (lat, lng in degrees)
-const LAND_POINTS: [number, number][] = [
-  // North America
-  [45, -100], [55, -110], [50, -85], [40, -75], [35, -90], [30, -100], [38, -120], [48, -122],
-  [60, -135], [64, -150], [25, -80], [20, -100], [50, -65], [32, -85], [42, -93], [37, -105],
-  // South America
-  [5, -73], [-5, -60], [-10, -50], [-15, -45], [-23, -46], [-34, -58], [-20, -65], [-33, -70],
-  [-12, -77], [0, -78], [-45, -70], [-52, -68],
-  // Europe
-  [50, 10], [52, 0], [48, 2], [40, -4], [42, 12], [46, 14], [55, 37], [60, 25],
-  [58, 15], [60, 10], [54, 18], [44, 20], [38, 24], [56, -4], [53, -8],
-  // Africa
-  [30, 31], [25, 15], [20, 0], [15, -15], [10, 10], [5, 25], [0, 35], [-5, 20],
-  [-15, 30], [-25, 28], [-33, 20], [10, 40], [12, -5], [-20, 18], [-4, 39], [32, -5],
-  // Asia
-  [35, 105], [30, 115], [40, 116], [22, 114], [35, 139], [34, 135], [43, 142], [37, 127],
-  [55, 80], [60, 100], [65, 130], [50, 60], [45, 75], [25, 85], [20, 78], [13, 80],
-  [23, 70], [15, 101], [10, 106], [1, 104], [32, 53], [24, 45], [33, 44], [38, 35],
-  // Oceania / Australia
-  [-25, 135], [-33, 151], [-37, 145], [-31, 115], [-20, 148], [-12, 131], [-41, 174], [-36, 175],
-  [-3, 140], [-6, 106], [-8, 115],
-];
-
 interface GlobeProps {
   selectedLocation: GlobeLocation;
   targetHub?: MedicalHub;
@@ -65,408 +43,164 @@ export default function Globe({
   selectedLocation,
   targetHub,
   className = "",
-  size = 360,
+  size = 380,
 }: GlobeProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const pointerInteracting = useRef<number | null>(null);
+  const pointerInteractionMovement = useRef(0);
+  const currentPhi = useRef(0);
+  const currentTheta = useRef(0);
+  const targetPhi = useRef(0);
+  const targetTheta = useRef(0);
+  const [activeHubIndex, setActiveHubIndex] = useState(0);
 
-  // Current view rotation angles (in radians)
-  const currentRot = useRef({
-    yaw: -selectedLocation.lng * (Math.PI / 180),
-    pitch: selectedLocation.lat * (Math.PI / 180) * 0.4,
-  });
-
-  // Target rotation angles towards selected location
-  const targetRot = useRef({
-    yaw: -selectedLocation.lng * (Math.PI / 180),
-    pitch: selectedLocation.lat * (Math.PI / 180) * 0.4,
-  });
-
-  const isDragging = useRef(false);
-  const lastMousePos = useRef({ x: 0, y: 0 });
-  const animFrame = useRef<number | null>(null);
-  const pulsePhase = useRef(0);
-  const beamProgress = useRef(0);
-
-  // Update target rotation when selected location changes
+  // Compute spherical target angles from lat/lng
   useEffect(() => {
-    targetRot.current = {
-      yaw: -selectedLocation.lng * (Math.PI / 180),
-      pitch: Math.max(-0.6, Math.min(0.6, selectedLocation.lat * (Math.PI / 180) * 0.5)),
-    };
+    targetPhi.current = (-selectedLocation.lng * Math.PI) / 180 + Math.PI / 2;
+    targetTheta.current = (selectedLocation.lat * Math.PI) / 180 * 0.45;
   }, [selectedLocation]);
+
+  // Rotate through destination hubs every 4 seconds for route preview
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveHubIndex((prev) => (prev + 1) % MEDICAL_HUBS.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const highlightedHub = targetHub || MEDICAL_HUBS[activeHubIndex];
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
 
-    // Handle High-DPI screens
-    const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
-    canvas.width = size * dpr;
-    canvas.height = size * dpr;
-    ctx.scale(dpr, dpr);
+    // Markers: Selected Origin (terracotta), Medical Hubs (teal)
+    const markers = [
+      {
+        location: [selectedLocation.lat, selectedLocation.lng] as [number, number],
+        size: 0.12,
+        color: [0.83, 0.36, 0.17] as [number, number, number],
+      },
+      ...MEDICAL_HUBS.map((hub) => ({
+        location: [hub.lat, hub.lng] as [number, number],
+        size: hub.id === highlightedHub.id ? 0.08 : 0.04,
+        color: hub.id === highlightedHub.id ? [0.83, 0.36, 0.17] as [number, number, number] : [0.05, 0.66, 0.61] as [number, number, number],
+      })),
+    ];
 
-    const radius = size * 0.38;
-    const cx = size / 2;
-    const cy = size / 2;
+    // Native 3D flight arcs connecting Origin to Medical Hubs
+    const arcs = MEDICAL_HUBS.map((hub) => ({
+      from: [selectedLocation.lat, selectedLocation.lng] as [number, number],
+      to: [hub.lat, hub.lng] as [number, number],
+      color: hub.id === highlightedHub.id ? [0.83, 0.36, 0.17] as [number, number, number] : [0.05, 0.66, 0.61] as [number, number, number],
+    }));
 
-    let running = true;
+    const globe = createGlobe(canvas, {
+      devicePixelRatio: Math.min(2, typeof window !== "undefined" ? window.devicePixelRatio || 2 : 2),
+      width: (size || 380) * 2,
+      height: (size || 380) * 2,
+      phi: targetPhi.current,
+      theta: targetTheta.current,
+      dark: 1,
+      diffuse: 1.25,
+      mapSamples: 18000,
+      mapBrightness: 6,
+      baseColor: [0.04, 0.22, 0.19], // Deep MedTour teal (#0B463F)
+      markerColor: [0.83, 0.36, 0.17], // Terracotta (#D45B2C)
+      glowColor: [0.05, 0.66, 0.61], // Mint / bright teal glow (#0CA99D)
+      markers,
+      arcs,
+      arcColor: [0.05, 0.66, 0.61],
+      arcWidth: 1.5,
+      arcHeight: 0.35,
+    });
 
-    // Convert lat/lng to 3D Cartesian on unit sphere
-    const latLngToVec3 = (lat: number, lng: number): [number, number, number] => {
-      const phi = (90 - lat) * (Math.PI / 180);
-      const theta = (lng + 180) * (Math.PI / 180);
-      const x = -Math.sin(phi) * Math.cos(theta);
-      const z = Math.sin(phi) * Math.sin(theta);
-      const y = Math.cos(phi);
-      return [x, y, z];
-    };
-
-    // Rotate point around Y-axis (yaw) and X-axis (pitch)
-    const rotateVec = (
-      [x, y, z]: [number, number, number],
-      yaw: number,
-      pitch: number
-    ): [number, number, number] => {
-      // Rotate around Y
-      const cosY = Math.cos(yaw);
-      const sinY = Math.sin(yaw);
-      const x1 = x * cosY + z * sinY;
-      const z1 = -x * sinY + z * cosY;
-
-      // Rotate around X
-      const cosP = Math.cos(pitch);
-      const sinP = Math.sin(pitch);
-      const y2 = y * cosP - z1 * sinP;
-      const z2 = y * sinP + z1 * cosP;
-
-      return [x1, y2, z2];
-    };
-
+    let animId: number;
     const render = () => {
-      if (!running) return;
-
-      // Smooth camera interpolation towards target
-      if (!isDragging.current) {
-        currentRot.current.yaw += (targetRot.current.yaw - currentRot.current.yaw) * 0.06;
-        currentRot.current.pitch += (targetRot.current.pitch - currentRot.current.pitch) * 0.06;
-        // Subtle ambient continuous drift
-        targetRot.current.yaw -= 0.0012;
+      // When user is not dragging, gently auto-drift and lerp towards target
+      if (!pointerInteracting.current) {
+        targetPhi.current += 0.002;
       }
+      currentPhi.current += (targetPhi.current - currentPhi.current) * 0.06;
+      currentTheta.current += (targetTheta.current - currentTheta.current) * 0.06;
 
-      pulsePhase.current = (pulsePhase.current + 0.04) % (Math.PI * 2);
-      beamProgress.current = (beamProgress.current + 0.008) % 1;
-
-      ctx.clearRect(0, 0, size, size);
-
-      // 1. Atmospheric Outer Glow
-      const glowGrad = ctx.createRadialGradient(cx, cy, radius * 0.85, cx, cy, radius * 1.25);
-      glowGrad.addColorStop(0, "rgba(13, 92, 83, 0.25)");
-      glowGrad.addColorStop(0.5, "rgba(12, 169, 157, 0.08)");
-      glowGrad.addColorStop(1, "rgba(23, 35, 33, 0)");
-      ctx.fillStyle = glowGrad;
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius * 1.25, 0, Math.PI * 2);
-      ctx.fill();
-
-      // 2. Earth Sphere Body
-      const sphereGrad = ctx.createRadialGradient(
-        cx - radius * 0.35,
-        cy - radius * 0.35,
-        radius * 0.1,
-        cx,
-        cy,
-        radius
-      );
-      sphereGrad.addColorStop(0, "#123c38");
-      sphereGrad.addColorStop(0.5, "#0b2b28");
-      sphereGrad.addColorStop(1, "#071c19");
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-      ctx.clip();
-
-      ctx.fillStyle = sphereGrad;
-      ctx.fill();
-
-      // 3. Graticule (Latitudinal and Longitudinal Grid Lines)
-      ctx.strokeStyle = "rgba(123, 168, 162, 0.14)";
-      ctx.lineWidth = 1;
-
-      // Parallels (Latitude rings)
-      [-60, -30, 0, 30, 60].forEach((lat) => {
-        ctx.beginPath();
-        let first = true;
-        for (let lng = -180; lng <= 180; lng += 10) {
-          const v = latLngToVec3(lat, lng);
-          const [rx, ry, rz] = rotateVec(v, currentRot.current.yaw, currentRot.current.pitch);
-          if (rz > 0) {
-            const px = cx + rx * radius;
-            const py = cy - ry * radius;
-            if (first) {
-              ctx.moveTo(px, py);
-              first = false;
-            } else {
-              ctx.lineTo(px, py);
-            }
-          } else {
-            first = true;
-          }
-        }
-        ctx.stroke();
+      globe.update({
+        phi: currentPhi.current + pointerInteractionMovement.current,
+        theta: currentTheta.current,
       });
 
-      // Meridians (Longitude lines)
-      [-120, -60, 0, 60, 120, 180].forEach((lng) => {
-        ctx.beginPath();
-        let first = true;
-        for (let lat = -80; lat <= 80; lat += 8) {
-          const v = latLngToVec3(lat, lng);
-          const [rx, ry, rz] = rotateVec(v, currentRot.current.yaw, currentRot.current.pitch);
-          if (rz > 0) {
-            const px = cx + rx * radius;
-            const py = cy - ry * radius;
-            if (first) {
-              ctx.moveTo(px, py);
-              first = false;
-            } else {
-              ctx.lineTo(px, py);
-            }
-          } else {
-            first = true;
-          }
-        }
-        ctx.stroke();
-      });
-
-      // 4. Landmass Points
-      LAND_POINTS.forEach(([lat, lng]) => {
-        const v = latLngToVec3(lat, lng);
-        const [rx, ry, rz] = rotateVec(v, currentRot.current.yaw, currentRot.current.pitch);
-        if (rz > 0) {
-          const px = cx + rx * radius;
-          const py = cy - ry * radius;
-          const alpha = Math.max(0.15, rz);
-          ctx.fillStyle = `rgba(85, 196, 190, ${alpha * 0.45})`;
-          ctx.beginPath();
-          ctx.arc(px, py, 2.4 * (0.6 + rz * 0.4), 0, Math.PI * 2);
-          ctx.fill();
-        }
-      });
-
-      // 5. Medical Hubs (Destinations)
-      const visibleHubs: { hub: MedicalHub; px: number; py: number; rz: number }[] = [];
-      MEDICAL_HUBS.forEach((hub) => {
-        const v = latLngToVec3(hub.lat, hub.lng);
-        const [rx, ry, rz] = rotateVec(v, currentRot.current.yaw, currentRot.current.pitch);
-        if (rz > 0) {
-          const px = cx + rx * radius;
-          const py = cy - ry * radius;
-          visibleHubs.push({ hub, px, py, rz });
-
-          // Draw hub node
-          const isTarget = targetHub?.id === hub.id;
-          ctx.fillStyle = isTarget ? "#17b4a5" : "#0ca99d";
-          ctx.beginPath();
-          ctx.arc(px, py, isTarget ? 4.5 : 3.2, 0, Math.PI * 2);
-          ctx.fill();
-
-          ctx.strokeStyle = "rgba(255, 255, 255, 0.7)";
-          ctx.lineWidth = 1;
-          ctx.stroke();
-        }
-      });
-
-      // 6. Selected Origin Marker & Radar Ping
-      const originV = latLngToVec3(selectedLocation.lat, selectedLocation.lng);
-      const [ox, oy, oz] = rotateVec(originV, currentRot.current.yaw, currentRot.current.pitch);
-      let originPx = 0;
-      let originPy = 0;
-
-      if (oz > 0) {
-        originPx = cx + ox * radius;
-        originPy = cy - oy * radius;
-
-        // Animated radar pulse rings
-        const ringRadius = 4 + Math.sin(pulsePhase.current) * 8 + 8;
-        const ringAlpha = Math.max(0, 1 - ringRadius / 22);
-
-        ctx.strokeStyle = `rgba(212, 91, 44, ${ringAlpha})`;
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.arc(originPx, originPy, ringRadius, 0, Math.PI * 2);
-        ctx.stroke();
-
-        // Origin central core
-        ctx.fillStyle = "#d45b2c";
-        ctx.beginPath();
-        ctx.arc(originPx, originPy, 5.5, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.strokeStyle = "#ffffff";
-        ctx.lineWidth = 2;
-        ctx.stroke();
-      }
-
-      // 7. Flight Arcs Connecting Origin to Medical Hubs
-      if (oz > -0.2) {
-        const hubsToConnect = targetHub
-          ? MEDICAL_HUBS.filter((h) => h.id === targetHub.id)
-          : MEDICAL_HUBS.slice(0, 4);
-
-        hubsToConnect.forEach((hub) => {
-          const hubV = latLngToVec3(hub.lat, hub.lng);
-          const [hx, hy, hz] = rotateVec(hubV, currentRot.current.yaw, currentRot.current.pitch);
-
-          if (hz > -0.2) {
-            const hpx = cx + hx * radius;
-            const hpy = cy - hy * radius;
-
-            // Arc control point lifted outward into 3D space
-            const midX = (ox + hx) * 0.5;
-            const midY = (oy + hy) * 0.5;
-            const midZ = (oz + hz) * 0.5;
-            const dist = Math.sqrt(midX * midX + midY * midY + midZ * midZ) || 1;
-            const arcAltitude = 1.25; // Bulge outwards
-
-            const ctlX = cx + (midX / dist) * radius * arcAltitude;
-            const ctlY = cy - (midY / dist) * radius * arcAltitude;
-
-            // Draw curved flight arc
-            ctx.beginPath();
-            ctx.moveTo(originPx, originPy);
-            ctx.quadraticCurveTo(ctlX, ctlY, hpx, hpy);
-            ctx.strokeStyle = "rgba(12, 169, 157, 0.4)";
-            ctx.lineWidth = 1.5;
-            ctx.setLineDash([3, 4]);
-            ctx.stroke();
-            ctx.setLineDash([]); // Reset dash
-
-            // Draw animated traveling photon beam along quadratic curve
-            const t = (beamProgress.current + (hub.lng % 50) / 100) % 1;
-            const oneMinusT = 1 - t;
-            // Quadratic Bezier formula: B(t) = (1-t)^2 P0 + 2(1-t)t P1 + t^2 P2
-            const bx =
-              oneMinusT * oneMinusT * originPx +
-              2 * oneMinusT * t * ctlX +
-              t * t * hpx;
-            const by =
-              oneMinusT * oneMinusT * originPy +
-              2 * oneMinusT * t * ctlY +
-              t * t * hpy;
-
-            ctx.fillStyle = "#ffffff";
-            ctx.beginPath();
-            ctx.arc(bx, by, 3, 0, Math.PI * 2);
-            ctx.fill();
-
-            const beamGlow = ctx.createRadialGradient(bx, by, 1, bx, by, 7);
-            beamGlow.addColorStop(0, "rgba(85, 196, 190, 0.9)");
-            beamGlow.addColorStop(1, "rgba(85, 196, 190, 0)");
-            ctx.fillStyle = beamGlow;
-            ctx.beginPath();
-            ctx.arc(bx, by, 7, 0, Math.PI * 2);
-            ctx.fill();
-          }
-        });
-      }
-
-      ctx.restore(); // restore clipping
-
-      // 8. Outer Rim & Atmosphere Ring
-      ctx.strokeStyle = "rgba(13, 92, 83, 0.45)";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-      ctx.stroke();
-
-      // 9. Location Pin Tooltip when facing front
-      if (oz > 0.15) {
-        ctx.fillStyle = "rgba(23, 35, 33, 0.88)";
-        ctx.strokeStyle = "rgba(212, 91, 44, 0.6)";
-        ctx.lineWidth = 1;
-
-        const labelText = `${selectedLocation.flag} ${selectedLocation.name}`;
-        ctx.font = "bold 11px Inter, system-ui, sans-serif";
-        const textMetrics = ctx.measureText(labelText);
-        const padding = 6;
-        const boxW = textMetrics.width + padding * 2;
-        const boxH = 20;
-        const boxX = originPx - boxW / 2;
-        const boxY = originPy - 28;
-
-        // Rounded box
-        ctx.beginPath();
-        ctx.roundRect(boxX, boxY, boxW, boxH, 6);
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.fillStyle = "#ffffff";
-        ctx.fillText(labelText, boxX + padding, boxY + 14);
-      }
-
-      animFrame.current = requestAnimationFrame(render);
+      animId = requestAnimationFrame(render);
     };
 
-    render();
+    animId = requestAnimationFrame(render);
 
     return () => {
-      running = false;
-      if (animFrame.current) cancelAnimationFrame(animFrame.current);
+      cancelAnimationFrame(animId);
+      globe.destroy();
     };
-  }, [selectedLocation, targetHub, size]);
-
-  // Interactive mouse/touch dragging handlers
-  const handlePointerDown = (e: React.PointerEvent) => {
-    isDragging.current = true;
-    lastMousePos.current = { x: e.clientX, y: e.clientY };
-    if (canvasRef.current) canvasRef.current.setPointerCapture(e.pointerId);
-  };
-
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isDragging.current) return;
-    const dx = e.clientX - lastMousePos.current.x;
-    const dy = e.clientY - lastMousePos.current.y;
-    lastMousePos.current = { x: e.clientX, y: e.clientY };
-
-    currentRot.current.yaw += dx * 0.008;
-    currentRot.current.pitch = Math.max(
-      -0.8,
-      Math.min(0.8, currentRot.current.pitch - dy * 0.008)
-    );
-    targetRot.current.yaw = currentRot.current.yaw;
-    targetRot.current.pitch = currentRot.current.pitch;
-  };
-
-  const handlePointerUp = (e: React.PointerEvent) => {
-    isDragging.current = false;
-    if (canvasRef.current) canvasRef.current.releasePointerCapture(e.pointerId);
-  };
+  }, [selectedLocation, highlightedHub, size]);
 
   return (
     <div
-      ref={containerRef}
-      className={`relative flex items-center justify-center select-none ${className}`}
-      style={{ width: size, height: size }}
+      className={`relative flex flex-col items-center justify-center select-none overflow-hidden rounded-3xl ${className}`}
+      style={{ width: "100%", maxWidth: size, height: size }}
     >
+      {/* Radial Atmosphere Ambient Backdrop */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(12,169,157,0.18)_0%,rgba(11,70,63,0.06)_50%,transparent_75%)] pointer-events-none" />
+
+      {/* WebGL Canvas */}
       <canvas
         ref={canvasRef}
-        style={{ width: size, height: size }}
-        className="cursor-grab active:cursor-grabbing rounded-full touch-none"
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
-        title="Interactive 3D Medical Route Globe: Click and drag to spin"
+        style={{
+          width: size,
+          height: size,
+          maxWidth: "100%",
+          aspectRatio: "1",
+        }}
+        className="cursor-grab active:cursor-grabbing touch-none relative z-10"
+        onPointerDown={(e) => {
+          pointerInteracting.current = e.clientX - pointerInteractionMovement.current;
+          if (canvasRef.current) canvasRef.current.style.cursor = "grabbing";
+        }}
+        onPointerUp={() => {
+          pointerInteracting.current = null;
+          if (canvasRef.current) canvasRef.current.style.cursor = "grab";
+        }}
+        onPointerOut={() => {
+          pointerInteracting.current = null;
+          if (canvasRef.current) canvasRef.current.style.cursor = "grab";
+        }}
+        onMouseMove={(e) => {
+          if (pointerInteracting.current !== null) {
+            const delta = e.clientX - pointerInteracting.current;
+            pointerInteractionMovement.current = delta * 0.005;
+          }
+        }}
+        onTouchMove={(e) => {
+          if (pointerInteracting.current !== null && e.touches[0]) {
+            const delta = e.touches[0].clientX - pointerInteracting.current;
+            pointerInteractionMovement.current = delta * 0.005;
+          }
+        }}
       />
 
-      {/* Floating Interactive Badge */}
-      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-xs border border-line shadow-xs px-3 py-1 rounded-full text-[10px] text-muted flex items-center gap-1.5 pointer-events-none">
-        <span className="size-2 rounded-full bg-teal animate-pulse" />
-        <span>Live Medical Corridors • Drag to spin</span>
+      {/* Floating Live Corridors HUD Overlay */}
+      <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none z-20 text-[11px]">
+        <div className="bg-white/90 backdrop-blur-md border border-line shadow-xs px-2.5 py-1 rounded-full flex items-center gap-1.5 font-semibold text-ink">
+          <span className="size-2 rounded-full bg-terracotta animate-pulse" />
+          <span>{selectedLocation.flag} {selectedLocation.name}</span>
+        </div>
+
+        <div className="bg-white/90 backdrop-blur-md border border-line shadow-xs px-2.5 py-1 rounded-full flex items-center gap-1.5 font-semibold text-teal">
+          <span>✈️ Route:</span>
+          <span>{highlightedHub.flag} {highlightedHub.name}</span>
+        </div>
+      </div>
+
+      {/* Drag & Controls Prompt */}
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-ink/80 backdrop-blur-md text-white border border-white/10 px-3.5 py-1 rounded-full text-[10px] flex items-center gap-2 pointer-events-none z-20">
+        <span className="size-1.5 rounded-full bg-tealBrand animate-ping" />
+        <span>Drag to rotate • WebGL 3D flight arcs</span>
       </div>
     </div>
   );

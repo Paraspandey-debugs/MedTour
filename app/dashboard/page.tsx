@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { hospitalById, treatmentById, TREATMENTS } from "@/lib/data";
 import MedicalDisclaimer from "@/components/MedicalDisclaimer";
@@ -37,6 +38,15 @@ export default async function DashboardPage() {
 
   if (!user) {
     redirect("/login?next=/dashboard");
+  }
+
+  // Redirect to onboarding if not yet completed
+  const cookieStore = await cookies();
+  const onboardingCookie = cookieStore.get("medtour_onboarding_done")?.value;
+  const onboardingDone = Boolean(user.user_metadata?.onboarding_done || onboardingCookie === "true");
+
+  if (!onboardingDone) {
+    redirect("/onboarding");
   }
 
   const [quotesRes, dossierRes] = await Promise.all([
