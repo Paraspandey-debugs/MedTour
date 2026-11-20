@@ -6,6 +6,7 @@ import { CostBar, HospitalMark, Place, TierBadge } from "@/components/ui";
 import MedicalDisclaimer from "@/components/MedicalDisclaimer";
 import QuoteForm from "@/components/QuoteForm";
 import { createClient } from "@/lib/supabase/server";
+import { getDestinationByCountry } from "@/lib/tourism";
 
 export function generateStaticParams() {
   return HOSPITALS.map((h) => ({ id: h.id }));
@@ -170,6 +171,92 @@ export default async function HospitalPage({
               </div>
             </div>
           )}
+
+          {/* Destination Convalescence & Tourism Section */}
+          {(() => {
+            const dest = getDestinationByCountry(h.country);
+            if (!dest) return null;
+            return (
+              <div className="mt-8 rounded-2xl border border-teal/30 bg-teal/[0.02] p-5 sm:p-6 space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-teal/15 pb-3">
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-3xl">{dest.flag}</span>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h2 className="font-display text-xl font-bold text-ink">
+                          Destination Guide: {dest.city}, {dest.countryName}
+                        </h2>
+                        <span className="text-[10px] bg-mint text-teal font-semibold px-2 py-0.5 rounded-full">
+                          {dest.vibe}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted">{dest.tagline}</p>
+                    </div>
+                  </div>
+                  <Link
+                    href="/tourism"
+                    className="btn btn-secondary !text-xs !py-1.5 !px-3 font-semibold"
+                  >
+                    Full Tourism Hub &rarr;
+                  </Link>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-3 text-xs">
+                  {/* Recovery Hotel */}
+                  <div className="p-3.5 rounded-xl bg-white border border-line shadow-2xs space-y-2">
+                    <span className="font-bold text-teal uppercase text-[10px] tracking-wider block">
+                      🏨 Recovery Accommodations
+                    </span>
+                    <p className="font-semibold text-ink text-xs">{dest.recoveryHotels[0]?.name}</p>
+                    <p className="text-muted text-[11px]">{dest.recoveryHotels[0]?.distanceToHospital}</p>
+                    <p className="text-[11px] font-semibold text-teal num">
+                      From ${dest.recoveryHotels[0]?.pricePerNight}/night
+                    </p>
+                    <div className="flex flex-wrap gap-1 pt-0.5">
+                      {dest.recoveryHotels[0]?.amenities.slice(0, 2).map((a, i) => (
+                        <span key={i} className="text-[10px] bg-sand/60 px-1.5 py-0.5 rounded text-muted">
+                          ✓ {a}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Companion Itinerary */}
+                  <div className="p-3.5 rounded-xl bg-white border border-line shadow-2xs space-y-2">
+                    <span className="font-bold text-teal uppercase text-[10px] tracking-wider block">
+                      👥 Companion Itinerary
+                    </span>
+                    <p className="font-semibold text-ink text-xs">{dest.companionItinerary[1]?.title}</p>
+                    <p className="text-muted text-[11px] line-clamp-3 leading-relaxed">
+                      {dest.companionItinerary[1]?.activity}
+                    </p>
+                    <span className="text-[10px] bg-sand/80 text-ink px-2 py-0.5 rounded-full inline-block font-medium">
+                      Companion Score: {dest.companionFriendlyRating}/5 ★
+                    </span>
+                  </div>
+
+                  {/* Visa & Airport */}
+                  <div className="p-3.5 rounded-xl bg-white border border-line shadow-2xs space-y-2">
+                    <span className="font-bold text-teal uppercase text-[10px] tracking-wider block">
+                      🛂 Entry &amp; Airport
+                    </span>
+                    <p className="font-semibold text-ink text-xs">
+                      {dest.practicalities.airportCode} ({dest.practicalities.airportName})
+                    </p>
+                    <p className="text-muted text-[11px]">
+                      ~{dest.practicalities.transferMinutesToMedicalDistrict} min transfer to {h.name}.
+                    </p>
+                    <p className="text-[11px] text-ink font-medium">
+                      Visa: {dest.visa.processingDays} days • {dest.visa.feeUsd === 0 ? "Free" : `$${dest.visa.feeUsd}`}
+                    </p>
+                    <span className="text-[10px] text-teal font-semibold block">
+                      {dest.visa.fastTrackAirportImmigration ? "✓ Fast-track medical immigration" : "Standard lane"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
 
           <h2 className="mt-8 font-display text-2xl">What patients say</h2>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">

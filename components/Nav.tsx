@@ -14,6 +14,7 @@ export interface NavUser {
 
 const MAIN_LINKS = [
   { href: "/hospitals", label: "Compare hospitals" },
+  { href: "/tourism", label: "Destinations & Tourism" },
   { href: "/#how-it-works", label: "How it works" },
   { href: "/security", label: "Security & privacy" },
 ];
@@ -22,6 +23,7 @@ const ACCOUNT_LINKS = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/match", label: "Analyse my report" },
   { href: "/journey", label: "Trip plan" },
+  { href: "/tourism", label: "Destinations & Tourism" },
   { href: "/coordinator", label: "Ask the assistant" },
 ];
 

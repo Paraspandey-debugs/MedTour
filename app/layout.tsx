@@ -65,6 +65,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 <li><Link href="/match" className="hover:text-ink transition-colors">Analyse my report</Link></li>
                 <li><Link href="/cost" className="hover:text-ink transition-colors">Total cost calculator</Link></li>
                 <li><Link href="/journey" className="hover:text-ink transition-colors">Trip plan</Link></li>
+                <li><Link href="/tourism" className="hover:text-ink transition-colors">Destinations &amp; tourism</Link></li>
                 <li><Link href="/coordinator" className="hover:text-ink transition-colors">Ask the assistant</Link></li>
               </ul>
             </nav>

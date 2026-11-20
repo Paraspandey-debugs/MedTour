@@ -6,6 +6,7 @@ import { useState } from "react";
 import { COUNTRIES, HOSPITALS, TREATMENTS, homeById, hospitalById, offers, treatmentById, usd } from "@/lib/data";
 import { buildJourney, trueCost, type Step } from "@/lib/engine";
 import { Disclaimer } from "@/components/ui";
+import { getDestinationByCountry } from "@/lib/tourism";
 
 const KIND: Record<Step["kind"], { dot: string; label: string }> = {
   prep: { dot: "bg-gold", label: "Prepare" },
@@ -192,6 +193,111 @@ export default function JourneyTool() {
             </li>
           ))}
         </ol>
+
+        {/* Tourism & Companion Convalescence Guide Card */}
+        {(() => {
+          const dest = getDestinationByCountry(h.country);
+          if (!dest) return null;
+          return (
+            <div className="mt-6 rounded-2xl border border-teal/30 bg-teal/[0.03] p-5 sm:p-6 space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-teal/15 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-2xl">{dest.flag}</span>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-display text-lg font-bold text-ink">
+                        Destination Guide: {dest.city}, {dest.countryName}
+                      </h3>
+                      <span className="text-[10px] bg-mint text-teal font-semibold px-2 py-0.5 rounded-full">
+                        {dest.vibe}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted">{dest.tagline}</p>
+                  </div>
+                </div>
+                <Link
+                  href="/tourism"
+                  className="btn btn-secondary !text-xs !py-1.5 !px-3 font-semibold"
+                >
+                  Explore All Destinations &rarr;
+                </Link>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-3 text-xs">
+                {/* Companion Itinerary Highlight */}
+                <div className="p-3.5 rounded-xl bg-white border border-line shadow-2xs space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-teal uppercase text-[10px] tracking-wider">
+                      👥 Travelling Companion
+                    </span>
+                    <span className="text-teal font-semibold">
+                      {dest.companionFriendlyRating}/5 ★
+                    </span>
+                  </div>
+                  <p className="font-semibold text-ink text-xs">{dest.companionItinerary[1]?.title}</p>
+                  <p className="text-muted leading-relaxed line-clamp-3">
+                    {dest.companionItinerary[1]?.activity}
+                  </p>
+                  <p className="text-[10px] text-muted border-t border-line/60 pt-1">
+                    💡 <b>Tip:</b> {dest.companionItinerary[1]?.tip}
+                  </p>
+                </div>
+
+                {/* Vetted Recovery Residence */}
+                <div className="p-3.5 rounded-xl bg-white border border-line shadow-2xs space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-teal uppercase text-[10px] tracking-wider">
+                      🏨 Recommended Recovery Stay
+                    </span>
+                    <span className="font-bold text-ink num">
+                      ${dest.recoveryHotels[0]?.pricePerNight}/night
+                    </span>
+                  </div>
+                  <p className="font-semibold text-ink text-xs">{dest.recoveryHotels[0]?.name}</p>
+                  <p className="text-muted text-[11px]">{dest.recoveryHotels[0]?.distanceToHospital}</p>
+                  <div className="flex flex-wrap gap-1 pt-1">
+                    {dest.recoveryHotels[0]?.amenities.slice(0, 3).map((am, i) => (
+                      <span key={i} className="text-[10px] bg-sand/60 px-1.5 py-0.5 rounded text-muted">
+                        ✓ {am}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Post-Op Gentle Sightseeing */}
+                <div className="p-3.5 rounded-xl bg-white border border-line shadow-2xs space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-teal uppercase text-[10px] tracking-wider">
+                      🌿 Gentle Patient Excursion
+                    </span>
+                    <span className="text-muted font-medium text-[10px]">
+                      {dest.gentleActivities[0]?.idealRecoveryStage}
+                    </span>
+                  </div>
+                  <p className="font-semibold text-ink text-xs">{dest.gentleActivities[0]?.title}</p>
+                  <p className="text-muted leading-relaxed line-clamp-3">
+                    {dest.gentleActivities[0]?.description}
+                  </p>
+                  <div className="text-[10px] text-muted border-t border-line/60 pt-1 flex justify-between">
+                    <span>Walking: <b>{dest.gentleActivities[0]?.walkingLevel}</b></span>
+                    {dest.gentleActivities[0]?.wheelchairAccessible && (
+                      <span className="text-teal font-semibold">♿ Accessible</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-[11px] text-muted">
+                <span>
+                  ✈️ <b>Airport:</b> {dest.practicalities.airportName} ({dest.practicalities.airportCode}) — ~{dest.practicalities.transferMinutesToMedicalDistrict} mins to hospital.
+                </span>
+                <span>
+                  🛂 <b>Visa:</b> {dest.visa.processingDays} days ({dest.visa.validity}).
+                </span>
+              </div>
+            </div>
+          );
+        })()}
 
         <div className="mt-6 card p-5 flex flex-wrap items-center justify-between gap-4">
           <div>
